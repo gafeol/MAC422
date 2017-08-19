@@ -6,8 +6,15 @@
 #include <unistd.h>
 #include <time.h>
 
-int main (int argc, char *argv[])
-{
+#define BUFLEN 4096
+
+#define STDIN   0
+#define STDOUT  1
+
+int main (int argc, char *argv[]){
+	int pipe_arr[2];
+  char buf[BUFLEN];
+
 	if(strcmp(argv[1], "date") == 0){
 		time_t result = time(NULL);
 		if(result != -1){
@@ -15,21 +22,23 @@ int main (int argc, char *argv[])
 		}
 	}
 	else if(argv[1][0] == '/'){
-		int pid = fork();
-		if (pid=0){
-		    int err;
-		    char *env[1] = { 0 };
-		    char *argv[3] = { "ls", "-l", 0 };
-				err = execve("/bin/ls", argv, env);  //syscall, libc has simpler wrappers (man exec)
-		    exit(err); //if it got here, it's an error
-		} else if(pid<0) {
-		    printf("fork failed with error code %d\n", pid);
-		    exit(-1);
+		pipe(pipe_arr);
+		if (fork() == 0){
+		    //int err;
+		    //char *env[1] = { "www.google.com.br" };
+		    //char *argv[3] = {"ping"};
+				//err = execve("/bin/ping", argv, env);  //syscall, libc has simpler wrappers (man exec)
+		    //exit(err); //if it got here, it's an error
+				dup2(pipe_arr[1], STDOUT);
+				execl("/bin/ping", "ping", "-c 10", "www.google.com.br", (char*)NULL);
 		}
+		else {
+        wait(NULL);
+        read(pipe_arr[0], buf, BUFLEN);
+        printf("%s\n", buf);
+    }
 
-		int status;
-		wait(&status); //simplest one, man wait for others
-		printf("child pid was %d, it exited with %d\n", pid, status);
-		exit(0);
+    close(pipe_arr[0]);
+    close(pipe_arr[1]);
 	}
 }
