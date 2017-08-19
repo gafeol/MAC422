@@ -21,7 +21,7 @@ int main (int argc, char *argv[]){
 			printf("%s", asctime(localtime(&result)));
 		}
 	}
-	else if(argv[1][0] == '/'){
+	else if(strcmp(argv[1], "/bin/ping") == 0){
 		pipe(pipe_arr);
 		if (fork() == 0){
 		    //int err;
@@ -38,7 +38,7 @@ int main (int argc, char *argv[]){
         printf("%s\n", buf);
     }
 
-    close(pipe_arr[0]);
+		close(pipe_arr[0]);
     close(pipe_arr[1]);
 	}
 }

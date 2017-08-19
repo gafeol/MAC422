@@ -6,7 +6,14 @@
 
 void type_prompt()
 {
-	printf("[%s]$ ", get_current_dir_name());
+	//alteracoes do susu
+	char cwd[1024];
+	if (getcwd(cwd, sizeof(cwd)) != NULL)
+
+		printf("[%s]$ ", cwd);
+	else
+		perror("getcwd() error");
+//	printf("[%s]$ ", get_current_dir_name());
 }
 
 int main()
