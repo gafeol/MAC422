@@ -24,13 +24,8 @@ int main (int argc, char *argv[]){
 	else if(strcmp(argv[1], "/bin/ping") == 0){
 		pipe(pipe_arr);
 		if (fork() == 0){
-			//int err;
-			//char *env[1] = { "www.google.com.br" };
-			//char *argv[3] = {"ping"};
-			//err = execve("/bin/ping", argv, env);  //syscall, libc has simpler wrappers (man exec)
-			//exit(err); //if it got here, it's an error
 			dup2(pipe_arr[1], STDOUT);
-			execl("/bin/ping", "ping" argv[3](char*)NULL);
+			execl("/bin/ping", "ping", argv[2], argv[3], argv[4], (char*)NULL);
 		}
 		else {
 			wait(NULL);
@@ -56,11 +51,12 @@ int main (int argc, char *argv[]){
 		close(pipe_arr[0]);
 		close(pipe_arr[1]);
 	}
-	else if(strcmp(argv[1], "/usr/bin/cal") == 0){
+	else if(strcmp(argv[1], "./ep1") == 0){
 		pipe(pipe_arr);
 		if (fork() == 0){
 			dup2(pipe_arr[1], STDOUT);
-			execl("/usr/bin/cal", "cal", argv[2], (char*)NULL);
+			// compila o ep1 com um argumento (argv[2])
+			execl("./ep1", "ep1", argv[2], (char*)NULL);
 		}
 		else {
 			wait(NULL);
