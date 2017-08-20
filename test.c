@@ -10,7 +10,7 @@ char* createprompt()
 {
 	char *dir, *prompt;
 
-	dir = malloc((MAXL-4)*sizeof(char));
+	dir = malloc(MAXL*sizeof(char));
 	prompt = malloc(MAXL*sizeof(char));
 
 	if(!dir || !prompt) {
@@ -18,14 +18,14 @@ char* createprompt()
 		exit(EXIT_FAILURE);
 	}
 
-	if(getcwd(dir,sizeof(dir)) == NULL) {
+	if(getcwd(dir,MAXL*sizeof(char)) == NULL) {
 		fprintf(stderr,"erro em getcwd\n");
 		exit(EXIT_FAILURE);
 	}
 
 	strcpy(prompt,"[");
 	strcat(prompt,dir);
-	strcat(prompt,"] ");
+	strcat(prompt,"]$ ");
 
 	free(dir);
 	return prompt; 
