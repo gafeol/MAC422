@@ -47,7 +47,6 @@ int main (int argc, char *argv[]){
 			read(pipe_arr[0], buf, BUFLEN);
 			printf("%s\n", buf);
 		}
-
 		close(pipe_arr[0]);
 		close(pipe_arr[1]);
 	}
