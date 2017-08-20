@@ -43,9 +43,31 @@ char* stripwhite(char *string)
 	while(t > s && whitespace(*t)) {
 		t--;
 	}
-	*(t++) = '\0';
+	*(++t) = '\0';
 
 	return s;
+}
+
+char** tokenize(char *line)
+{
+	char** token = malloc(MAXL*sizeof(char*));
+	int cnt = 0;
+	if(token == NULL) {
+		fprintf(stderr,"erro de alocacao\n");
+		exit(EXIT_FAILURE);
+	}
+	char *p;
+	p = strtok(line," ");
+	while(p != NULL) {
+		token[cnt++] = p;
+		p = strtok(NULL," ");
+	}
+	return token;
+}
+
+void execute_line(char *line)
+{
+	char** token = tokenize(line);
 }
 
 int main()
@@ -66,7 +88,7 @@ int main()
 		s = stripwhite(line);
 		if(*s) {
 			add_history(s);
-			//execute_line(line);
+			execute_line(s);
 		}
 		free(line);
 		//read_command(cmd,param);	
