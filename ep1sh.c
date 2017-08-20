@@ -5,6 +5,9 @@
 #include <string.h>
 #include <unistd.h>
 #include <time.h>
+#include <sys/types.h>
+#include <pwd.h>
+#include <grp.h>
 
 #define BUFLEN 4096
 
@@ -66,5 +69,18 @@ int main (int argc, char *argv[]){
 
 		close(pipe_arr[0]);
 		close(pipe_arr[1]);
+	}
+	else if(strcmp(argv[1], "chown") == 0){
+		struct group  *grp;
+		// remove o primeiro elemento da string (tira o : de :group)
+		memmove (argv[2], argv[2]+1, strlen (argv[2]+1) + 1); 
+		grp = getgrnam(argv[2]);
+		if (grp == NULL) {
+			printf("Failed to get gid");
+		}
+		gid_t gid = grp->gr_gid;
+		if(chown(argv[3], -1, gid) == -1){
+			printf("chown fail");
+		}
 	}
 }
