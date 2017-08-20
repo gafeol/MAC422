@@ -3,41 +3,72 @@
 #include <unistd.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-#define MAX_LENGTH 1024
+#define MAXL 4096
 
 
-/*char type_prompt()
+char* createprompt()
 {
-	//alteracoes do susu
-	char cwd[1024];
-	if (getcwd(cwd, sizeof(cwd)) != NULL)
-		return cwd;
-	else {
-		perror("getcwd() error");
+	char *dir, *prompt;
+
+	dir = malloc((MAXL-4)*sizeof(char));
+	prompt = malloc(MAXL*sizeof(char));
+
+	if(!dir || !prompt) {
+		fprintf(stderr,"erro de alocacao\n");
+		exit(EXIT_FAILURE);
 	}
 
-//	printf("[%s]$ ", get_current_dir_name());
-}*/
+	if(getcwd(dir,sizeof(dir)) == NULL) {
+		fprintf(stderr,"erro em getcwd\n");
+		exit(EXIT_FAILURE);
+	}
+
+	strcpy(prompt,"[");
+	strcat(prompt,dir);
+	strcat(prompt,"] ");
+
+	free(dir);
+	return prompt; 
+}
+
+char* stripwhite(char *string)
+{
+	char *s, *t;
+
+	for(s = string; whitespace(*s); s++);
+
+	if(*s) return s;
+
+	t = s + strlen(s) - 1;
+	while(t > s && whitespace(*t)) {
+		t--;
+	}
+	*(t++) = '\0';
+
+	return s;
+}
 
 int main()
 {
-	char *line;
-	char cmd[MAX_LENGTH], param[10][MAX_LENGTH];
+	char *line, *s;
+	char cmd[MAXL], param[10][MAXL];
 
 	while(1) {
-		char cwd[1024];
-		if (getcwd(cwd, sizeof(cwd)) == NULL)
-			perror("getcwd() error");
-		line = readline(cwd);
-
+		char *prompt;
+		prompt = createprompt();
+		if(prompt == NULL) {
+			printf("error\n");
+			break;
+		}
+		line = readline(prompt);
+		free(prompt);
 		if(!line) break;
-
-		//s = stripwhite(line);
-
-		if(*line) {
+		s = stripwhite(line);
+		if(*s) {
 			add_history(line);
 			//execute_line(line);
 		}
+		free(line);
 		//read_command(cmd,param);	
 	}
 	return 0;
