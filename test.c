@@ -37,7 +37,7 @@ char* stripwhite(char *string)
 
 	for(s = string; whitespace(*s); s++);
 
-	if(*s) return s;
+	if(*s == '\0') return s;
 
 	t = s + strlen(s) - 1;
 	while(t > s && whitespace(*t)) {
@@ -65,7 +65,7 @@ int main()
 		if(!line) break;
 		s = stripwhite(line);
 		if(*s) {
-			add_history(line);
+			add_history(s);
 			//execute_line(line);
 		}
 		free(line);
