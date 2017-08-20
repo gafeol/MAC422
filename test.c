@@ -6,17 +6,18 @@
 #define MAX_LENGTH 1024
 
 
-void type_prompt()
+/*char type_prompt()
 {
 	//alteracoes do susu
 	char cwd[1024];
 	if (getcwd(cwd, sizeof(cwd)) != NULL)
-
-		printf("[%s]$ ", cwd);
-	else
+		return cwd;
+	else {
 		perror("getcwd() error");
+	}
+
 //	printf("[%s]$ ", get_current_dir_name());
-}
+}*/
 
 int main()
 {
@@ -24,14 +25,16 @@ int main()
 	char cmd[MAX_LENGTH], param[10][MAX_LENGTH];
 
 	while(1) {
-		type_prompt();
-		line = readline("");
+		char cwd[1024];
+		if (getcwd(cwd, sizeof(cwd)) == NULL)
+			perror("getcwd() error");
+		line = readline(cwd);
 
 		if(!line) break;
 
-		s = stripwhite(line);
+		//s = stripwhite(line);
 
-		if(*s) {
+		if(*line) {
 			add_history(line);
 			//execute_line(line);
 		}
