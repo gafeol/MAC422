@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 #define MAX_LENGTH 1024
 
 
@@ -18,12 +20,21 @@ void type_prompt()
 
 int main()
 {
-	char line[MAX_LENGTH];
+	char *line;
 	char cmd[MAX_LENGTH], param[10][MAX_LENGTH];
 
 	while(1) {
 		type_prompt();
-		scanf("%s", cmd);
+		line = readline("");
+
+		if(!line) break;
+
+		s = stripwhite(line);
+
+		if(*s) {
+			add_history(line);
+			//execute_line(line);
+		}
 		//read_command(cmd,param);	
 	}
 	return 0;
