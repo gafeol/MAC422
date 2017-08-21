@@ -107,18 +107,16 @@ void execute_line(char *line)
 	}
 	else{
 		int status;
-		switch (pid = fork()) {
-			case -1:
-				perror("fork()");
+		pid = fork();
+		if(pid == 0){
+			status = execve(token[0], token, 0);
+			exit(status);
+		}
+		else{
+			if ((waitpid(pid, &status, 0)) < 0) {
+				perror("waitpid()");
 				exit(EXIT_FAILURE);
-			case 0: 
-				status = execve(token[0], token, 0);
-				exit(status);
-			default: 
-				if ((waitpid(pid, &status, 0)) < 0) {
-					perror("waitpid()");
-					exit(EXIT_FAILURE);
-				}
+			}
 		}
 	}
 	free(buf);
