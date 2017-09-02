@@ -1,8 +1,11 @@
-// proto ep1 para testar o binario ./ep1 de ep1sh
-
 #include<stdio.h>
+#include<pthread.h>
+
+#define FL "trace.txt"	
 
 int main(int argc, char *argv[]){
+	FILE *fp;
+	fopen(FL, 
 	printf("Hello World!\n");
 	printf("%d parameters:\n", argc);
 	for(int a=0;a<argc;a++){
