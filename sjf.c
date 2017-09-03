@@ -22,7 +22,7 @@ double running_time(){
 
 void finish_process(Heap running_process, Queue cpu_livre){
 	// caso algum processo que esta rodando ja tenha terminado, o finish process tira ele da heap e libera a cpu
-	while(!heap_empty(running_process) && running_time() >= heap_min_time(running_process)){
+	while(!heap_empty(running_process) && heap_min_element(running_process)->done == 1){
 		// processo acabou de rodar
 		Process ready = heap_min_element(running_process);
 		heap_pop(running_process);
@@ -34,9 +34,11 @@ void finish_process(Heap running_process, Queue cpu_livre){
 static void *run_process(void *p){
 	pthread_mutex_lock(proc->mutex);
 	struct timespec tim, tim2;
-	tim.tv_sec = 1;
-	tim.tv_nsec = 500;
-	nanosleep();
+	tim.tv_sec = (long) p->dt;
+	tim.tv_nsec = (long) 1000000*(p->dt - tim.tv_sec);
+	nanosleep(&tim, &tim2);
+	p->done = 1;
+	return NULL;
 }
 
 void SJF(FILE* input, FILE* output, int ncores){
