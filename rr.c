@@ -16,8 +16,11 @@ double running_time(){
 	return sec(act) - sec(start_time); 
 }
 
-void SJF(FILE* input, FILE* output, int ncores){
+void RR(FILE* input, FILE* output, int ncores){
 	char *line = NULL;
+	int *cores;
+	cores = malloc((ncores+1)*sizeof(int));
+	int id;
 	Heap ordered_process = heap_create();
 	while(getline(&line, &len, input)){
 		Process p = process_line(line);
@@ -29,7 +32,7 @@ void SJF(FILE* input, FILE* output, int ncores){
 
 	Heap running_process = heap_create();
 	Queue awaiting_process = queue_create();
-	
+
 
 	gettimeofday(&start_time, NULL);
 	
