@@ -46,7 +46,7 @@ void process_delete(Process *p){
 }
 
 
-#define MAXL 1000
+#define MAXL 100
 
 int main(int argc, char *argv[]){
 	FILE *fp;
