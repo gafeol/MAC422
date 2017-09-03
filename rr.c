@@ -14,6 +14,7 @@ typedef struct exec_node {
 typedef exec_node* Exec_node;
 typedef struct timeval timev;
 static timev start_time;
+static FILE *out;
 
 double sec(timev t){
 	return t.tv_sec + t.tv_usec/1000000.;
@@ -25,18 +26,23 @@ double running_time(){
 	return sec(act) - sec(start_time); 
 }
 
-static void *run_process(Process p){
+static void *run_process(void *pro){
+	Process p = pro;
 	pthread_mutex_lock(p->mutex);
 	struct timespec tim, tim2;
+	
+	double st = running_time();
 	tim.tv_sec = (long) p->dt;
 	tim.tv_nsec = (long) 1000000*(p->dt - tim.tv_sec);
 	nanosleep(&tim, &tim2);
 	p->done = 1;
+	fprintf(out, "%s %.1f %.1f\n", p->name, running_time(), running_time() - st); 
 	return NULL;
 }
 
 void RR(FILE* input, FILE* output, int ncores){
 	char *line = NULL;
+	out = output;
 	Queue cpu_livre = queue_create();
 	int *core;
 	core = malloc((ncores+1)*sizeof(int));
@@ -77,13 +83,17 @@ void RR(FILE* input, FILE* output, int ncores){
 
 		//while(current_time() < current_process->t0 && !heap_empty(running_process) && heap_min_time(running_process) <= running_time());
 
-		while(current_time() >= current_process->t0) {
+		while(running_time() >= current_process->t0) {
 			double exe_time = 0;
 			if(current_process->dt >= quantum)
 					exe_time = quantum;
 				else
 					exe_time = current_process->dt;
-			queue_push(awaiting_process, exe_time, current_process);
+			current_process->dt -= exe_time;
+			en->exe_time = exe_time;
+			en->proc = current_process;
+			current_process->done = 0;
+			queue_push(awaiting_process, en);
 			if(heap_empty(ordered_process)) break;
 			current_process = heap_min_element(ordered_process);
 			heap_pop(ordered_process);
@@ -109,18 +119,17 @@ void RR(FILE* input, FILE* output, int ncores){
 			}
 		}
 
-		while(!(awaiting_process->size == 0) && (heap->size < ncores)){
-			id = *head(cpu_livre);
+		while(!(awaiting_process->size == 0) && (running_process->size < ncores)){
+			id = *((int*) head(cpu_livre));
 			queue_pop(cpu_livre);
-			process *p = head(awaiting_process)->proc;
-			double exe_time = head(awaiting_process)->exe_time;
+			Process p = ((Exec_node) head(awaiting_process))->proc;
+			double exe_time = ((Exec_node) head(awaiting_process))->exe_time;
 			p->cpu = id; 
 			pthread_mutex_unlock(p->mutex);
 			heap_push(running_process,running_time() + exe_time, p);
 			queue_pop(awaiting_process);
 		}
 	}
-	free(cores);
+	free(core);
 	free(en);
-	return 0;
 }
