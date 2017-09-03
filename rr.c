@@ -133,3 +133,14 @@ void RR(FILE* input, FILE* output, int ncores){
 	free(core);
 	free(en);
 }
+
+int main(){
+	FILE *trace = fopen("test.txt", "r"), *output = fopen("saida.txt", "w");
+	if(trace == NULL)
+		puts("File input open error");
+	if(output == NULL)
+		puts("File output open error");
+	RR(trace, output, 5);
+	fclose(trace);
+	fclose(output);
+}

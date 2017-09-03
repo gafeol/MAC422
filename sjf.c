@@ -115,6 +115,8 @@ void SJF(FILE* input, FILE* output, int ncores){
 	}
 	while(!heap_empty(running_process))
 		finish_process(running_process, cpu_livre);
+
+	free(cores);
 }
 
 int main(){
