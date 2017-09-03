@@ -76,6 +76,7 @@ void RR(FILE* input, FILE* output, int ncores){
 	}
 
 	while(current_process != NULL || running_process->size != 0){
+		//printf("process %s\n", current_process->name);
 		/*while(!heap_empty(running_process) && running_time() >= heap_min_time(running_process)){
 			// processo acabou de rodar
 			Process ready = 
@@ -83,7 +84,8 @@ void RR(FILE* input, FILE* output, int ncores){
 
 		//while(current_time() < current_process->t0 && !heap_empty(running_process) && heap_min_time(running_process) <= running_time());
 
-		while(running_time() >= current_process->t0) {
+		while(current_process != NULL && running_time() >= current_process->t0) {
+			printf("while 2 process %s\n", current_process->name);
 			double exe_time = 0;
 			if(current_process->dt >= quantum)
 					exe_time = quantum;
@@ -96,12 +98,15 @@ void RR(FILE* input, FILE* output, int ncores){
 			queue_push(awaiting_process, en);
 			if(heap_empty(ordered_process)) break;
 			current_process = heap_min_element(ordered_process);
+			printf("curr process %s\n", current_process->name);
 			heap_pop(ordered_process);
 		}
 
 		while(!heap_empty(running_process) && running_time() > heap_min_time(running_process)){
 			Process top = heap_min_element(running_process);
+			printf("top process %s %.1f\n", top->name, top->dt);
 			while(!top->done);
+			printf("top process %s done  dt %.1f\n", top->name, top->dt);
 			if(top->dt > 0) {
 				double exe_time = 0;
 				if(top->dt >= quantum)
@@ -112,24 +117,34 @@ void RR(FILE* input, FILE* output, int ncores){
 				en->exe_time = exe_time;
 				en->proc = top;
 				top->done = 0;
-				pthread_mutex_lock(top->mutex);
+				puts("before thread");
 				pthread_create(top->thread,NULL,run_process,top);
 				queue_push(awaiting_process, en);
 				heap_pop(running_process);
+			Process stop = ((Process)heap_min_element(running_process));
+			queue_push(cpu_livre, &stop->cpu);
 			}
+			puts("sai do while 2");
 		}
 
 		while(!(awaiting_process->size == 0) && (running_process->size < ncores)){
+			puts("while 3");
+			if(queue_empty(cpu_livre))
+				puts("FUUUUUUUUUUUUU");
 			id = *((int*) head(cpu_livre));
+			printf("cpu livre %d\n", id);
 			queue_pop(cpu_livre);
 			Process p = ((Exec_node) head(awaiting_process))->proc;
 			double exe_time = ((Exec_node) head(awaiting_process))->exe_time;
+			printf("unlock process %s\n", p->name);
 			p->cpu = id; 
 			pthread_mutex_unlock(p->mutex);
 			heap_push(running_process,running_time() + exe_time, p);
 			queue_pop(awaiting_process);
 		}
+	//	printf("running_process size %d awaiting process %d\n", running_process->size, awaiting_process->size);
 	}
+	puts("cabou");
 	free(core);
 	free(en);
 }
