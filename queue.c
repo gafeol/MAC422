@@ -56,7 +56,7 @@ int queue_size(Queue *q){
 	return q->size;
 }
 
-/* Testing stuff 
+ 
 
 int main(){
 	Queue *q = queue_create();
@@ -78,6 +78,7 @@ int main(){
 	assert(queue_size(q) == 0);
 
 	queue_delete(q);
+	free(v);
 }
 
-*/
+
