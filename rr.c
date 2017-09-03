@@ -104,10 +104,11 @@ void RR(FILE* input, FILE* output, int ncores){
 
 		while(!heap_empty(running_process) && running_time() > heap_min_time(running_process)){
 			Process top = heap_min_element(running_process);
-			printf("top process %s %.1f\n", top->name, top->dt);
+			heap_pop(running_process);
+			printf("top process %s %.3f\n", top->name, top->dt);
 			while(!top->done);
-			printf("top process %s done  dt %.1f\n", top->name, top->dt);
-			if(top->dt > 0) {
+			printf("top process %s done  dt %.3f\n", top->name, top->dt);
+			if(top->dt > 0.) {
 				double exe_time = 0;
 				if(top->dt >= quantum)
 					exe_time = quantum;
@@ -120,17 +121,14 @@ void RR(FILE* input, FILE* output, int ncores){
 				puts("before thread");
 				pthread_create(top->thread,NULL,run_process,top);
 				queue_push(awaiting_process, en);
-				heap_pop(running_process);
-			Process stop = ((Process)heap_min_element(running_process));
-			queue_push(cpu_livre, &stop->cpu);
+				Process stop = ((Process)heap_min_element(running_process));
+				queue_push(cpu_livre, &stop->cpu);
 			}
-			puts("sai do while 2");
+			puts("sai do while 3");
 		}
 
 		while(!(awaiting_process->size == 0) && (running_process->size < ncores)){
-			puts("while 3");
-			if(queue_empty(cpu_livre))
-				puts("FUUUUUUUUUUUUU");
+			puts("while 4");
 			id = *((int*) head(cpu_livre));
 			printf("cpu livre %d\n", id);
 			queue_pop(cpu_livre);
