@@ -31,6 +31,14 @@ void finish_process(Heap running_process, Queue cpu_livre){
 	}
 }
 
+static void *run_process(void *p){
+	pthread_mutex_lock(proc->mutex);
+	struct timespec tim, tim2;
+	tim.tv_sec = 1;
+	tim.tv_nsec = 500;
+	nanosleep();
+}
+
 void SJF(FILE* input, FILE* output, int ncores){
 
 	Queue cpu_livre = queue_create(); 
@@ -67,6 +75,7 @@ void SJF(FILE* input, FILE* output, int ncores){
 	}
 
 	while(!heap_empty(next_process) || !heap_empty(ordered_process)){
+
 		if(heap_empty(next_process))
 			current_process = heap_min_element(ordered_process);
 		else
@@ -77,7 +86,7 @@ void SJF(FILE* input, FILE* output, int ncores){
 		while(current_time() < current_process->t0)
 			finish_process(running_process, cpu_livre);
 		//se nao posso ainda adicionar o proximo processo ou nao tenho cpu livre, espero
-		
+
 		//boto todos que ja podem ser executador na next_process
 		while(!heap_empty(ordered_process) && running_time() > heap_min_time(ordered_process)){
 			Process top = heap_min_element(ordered_process);
