@@ -16,6 +16,8 @@ typedef struct process{
 
 	pthread_t *thread;
 	pthread_mutex_t *mutex;
+
+	int cpu;
 	
 } process;
 

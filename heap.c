@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 #include "heap.h"
 
 #define LCHILD(x) 2*x + 1
@@ -16,6 +17,10 @@ heap *heap_create() {
 	heap *H = (heap*) malloc(sizeof(heap));
 	H->size = 0;
 	return H;
+}
+
+int heap_empty(Heap H){
+	return (H->size == 0);
 }
 
 void heap_destroy(heap *H) {
@@ -80,6 +85,7 @@ int main()
 		printf("%lf\n", heap_min_time(H));
 		heap_pop(H);
 	}
+	assert(heap_empty(H));
 	heap_destroy(H);
 	return 0;
 }

@@ -15,6 +15,7 @@ typedef struct heap {
 typedef heap* Heap;
 
 heap *heap_create();
+int heap_empty(heap*);
 double heap_min_time(heap*);
 void *heap_min_element(heap*);
 void heap_push(heap*, double, void*);
