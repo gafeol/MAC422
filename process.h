@@ -6,9 +6,9 @@
 
 
 typedef struct process{
-	float t0, dt, deadline;
+	double t0, dt, deadline;
 
-	float elapsed; /* tempo que este processo rodou ate agora */
+	double start;
 
 	char *name;
 

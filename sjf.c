@@ -41,7 +41,7 @@ static void *run_process(void *pro){
 	
 	double st = running_time();
 	tim.tv_sec = (long) p->dt;
-	tim.tv_nsec = (long) 1000000*(p->dt - tim.tv_sec);
+	tim.tv_nsec = (long) (1000000000.*(p->dt - tim.tv_sec));
 	nanosleep(&tim, &tim2);
 	p->done = 1;
 	fprintf(out, "%s %.1f %.1f\n", p->name, running_time(), running_time() - st); 

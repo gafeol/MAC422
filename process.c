@@ -15,11 +15,11 @@ process *process_create(float t0, float dt, float deadline, char *name){
 	new_process->name = malloc(MAX_SZ*sizeof(char));
 	strcpy(new_process->name, name);
 	new_process->priority = 0;
-	new_process->elapsed = 0;
 	new_process->mutex = malloc(sizeof(pthread_mutex_t));
 	new_process->thread = malloc(sizeof(pthread_t));
 	new_process->cpu = -1;
 	new_process->done = 0;
+	new_process->start = -1.;
 
 	return new_process;
 }
