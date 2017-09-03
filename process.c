@@ -7,8 +7,8 @@
 
 #define MAX_SZ 100
 
-Process *process_create(float t0, float dt, float deadline, char *name){
-	Process *new_process = malloc(sizeof(Process));
+process *process_create(float t0, float dt, float deadline, char *name){
+	process *new_process = malloc(sizeof(process));
 	new_process->t0 = t0;
 	new_process->dt = dt;
 	new_process->deadline = deadline;
@@ -22,7 +22,7 @@ Process *process_create(float t0, float dt, float deadline, char *name){
 	return new_process;
 }
 
-Process *process_line(char *line){
+process *process_line(char *line){
 	char **token = malloc(MAX_SZ*sizeof(char*));
 	int cnt = 0;
 	char *st = strtok(line, " ");
@@ -30,14 +30,14 @@ Process *process_line(char *line){
 		token[cnt++] = st;
 		st = strtok(NULL, " ");
 	}
-	Process *p = process_create(atof(token[0]), atof(token[1]), atof(token[2]), token[3]);
+	Process p = process_create(atof(token[0]), atof(token[1]), atof(token[2]), token[3]);
 	free(token);
 
 	return p;
 }
 
 
-void process_delete(Process *p){
+void process_delete(process *p){
 	free(p->name);
 	free(p->thread);
 	pthread_mutex_destroy(p->mutex);
@@ -51,11 +51,11 @@ void process_delete(Process *p){
 int main(int argc, char *argv[]){
 	FILE *fp;
 	fp = fopen(argv[1], "r");	
-	char *line;
+	char *line = NULL;
 	size_t len = 0;
 	ssize_t read;
 	while ((read = getline(&line, &len, fp)) != -1) {
-		Process *p = process_line(line);
+		Process p = process_line(line);
 		printf("t0 %f dt %f deadline %f name %s\n", p->t0, p->dt, p->deadline, p->name);
 		process_delete(p);
 	}

@@ -5,25 +5,25 @@
 #include "queue.h"
 
 
-Queue *queue_create(){
-	Queue *q = (Queue *) malloc(sizeof(Queue));
+Queue queue_create(){
+	Queue q = (Queue) malloc(sizeof(queue));
 	q->first = q->last = NULL;
 	q->size = 0;
 	return q; 
 }
 
-void *head(Queue *q){
+void *head(Queue q){
 	if(q->first == NULL) return NULL;
 	return q->first->value;
 }
 
-void *tail(Queue *q){
+void *tail(Queue q){
 	if(q->last == NULL) return NULL;
 	return q->last->value;
 }
 
-void queue_push(Queue *q, void *value){
-	Node *new_node = (Node *) malloc(sizeof(Node));
+void queue_push(Queue q, void *value){
+	Node new_node = (Node) malloc(sizeof(Node));
 	new_node->value = value;
 	new_node->next = NULL;
 
@@ -37,8 +37,8 @@ void queue_push(Queue *q, void *value){
 	q->last = new_node;
 }
 
-void queue_pop(Queue *q){
-	Node *top = q->first;
+void queue_pop(Queue q){
+	Node top = q->first;
 	q->first = top->next; 
 	if(q->first == NULL)
 		q->last = NULL;
@@ -46,20 +46,20 @@ void queue_pop(Queue *q){
 	q->size--;
 }
 
-void queue_delete(Queue *q){
+void queue_delete(Queue q){
 	while(q->size != 0)
 		queue_pop(q);
 	free(q);
 }
 
-int queue_size(Queue *q){
+int queue_size(Queue q){
 	return q->size;
 }
 
  
 
 int main(){
-	Queue *q = queue_create();
+	Queue q = queue_create();
 	int *v;
 	v = malloc(2*sizeof(int));
 	v[0] = 1;

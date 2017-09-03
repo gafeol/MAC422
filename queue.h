@@ -1,29 +1,32 @@
-#define ifndef QUEUE_H
+#ifndef QUEUE_H
 #define QUEUE_H
 
-typedef struct Node{
+typedef struct node{
 	void *value;
-	struct Node *next;
-} Node;
+	struct node *next;
+} node;
 
-typedef struct Queue{
-	struct Node *first, *last;
+typedef struct queue{
+	struct node *first, *last;
 	int size;
-} Queue;
+} queue;
 
 
-Queue *queue_create();
+typedef node* Node;
+typedef queue* Queue;
 
-void *head(Queue *q);
+Queue queue_create();
 
-void *tail(Queue *q);
+void *head(Queue);
 
-void queue_push(Queue *q, void *value);
+void *tail(Queue);
 
-void queue_pop(Queue *q);
+void queue_push(Queue, void*);
 
-void queue_delete(Queue *q);
+void queue_pop(Queue);
 
-int queue_size(Queue *q);
+void queue_delete(Queue);
+
+int queue_size(Queue);
 
 #endif

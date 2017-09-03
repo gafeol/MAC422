@@ -5,7 +5,7 @@
 #include <pthread.h>
 
 
-typedef struct Process{
+typedef struct process{
 	float t0, dt, deadline;
 
 	float elapsed; /* tempo que este processo rodou ate agora */
@@ -17,12 +17,14 @@ typedef struct Process{
 	pthread_t *thread;
 	pthread_mutex_t *mutex;
 	
-} Process;
+} process;
 
-Process *process_create(float t0, float dt, float deadline, char *name);
+typedef process* Process;
 
-Process *process_line(char *line);
+process *process_create(float, float, float, char*);
 
-void process_delete(Process *p);
+process *process_line(char*);
+
+void process_delete(process*);
 
 #endif
