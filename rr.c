@@ -2,7 +2,14 @@
 #include "queue.h"
 #include "heap.h"
 #include <sys/time.h>
+#include <pthread.h>
 
+typedef struct exec_node {
+	double exe_time;
+	process *proc;
+};
+
+typedef *exec_node Exec_node;
 typedef struct timeval timev;
 static timev start_time;
 
@@ -18,9 +25,17 @@ double running_time(){
 
 void RR(FILE* input, FILE* output, int ncores){
 	char *line = NULL;
+	Queue cpu_livre = queue_create();
 	int *cores;
 	cores = malloc((ncores+1)*sizeof(int));
+	double quantum = 0.1;
 	int id;
+	Exec_node en = malloc(sizeof(exec_node));
+	for(id = 1; id <= ncores; id++) {
+		core[id] = id;
+		queue_push(cpu_livre, core+id);
+	}
+
 	Heap ordered_process = heap_create();
 	while(getline(&line, &len, input)){
 		Process p = process_line(line);
@@ -42,13 +57,13 @@ void RR(FILE* input, FILE* output, int ncores){
 		heap_pop(ordered_process);
 	}
 
-	while(current_process != NULL){
+	while(current_process != NULL || running_process->size != 0){
 		/*while(!heap_empty(running_process) && running_time() >= heap_min_time(running_process)){
 			// processo acabou de rodar
 			Process ready = 
 		}*/
 
-		while(current_time() < current_process->t0 && !heap_empty(running_process) && heap_min_time(running_process) <= running_time());
+		//while(current_time() < current_process->t0 && !heap_empty(running_process) && heap_min_time(running_process) <= running_time());
 
 		while(current_time() >= current_process->t0) {
 			double exe_time = 0;
@@ -64,6 +79,7 @@ void RR(FILE* input, FILE* output, int ncores){
 
 		while(!heap_empty(running_process) && running_time() > heap_min_time(running_process)){
 			Process top = heap_min_element(running_process);
+			while(!top->done);
 			if(top->dt > 0) {
 				double exe_time = 0;
 				if(top->dt >= quantum)
@@ -71,23 +87,28 @@ void RR(FILE* input, FILE* output, int ncores){
 				else
 					exe_time = top->dt;
 				top->dt -= exe_time;
-				queue_push(awaiting_process, exe_time, top);
+				en->exe_time = exe_time;
+				en->proc = top;
+				top->done = 0;
+				pthread_mutex_lock(top->mutex);
+				pthread_create(top->thread,NULL,run_process,top);
+				queue_push(awaiting_process, en);
 				heap_pop(running_process);
 			}
 		}
 
-		while(!(awaiting_process->size == 0) && !heap_empty(next_process)){
-			Process top = heap_min_element(next_process);
-			top->cpu running_process->size + 1;	
-			pthread_mutex_unlock(top->mutex);
-			heap_push(running_process, running_time() + top->dt, top);
-			heap_pop(next_process);
-		}
-
-		while(running_time() >= heap_min_time(running_process)){
-			Process ready = heap_min_element(running_process);
-			heap_pop(running_process);
-			Process next = 
+		while(!(awaiting_process->size == 0) && (heap->size < ncores)){
+			id = *head(cpu_livre);
+			queue_pop(cpu_livre);
+			process *p = head(awaiting_process)->proc;
+			double exe_time = head(awaiting_process)->exe_time;
+			p->cpu = id; 
+			pthread_mutex_unlock(p->mutex);
+			heap_push(running_process,running_time() + exe_time, p);
+			queue_pop(awaiting_process);
 		}
 	}
+	free(cores);
+	free(en);
+	return 0;
 }
