@@ -20,7 +20,7 @@ heap *heap_create() {
 
 void heap_destroy(heap *H) {
 	for(int i = 0; i < H->size; i++)
-		heap_pop(H);
+		free(H->h[i]);
 	free(H);
 }
 
@@ -76,8 +76,10 @@ int main()
 		heap_push(H,i,NULL);
 		printf("%lf\n", heap_min_time(H));
 	}
-	for(int i = 0; i < H->size; i++)
-		printf("H->h[i]->priority = %lf\n", H->h[i]->priority);
+	for(int i = 0; i < H->size; i++) {
+		heap_pop(H);
+		printf("%lf\n", heap_min_time(H));
+	}
 	heap_destroy(H);
 	return 0;
 }
