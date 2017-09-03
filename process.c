@@ -51,9 +51,14 @@ void process_delete(Process *p){
 int main(int argc, char *argv[]){
 	FILE *fp;
 	fp = fopen(argv[1], "r");	
+<<<<<<< 642780f1e3d9518a6604a326027cccfcf41caeda
 	char *line;
+=======
+	char *line = (char*) malloc(sizeof(char)*MAXL);
+>>>>>>> ^^
 	size_t len = 0;
 	ssize_t read;
+	
 	while ((read = getline(&line, &len, fp)) != -1) {
 		printf("%s", line);
 		Process *p = process_line(line);
