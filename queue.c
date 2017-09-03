@@ -12,6 +12,10 @@ Queue queue_create(){
 	return q; 
 }
 
+int queue_empty(Queue q){
+	return (q->size == 0);
+}
+
 void *head(Queue q){
 	if(q->first == NULL) return NULL;
 	return q->first->value;

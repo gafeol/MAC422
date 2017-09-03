@@ -17,6 +17,8 @@ typedef queue* Queue;
 
 Queue queue_create();
 
+int queue_empty(Queue);
+
 void *head(Queue);
 
 void *tail(Queue);

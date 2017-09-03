@@ -1,64 +1,99 @@
+#include <stdlib.h>
+#include <sys/time.h>
+#include <stdio.h>
+
 #include "process.h"
 #include "queue.h"
 #include "heap.h"
 
-static timeval start_time;
+typedef struct timeval timev;
 
-double sec(timeval t){
+static timev start_time;
+
+double sec(timev t){
 	return t.tv_sec + t.tv_usec/1000000.;
 }
 
 double running_time(){
-	timeval act;
+	timev act;
 	gettimeofday(&act, NULL);
 	return sec(act) - sec(start_time); 
 }
 
+void finish_process(Heap running_process, Queue cpu_livre){
+	// caso algum processo que esta rodando ja tenha terminado, o finish process tira ele da heap e libera a cpu
+	while(!heap_empty(running_process) && running_time() >= heap_min_time(running_process)){
+		// processo acabou de rodar
+		Process ready = heap_min_element(running_process);
+		heap_pop(running_process);
+		//libera cpu
+		queue_push(cpu_livre, &ready->cpu);
+	}
+}
+
 void SJF(FILE* input, FILE* output, int ncores){
+
+	Queue cpu_livre = queue_create(); 
+	int *cores;
+	cores = malloc((ncores+1)*sizeof(int));
+	int id;
+	for(id = 1;id <= ncores;id++){
+		cores[id] = id;
+		queue_push(cpu_livre, cores+id);
+	}
+
 	char *line = NULL;
+	size_t len = 0;
+	ssize_t read;
 	Heap ordered_process = heap_create();
-	while(getline(&line, &len, input)){
+	while((read = getline(&line, &len, input)) != -1){
 		Process p = process_line(line);
 		heap_push(ordered_process, p->t0, p);
-		pthread_mutex_init(process->mutex, NULL);
-		pthread_mutex_lock(process->mutex);
-		pthread_create(process->thread, NULL, run_process, process);
+		pthread_mutex_init(p->mutex, NULL);
+		pthread_mutex_lock(p->mutex);
+		pthread_create(p->thread, NULL, run_process, p);
 	}
 
 	Heap running_process = heap_create();
 
+	Heap next_process = heap_create();
+
 	gettimeofday(&start_time, NULL);
-	
+
 	Process current_process = NULL;
 	if(!heap_empty(ordered_process)){
 		current_process = heap_min_element(ordered_process);
 		heap_pop(ordered_process);
 	}
 
-	while(current_process != NULL){
-		while(!heap_empty(running_process) && running_time() >= heap_min_time(running_process)){
-			// processo acabou de rodar
-			Process ready = 
-		}
-		while(current_time() < current_process->t0);
+	while(!heap_empty(next_process) || !heap_empty(ordered_process)){
+		if(heap_empty(next_process))
+			current_process = heap_min_element(ordered_process);
+		else
+			current_process = heap_min_element(next_process);
 
+		finish_process(running_process, cpu_livre);
+
+		while(current_time() < current_process->t0)
+			finish_process(running_process, cpu_livre);
+		//se nao posso ainda adicionar o proximo processo ou nao tenho cpu livre, espero
+		
+		//boto todos que ja podem ser executador na next_process
 		while(!heap_empty(ordered_process) && running_time() > heap_min_time(ordered_process)){
 			Process top = heap_min_element(ordered_process);
 			heap_push(next_process, top->dt, top);
 			heap_pop(ordered_process);
 		}
-		while(running_process->size < ncores && !heap_empty(next_process)){
+
+		while(!heap_empty(next_process) && !queue_empty(cpu_livre)){
 			Process top = heap_min_element(next_process);
-			top->cpu running_process->size + 1;	
+
+			top->cpu = *(int *)head(cpu_livre);	
+			queue_pop(cpu_livre);
+
 			pthread_mutex_unlock(top->mutex);
 			heap_push(running_process, running_time() + top->dt, top);
 			heap_pop(next_process);
-		}
-
-		while(running_time() >= heap_min_time(running_process)){
-			Process ready = heap_min_element(running_process);
-			heap_pop(running_process);
-			Process next = 
 		}
 	}
 }
