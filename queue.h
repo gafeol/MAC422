@@ -1,3 +1,6 @@
+#define ifndef QUEUE_H
+#define QUEUE_H
+
 typedef struct Node{
 	void *value;
 	struct Node *next;
@@ -22,3 +25,5 @@ void queue_pop(Queue *q);
 void queue_delete(Queue *q);
 
 int queue_size(Queue *q);
+
+#endif
