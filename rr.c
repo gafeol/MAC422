@@ -1,15 +1,17 @@
 #include "process.h"
 #include "queue.h"
 #include "heap.h"
+#include <stdio.h>
+#include <stdlib.h>
 #include <sys/time.h>
 #include <pthread.h>
 
 typedef struct exec_node {
 	double exe_time;
 	process *proc;
-};
+} exec_node;
 
-typedef *exec_node Exec_node;
+typedef exec_node* Exec_node;
 typedef struct timeval timev;
 static timev start_time;
 
@@ -23,11 +25,21 @@ double running_time(){
 	return sec(act) - sec(start_time); 
 }
 
+static void *run_process(Process p){
+	pthread_mutex_lock(p->mutex);
+	struct timespec tim, tim2;
+	tim.tv_sec = (long) p->dt;
+	tim.tv_nsec = (long) 1000000*(p->dt - tim.tv_sec);
+	nanosleep(&tim, &tim2);
+	p->done = 1;
+	return NULL;
+}
+
 void RR(FILE* input, FILE* output, int ncores){
 	char *line = NULL;
 	Queue cpu_livre = queue_create();
-	int *cores;
-	cores = malloc((ncores+1)*sizeof(int));
+	int *core;
+	core = malloc((ncores+1)*sizeof(int));
 	double quantum = 0.1;
 	int id;
 	Exec_node en = malloc(sizeof(exec_node));
@@ -35,11 +47,11 @@ void RR(FILE* input, FILE* output, int ncores){
 		core[id] = id;
 		queue_push(cpu_livre, core+id);
 	}
-
+	size_t len = 0;
 	Heap ordered_process = heap_create();
-	while(getline(&line, &len, input)){
-		Process p = process_line(line);
-		heap_push(ordered_process, p->t0, p);
+	while(getline(&line, &len, input) != -1){
+		Process process = process_line(line);
+		heap_push(ordered_process, process->t0, process);
 		pthread_mutex_init(process->mutex, NULL);
 		pthread_mutex_lock(process->mutex);
 		pthread_create(process->thread, NULL, run_process, process);
