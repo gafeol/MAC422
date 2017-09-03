@@ -52,9 +52,9 @@ void heapify(heap* H, int i)
 {
 	int smallest = i;
 	if(LCHILD(i) < H->size && H->h[LCHILD(i)]->priority < H->h[i]->priority)
-		smallest = i;
+		smallest = LCHILD(i);
 	if(RCHILD(i) < H->size && H->h[RCHILD(i)]->priority < H->h[i]->priority)
-		smallest = i;
+		smallest = RCHILD(i);
 	if(smallest != i) {
 		swap(H->h[i],H->h[smallest]);
 		heapify(H,smallest);
@@ -76,7 +76,7 @@ int main()
 		heap_push(H,i,NULL);
 		printf("%lf\n", heap_min_time(H));
 	}
-	for(int i = 0; i < H->size; i++) {
+	for(int i = 0; i < 6; i++) {
 		heap_pop(H);
 		printf("%lf\n", heap_min_time(H));
 	}
