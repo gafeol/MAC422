@@ -74,6 +74,7 @@ double heap_min_time(heap* H) {
 	return H->h[0]->priority;
 }
 
+/*
 int main()
 {
 	Heap H = heap_create();
@@ -89,3 +90,4 @@ int main()
 	heap_destroy(H);
 	return 0;
 }
+*/

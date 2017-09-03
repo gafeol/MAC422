@@ -61,7 +61,7 @@ int queue_size(Queue q){
 }
 
  
-
+/*
 int main(){
 	Queue q = queue_create();
 	int *v;
@@ -86,3 +86,4 @@ int main(){
 }
 
 
+*/

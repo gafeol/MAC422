@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <pthread.h>
 #include <sys/time.h>
 #include <stdio.h>
 
@@ -9,6 +10,7 @@
 typedef struct timeval timev;
 
 static timev start_time;
+static FILE *out;
 
 double sec(timev t){
 	return t.tv_sec + t.tv_usec/1000000.;
@@ -22,7 +24,7 @@ double running_time(){
 
 void finish_process(Heap running_process, Queue cpu_livre){
 	// caso algum processo que esta rodando ja tenha terminado, o finish process tira ele da heap e libera a cpu
-	while(!heap_empty(running_process) && heap_min_element(running_process)->done == 1){
+	while(!heap_empty(running_process) && ((Process)heap_min_element(running_process))->done == 1){
 		// processo acabou de rodar
 		Process ready = heap_min_element(running_process);
 		heap_pop(running_process);
@@ -31,17 +33,22 @@ void finish_process(Heap running_process, Queue cpu_livre){
 	}
 }
 
-static void *run_process(void *p){
-	pthread_mutex_lock(proc->mutex);
+static void *run_process(void *pro){
+	Process p = pro;
+	pthread_mutex_lock(p->mutex);
 	struct timespec tim, tim2;
+	
+	double st = running_time();
 	tim.tv_sec = (long) p->dt;
 	tim.tv_nsec = (long) 1000000*(p->dt - tim.tv_sec);
 	nanosleep(&tim, &tim2);
 	p->done = 1;
+	fprintf(out, "%s %.1f %.1f\n", p->name, running_time(), running_time() - st); 
 	return NULL;
 }
 
 void SJF(FILE* input, FILE* output, int ncores){
+	out = output;
 
 	Queue cpu_livre = queue_create(); 
 	int *cores;
@@ -63,6 +70,7 @@ void SJF(FILE* input, FILE* output, int ncores){
 		pthread_mutex_lock(p->mutex);
 		pthread_create(p->thread, NULL, run_process, p);
 	}
+	free(line);
 
 	Heap running_process = heap_create();
 
@@ -71,10 +79,6 @@ void SJF(FILE* input, FILE* output, int ncores){
 	gettimeofday(&start_time, NULL);
 
 	Process current_process = NULL;
-	if(!heap_empty(ordered_process)){
-		current_process = heap_min_element(ordered_process);
-		heap_pop(ordered_process);
-	}
 
 	while(!heap_empty(next_process) || !heap_empty(ordered_process)){
 
@@ -85,7 +89,7 @@ void SJF(FILE* input, FILE* output, int ncores){
 
 		finish_process(running_process, cpu_livre);
 
-		while(current_time() < current_process->t0)
+		while(running_time() < current_process->t0)
 			finish_process(running_process, cpu_livre);
 		//se nao posso ainda adicionar o proximo processo ou nao tenho cpu livre, espero
 
@@ -107,4 +111,15 @@ void SJF(FILE* input, FILE* output, int ncores){
 			heap_pop(next_process);
 		}
 	}
+}
+
+int main(){
+	FILE *trace = fopen("test.txt", "r"), *output = fopen("saida.txt", "w");
+	if(trace == NULL)
+		puts("File input open error");
+	if(output == NULL)
+		puts("File output open error");
+	SJF(trace, output, 5);
+	fclose(trace);
+	fclose(output);
 }

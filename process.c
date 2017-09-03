@@ -32,6 +32,7 @@ process *process_line(char *line){
 		token[cnt++] = st;
 		st = strtok(NULL, " ");
 	}
+	token[3][strlen(token[3])-1] = '\0'; // remove \n from name
 	Process p = process_create(atof(token[0]), atof(token[1]), atof(token[2]), token[3]);
 	free(token);
 
@@ -47,6 +48,7 @@ void process_delete(process *p){
 	free(p);
 }
 
+/*
 
 #define MAXL 1000
 
@@ -65,3 +67,5 @@ int main(int argc, char *argv[]){
 	if(line) 
 		free(line);
 }
+
+*/
