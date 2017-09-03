@@ -46,12 +46,12 @@ void process_delete(Process *p){
 }
 
 
-#define MAXL 100
+#define MAXL 1000
 
 int main(int argc, char *argv[]){
 	FILE *fp;
 	fp = fopen(argv[1], "r");	
-	char *line = malloc(sizeof(char)*MAXL);
+	char *line;
 	size_t len = 0;
 	ssize_t read;
 	while ((read = getline(&line, &len, fp)) != -1) {
@@ -61,5 +61,6 @@ int main(int argc, char *argv[]){
 		process_delete(p);
 	}
 	fclose(fp);
-	free(line);
+	if(line) 
+		free(line);
 }
