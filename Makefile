@@ -5,7 +5,7 @@ all: ep1 ep1sh
 ep1sh: ep1sh.c
 		$(CC) ep1sh.c -lreadline -o $@
 
-ep1: ep1.o sjf.o rr.o p.o print.o proccess.o queue.o heap.o calctime.o
+ep1: ep1.o sjf.o rr.o p.o print.o process.o queue.o heap.o calctime.o
 		$(CC) -pthread $^ -o $@
 
 ep1.o: ep1.c print.h p.h rr.h sjf.h
@@ -31,6 +31,8 @@ queue.o: queue.c queue.h
 
 calctime.o: calctime.c calctime.h
 		$(CC) calctime.c -c -o $@
+
+constants.h:
 
 clean: rm ep1 ep1sh *.o *~
 
