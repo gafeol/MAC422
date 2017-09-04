@@ -49,7 +49,7 @@ static void *run_process(void *pro){
 
 void calculate_priority(Process p){
 	context_change = 0;
-	p-> priority = (int) (p->deadline - p->t0 - p->dt);
+	p-> priority = (int) (0.5 + p->deadline - p->t0 - p->dt);
 	if(p->priority > 19)
 		p->priority = 19;
 	if(p->priority < -20)
