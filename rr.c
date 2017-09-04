@@ -5,6 +5,7 @@
 #include "queue.h"
 #include "heap.h"
 #include "print.h"
+#include "calctime.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,20 +13,6 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <pthread.h>
-
-typedef struct timeval timev;
-static timev start_time;
-static FILE *out;
-
-double sec(timev t){
-	return t.tv_sec + t.tv_usec/1000000.;
-}
-
-double running_time(){
-	timev act;
-	gettimeofday(&act, NULL);
-	return sec(act) - sec(start_time); 
-}
 
 static void *run_process(void *pro){
 	Process p = pro;
@@ -160,7 +147,7 @@ void RR(FILE* input, FILE* output, int ncores){
 	free(ordered_process);
 	free(cpu_livre);
 }
-
+/*
 int main(){
 	print_error = 1;
 
@@ -175,7 +162,7 @@ int main(){
 }
 
 
-/*
+
 test
 1 1 1 pro
 2 2 2 pro

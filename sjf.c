@@ -9,25 +9,11 @@
 #include "queue.h"
 #include "heap.h"
 #include "print.h"
-
-typedef struct timeval timev;
-
-static timev start_time;
-static FILE *out;
+#include "calctime.h"
 
 Queue cpu_livre;
 
 Heap running_process;
-
-double sec(timev t){
-	return t.tv_sec + t.tv_usec/1000000.;
-}
-
-double running_time(){
-	timev act;
-	gettimeofday(&act, NULL);
-	return sec(act) - sec(start_time); 
-}
 
 void finish_process(Heap running_process, Queue cpu_livre){
 	// caso algum processo que esta rodando ja tenha terminado, o finish process tira ele da heap e libera a cpu

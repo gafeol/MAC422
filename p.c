@@ -5,6 +5,7 @@
 #include "queue.h"
 #include "heap.h"
 #include "print.h"
+#include "calctime.h"
 #include <stdio.h>
 #include <assert.h>
 #include <stdlib.h>
@@ -12,20 +13,7 @@
 #include <unistd.h>
 #include <pthread.h>
 
-typedef struct timeval timev;
-static timev start_time;
-static FILE *out;
 double quantum = 0.1;
-
-double sec(timev t){
-	return t.tv_sec + t.tv_usec/1000000.;
-}
-
-double running_time(){
-	timev act;
-	gettimeofday(&act, NULL);
-	return sec(act) - sec(start_time); 
-}
 
 double exec_time(Process p){
 	//menor prioridade -> 1 quantum
