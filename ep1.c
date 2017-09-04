@@ -3,16 +3,10 @@
 #include<pthread.h>
 #include <unistd.h>
 
+#include "print.h"
 #include "p.h"
 #include "rr.h"
 #include "sjf.h"
-#include "print.h"
-#include "process.h"
-#include "queue.h"
-#include "heap.h"
-#include "constants.h"
-
-
 
 int main(int argc, char *argv[]){
 	lost_deadline = 0;

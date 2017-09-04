@@ -1,9 +1,7 @@
 #ifndef PROCESS_H
 #define PROCESS_H
 
-
-#include <pthread.h>
-
+#include <stdio.h>
 
 typedef struct process{
 	double t0, dt, deadline;

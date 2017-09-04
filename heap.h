@@ -1,7 +1,6 @@
 #ifndef HEAP_H
 #define HEAP_H
 
-
 typedef struct heap_node {
 	double priority;
 	void *element;	
