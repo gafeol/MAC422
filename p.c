@@ -49,7 +49,7 @@ static void *run_process(void *pro){
 		p->start = running_time();
 	usleep(runtime);
 
-	p->done = 1;
+	//p->done = 1;
 	
 	if(p->dt <= EPS){
 		fprintf(out, "%s %.1f %.1f\n", p->name, running_time(), running_time() - p->t0); 
@@ -112,7 +112,7 @@ void P(FILE* input, FILE* output, int ncores){
 	while(current_process != NULL || !heap_empty(running_process)){
 		while(current_process != NULL && running_time() >= current_process->t0) {
 			//printf("while 2 process %s\n", current_process->name);
-			current_process->done = 0;
+			//current_process->done = 0;
 			//puts("p done = 0");
 			queue_push(awaiting_process, current_process);
 			if(heap_empty(ordered_process)){
@@ -128,7 +128,11 @@ void P(FILE* input, FILE* output, int ncores){
 			Process top = heap_min_element(running_process);
 			heap_pop(running_process);
 		//	printf("top process %s %.3f\n", top->name, top->dt);
-			while(!top->done);
+			if(pthread_join(*(top->thread),NULL)) {
+				printf("\nerror joining thread\n");
+				exit(1);
+			}
+		//	while(!top->done);
 
 			print_cpu_liberation(top, top->cpu);
 

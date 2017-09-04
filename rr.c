@@ -42,7 +42,7 @@ static void *run_process(void *pro){
 	usleep(runtime);
 //	puts("depois");
 
-	p->done = 1;
+	//p->done = 1;
 //	puts("p done = 1");
 	if(p->dt <= EPS){
 //		puts("terminou");
@@ -95,7 +95,6 @@ void RR(FILE* input, FILE* output, int ncores){
 	while(current_process != NULL || !heap_empty(running_process)){
 		while(current_process != NULL && running_time() >= current_process->t0) {
 		//	printf("while 2 process %s\n", current_process->name);
-			current_process->done = 0;
 		//	puts("p done = 0");
 			queue_push(awaiting_process, current_process);
 		//	puts("deu break?");
@@ -113,7 +112,10 @@ void RR(FILE* input, FILE* output, int ncores){
 			Process top = heap_min_element(running_process);
 			heap_pop(running_process);
 		//	printf("top process %s %.3f\n", top->name, top->dt);
-			while(!top->done);
+			if(pthread_join(*(top->thread),NULL)) {
+				printf("error joining thread\n");
+				exit(1);
+			}
 			print_cpu_liberation(top, top->cpu);
 			queue_push(cpu_livre, &top->cpu);
 		//	printf("top process %s done  dt %.3f\n", top->name, top->dt);
