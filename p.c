@@ -166,6 +166,7 @@ void P(FILE* input, FILE* output, int ncores){
 	free(cpu_livre);
 }
 
+/*
 int main(){
 	FILE *trace = fopen("test.txt", "r"), *output = fopen("saida.txt", "w");
 	print_error = 1;
@@ -178,7 +179,6 @@ int main(){
 	fclose(output);
 }
 
-/*
 
 test 
 1 1 20 pro
