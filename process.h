@@ -23,7 +23,7 @@ typedef struct process{
 
 typedef process* Process;
 
-process *process_create(float, float, float, char*);
+process *process_create(double, double, double, char*);
 
 process *process_line(char*);
 

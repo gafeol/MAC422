@@ -39,6 +39,8 @@ static void *run_process(void *pro){
 	//p->done = 1;
 	
 	if(p->dt <= 1e-4){
+		if(running_time() > p->deadline + 1e-4)
+			lost_deadline++;
 		fprintf(out, "%s %.1f %.1f\n", p->name, running_time(), running_time() - p->t0); 
 		print_output(p);
 	}

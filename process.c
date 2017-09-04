@@ -7,7 +7,7 @@
 
 #define MAX_SZ 100
 
-process *process_create(float t0, float dt, float deadline, char *name){
+process *process_create(double t0, double dt, double deadline, char *name){
 	process *new_process = malloc(sizeof(process));
 	new_process->t0 = t0;
 	new_process->dt = dt;
@@ -32,8 +32,10 @@ process *process_line(char *line){
 		token[cnt++] = st;
 		st = strtok(NULL, " ");
 	}
+
 	token[3][strlen(token[3])-1] = '\0'; // remove \n from name
-	Process p = process_create(atof(token[0]), atof(token[1]), atof(token[2]), token[3]);
+
+	Process p = process_create(strtod(token[0], NULL), strtod(token[1], NULL), strtod(token[2], NULL), token[3]);
 	free(token);
 
 	return p;

@@ -29,11 +29,11 @@ static void *run_process(void *pro){
 	Process p = pro;
 	pthread_mutex_lock(p->mutex);
 	struct timespec tim, tim2;
-	
-	tim.tv_sec = (long) p->dt;
-	tim.tv_nsec = (long) (1000000000.*(p->dt - tim.tv_sec));
-	nanosleep(&tim, &tim2);
 
+	long runtime  = p->dt*1000000;
+	usleep(runtime);
+
+	if(running_time() > p->deadline + 1e-4) lost_deadline++;
 	fprintf(out, "%s %.1f %.1f\n", p->name, running_time(), running_time() - p->t0); 
 	print_output(p);
 	p->done = 1;
