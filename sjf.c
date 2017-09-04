@@ -6,6 +6,7 @@
 #include "process.h"
 #include "queue.h"
 #include "heap.h"
+#include "print.h"
 
 typedef struct timeval timev;
 
@@ -29,7 +30,8 @@ void finish_process(Heap running_process, Queue cpu_livre){
 		Process ready = heap_min_element(running_process);
 		heap_pop(running_process);
 		//libera cpu
-		printf("processo %s terminou e liberou cpu %d\n", ready->name, ready->cpu);
+		//printf("processo %s terminou e liberou cpu %d\n", ready->name, ready->cpu);
+		print_cpu_liberation(ready, ready->cpu);
 		queue_push(cpu_livre, &ready->cpu);
 	}
 }
@@ -44,6 +46,7 @@ static void *run_process(void *pro){
 	tim.tv_nsec = (long) (1000000000.*(p->dt - tim.tv_sec));
 	nanosleep(&tim, &tim2);
 	p->done = 1;
+	print_output(p);
 	fprintf(out, "%s %.1f %.1f\n", p->name, running_time(), running_time() - p->t0); 
 	return NULL;
 }
@@ -66,6 +69,9 @@ void SJF(FILE* input, FILE* output, int ncores){
 	Heap ordered_process = heap_create();
 	while((read = getline(&line, &len, input)) != -1){
 		Process p = process_line(line);
+
+		print_trace(p);
+
 		heap_push(ordered_process, p->t0, p);
 		pthread_mutex_init(p->mutex, NULL);
 		pthread_mutex_lock(p->mutex);
@@ -97,7 +103,7 @@ void SJF(FILE* input, FILE* output, int ncores){
 		//boto todos que ja podem ser executador na next_process
 		while(!heap_empty(ordered_process) && running_time() > heap_min_time(ordered_process)){
 			Process top = heap_min_element(ordered_process);
-			printf("pega processo %s e bota na next process\n", top->name);
+		//	printf("pega processo %s e bota na next process\n", top->name);
 			heap_push(next_process, top->dt, top);
 			heap_pop(ordered_process);
 		}
@@ -106,6 +112,9 @@ void SJF(FILE* input, FILE* output, int ncores){
 			Process top = heap_min_element(next_process);
 
 			top->cpu = *(int *)head(cpu_livre);	
+
+			print_cpu_usage(top, top->cpu);
+
 			queue_pop(cpu_livre);
 
 			pthread_mutex_unlock(top->mutex);
@@ -116,7 +125,13 @@ void SJF(FILE* input, FILE* output, int ncores){
 	while(!heap_empty(running_process))
 		finish_process(running_process, cpu_livre);
 
+	print_context_change();
+
 	free(cores);
+	free(running_process);
+	free(ordered_process);
+	free(next_process);
+	free(cpu_livre);
 }
 
 int main(){

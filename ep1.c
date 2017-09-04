@@ -7,15 +7,19 @@ int main(int argc, char *argv[]){
 	int type = atoi(argv[1]);
 	FILE *trace = fopen(argv[2], "r"), *output = fopen(argv[3], "w");
 	int ncores = sysconf(_SC_NPROCESSORS_ONLN);
+	print_error = 0;
+	if(argc > 4)
+		print_error = atoi(argv[4]);
+
 	switch (type) {
 		case 1:
-			//SJF(trace, output, ncores);
+			SJF(trace, output, ncores);
 			break;
 		case 2:
-			//RR(trace, output, ncores);
+			RR(trace, output, ncores);
 			break;
 		case 3:
-			//P(trace, output, ncores);
+			P(trace, output, ncores);
 			break;
 		default:
 			fprintf(stderr, "Escalonador invalido\n");
