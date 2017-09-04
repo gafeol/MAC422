@@ -7,14 +7,10 @@
 #include <unistd.h>
 #include <pthread.h>
 
-typedef struct exec_node {
-	double exe_time;
-	process *proc;
-} exec_node;
-
 int context_change;
 
-typedef exec_node* Exec_node;
+const double EPS = 1e-4;
+
 typedef struct timeval timev;
 static timev start_time;
 static FILE *out;
@@ -33,9 +29,10 @@ static void *run_process(void *pro){
 	puts("run process");
 	Process p = pro;
 	pthread_mutex_lock(p->mutex);
+	printf("dt %.10f\n", p->dt);
 	
 	long runtime = p->dt*1000000;
-	if(runtime > 100000. + 1e-8)
+	if(runtime > 100000. + EPS)
 		runtime = 100000;
 
 	p->dt -= runtime/1000000.;
@@ -48,8 +45,7 @@ static void *run_process(void *pro){
 
 	p->done = 1;
 	puts("p done = 1");
-	
-	if(p->dt <= 0 + 1e-8)
+	if(p->dt <= EPS)
 		fprintf(out, "%s %.1f %.1f\n", p->name, running_time(), running_time() - p->t0); 
 	return NULL;
 }
@@ -63,7 +59,6 @@ void RR(FILE* input, FILE* output, int ncores){
 	core = malloc((ncores+1)*sizeof(int));
 	double quantum = 0.1;
 	int id;
-	Exec_node en = malloc(sizeof(exec_node));
 	for(id = 1; id <= ncores; id++) {
 		core[id] = id;
 		queue_push(cpu_livre, core+id);
@@ -115,7 +110,7 @@ void RR(FILE* input, FILE* output, int ncores){
 			printf("libera cpu %d\n", top->cpu);
 			queue_push(cpu_livre, &top->cpu);
 			printf("top process %s done  dt %.3f\n", top->name, top->dt);
-			if(top->dt > 0. + 1e-8) {
+			if(top->dt > EPS) {
 				// Ainda nao acabou
 				context_change++;
 				top->done = 0;
@@ -148,7 +143,6 @@ void RR(FILE* input, FILE* output, int ncores){
 	}
 	printf("Context changes: %d\n", context_change);
 	free(core);
-	free(en);
 }
 
 int main(){
@@ -161,3 +155,16 @@ int main(){
 	fclose(trace);
 	fclose(output);
 }
+
+
+/*
+
+test
+1 1 1 pro
+2 2 2 pro
+
+dando 28 context changes
+pro 2 1
+pro2 4 2
+
+*/

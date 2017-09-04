@@ -47,6 +47,11 @@ static void *run_process(void *pro){
 	return NULL;
 }
 
+void calculate_priority(Process p){
+	p-> priority = 1;
+	// TODO
+}
+
 void P(FILE* input, FILE* output, int ncores){
 	char *line = NULL;
 	out = output;
@@ -54,7 +59,6 @@ void P(FILE* input, FILE* output, int ncores){
 	int *core;
 	core = malloc((ncores+1)*sizeof(int));
 	int id;
-	Exec_node en = malloc(sizeof(exec_node));
 	for(id = 1; id <= ncores; id++) {
 		core[id] = id;
 		queue_push(cpu_livre, core+id);
@@ -63,6 +67,9 @@ void P(FILE* input, FILE* output, int ncores){
 	Heap ordered_process = heap_create();
 	while(getline(&line, &len, input) != -1){
 		Process process = process_line(line);
+
+		calculate_priority(process);
+
 		heap_push(ordered_process, process->t0, process);
 		pthread_mutex_init(process->mutex, NULL);
 		pthread_mutex_lock(process->mutex);
@@ -135,9 +142,7 @@ void P(FILE* input, FILE* output, int ncores){
 			queue_pop(awaiting_process);
 		}
 	}
-	puts("cabou");
 	free(core);
-	free(en);
 }
 
 int main(){
