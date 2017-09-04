@@ -1,3 +1,7 @@
 #!/bin/bash
-make && ./ep1 $1 in out $2
+../make
+for i in `seq 0 $1`
+do
+	./ep1 1 "File$in{i}.txt" out $2 >> saida.txt
+done
 
