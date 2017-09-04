@@ -1,19 +1,16 @@
 #include "sjf.h"
+#include "calctime.h"
+#include "process.h"
+#include "queue.h"
+#include "heap.h"
+#include "print.h"
 
 #include <stdlib.h>
 #include <pthread.h>
 #include <sys/time.h>
 #include <stdio.h>
 
-#include "process.h"
-#include "queue.h"
-#include "heap.h"
-#include "print.h"
-#include "calctime.h"
 
-Queue cpu_livre;
-
-Heap running_process;
 
 void finish_process(Heap running_process, Queue cpu_livre){
 	// caso algum processo que esta rodando ja tenha terminado, o finish process tira ele da heap e libera a cpu
@@ -33,10 +30,12 @@ static void *run_process(void *pro){
 	pthread_mutex_lock(p->mutex);
 	struct timespec tim, tim2;
 	
-	double st = running_time();
 	tim.tv_sec = (long) p->dt;
 	tim.tv_nsec = (long) (1000000000.*(p->dt - tim.tv_sec));
+	printf("running_time %.3f\n", running_time());
 	nanosleep(&tim, &tim2);
+	printf("pos sleep running_time %.3f\n", running_time());
+	
 	fprintf(out, "%s %.1f %.1f\n", p->name, running_time(), running_time() - p->t0); 
 	print_output(p);
 	p->done = 1;
@@ -44,6 +43,9 @@ static void *run_process(void *pro){
 }
 
 void SJF(FILE* input, FILE* output, int ncores){
+	Queue cpu_livre;
+
+	Heap running_process;
 	out = output;
 
 	cpu_livre = queue_create(); 
@@ -65,7 +67,7 @@ void SJF(FILE* input, FILE* output, int ncores){
 		print_trace(p);
 
 		heap_push(ordered_process, p->t0, p);
-		pthread_mutex_init(p->mutex, NULL);
+	pthread_mutex_init(p->mutex, NULL);
 		pthread_mutex_lock(p->mutex);
 		pthread_create(p->thread, NULL, run_process, p);
 	}
@@ -76,6 +78,7 @@ void SJF(FILE* input, FILE* output, int ncores){
 	Heap next_process = heap_create();
 
 	gettimeofday(&start_time, NULL);
+	printf("dei reset %.3f\n", running_time());
 
 	Process current_process = NULL;
 

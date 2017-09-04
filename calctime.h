@@ -5,7 +5,7 @@
 #include <sys/time.h>
 
 typedef struct timeval timev;
-static timev start_time;
+timev start_time;
 static FILE *out;
 
 double sec(timev);
