@@ -51,8 +51,8 @@ static void *run_process(void *pro){
 	p->done = 1;
 	
 	if(p->dt <= EPS){
-		print_output(p);
 		fprintf(out, "%s %.1f %.1f\n", p->name, running_time(), running_time() - p->t0); 
+		print_output(p);
 	}
 	return NULL;
 }
@@ -138,6 +138,9 @@ void P(FILE* input, FILE* output, int ncores){
 				context_change++;
 				top->done = 0;
 //				puts("before thread");
+				pthread_mutex_destroy(top->mutex);
+				pthread_mutex_init(top->mutex, NULL);
+				pthread_mutex_lock(top->mutex);
 				pthread_create(top->thread,NULL,run_process,top);
 				queue_push(awaiting_process, top);
 			}

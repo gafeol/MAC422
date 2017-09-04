@@ -120,6 +120,9 @@ void RR(FILE* input, FILE* output, int ncores){
 				// Ainda nao acabou
 				context_change++;
 				top->done = 0;
+				pthread_mutex_destroy(top->mutex);
+				pthread_mutex_init(top->mutex, NULL);
+				pthread_mutex_lock(top->mutex);
 				pthread_create(top->thread,NULL,run_process,top);
 				queue_push(awaiting_process, top);
 			}
