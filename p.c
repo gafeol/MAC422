@@ -2,10 +2,15 @@
 #include "queue.h"
 #include "heap.h"
 #include <stdio.h>
+#include <assert.h>
 #include <stdlib.h>
 #include <sys/time.h>
 #include <unistd.h>
 #include <pthread.h>
+
+int context_change;
+
+double EPS = 1e-4;
 
 typedef struct timeval timev;
 static timev start_time;
@@ -22,14 +27,20 @@ double running_time(){
 	return sec(act) - sec(start_time); 
 }
 
+double exec_time(Process p){
+	//menor prioridade -> 1 quantum
+	//maior prioridade -> 40 quanta = 4 s
+	return (-p->priority + 20)*quantum;
+}
+
 static void *run_process(void *pro){
 	puts("run process");
 	Process p = pro;
 	pthread_mutex_lock(p->mutex);
 	
 	long runtime = p->dt*1000000;
-	if(runtime > 100000. + 1e-8)
-		runtime = 100000;
+	if(runtime > 1000000*exec_time(p) + EPS)
+		runtime = 1000000*exec_time(p);
 
 	p->dt -= runtime/1000000.;
 
@@ -42,15 +53,21 @@ static void *run_process(void *pro){
 	p->done = 1;
 	puts("p done = 1");
 	
-	if(p->dt <= 0 + 1e-8)
+	if(p->dt <= EPS)
 		fprintf(out, "%s %.1f %.1f\n", p->name, running_time(), running_time() - p->t0); 
 	return NULL;
 }
 
 void calculate_priority(Process p){
-	p-> priority = 1;
-	// TODO
+	context_change = 0;
+	p-> priority = (int) (p->deadline - p->t0);
+	if(p->priority > 19)
+		p->priority = 19;
+	if(p->priority < -20)
+		p->priority = -20;
+	// como melhorar o calculador de prioridade?
 }
+
 
 void P(FILE* input, FILE* output, int ncores){
 	char *line = NULL;
@@ -69,6 +86,7 @@ void P(FILE* input, FILE* output, int ncores){
 		Process process = process_line(line);
 
 		calculate_priority(process);
+		printf("priority of %s: %d\n", process->name, process->priority);
 
 		heap_push(ordered_process, process->t0, process);
 		pthread_mutex_init(process->mutex, NULL);
@@ -94,12 +112,10 @@ void P(FILE* input, FILE* output, int ncores){
 			current_process->done = 0;
 			puts("p done = 0");
 			queue_push(awaiting_process, current_process);
-			puts("deu break?");
 			if(heap_empty(ordered_process)){
 				current_process = NULL;
 				break;
 			}
-			puts("nao");
 			current_process = heap_min_element(ordered_process);
 			printf("curr process %s\n", current_process->name);
 			heap_pop(ordered_process);
@@ -113,7 +129,9 @@ void P(FILE* input, FILE* output, int ncores){
 			printf("libera cpu %d\n", top->cpu);
 			queue_push(cpu_livre, &top->cpu);
 			printf("top process %s done  dt %.3f\n", top->name, top->dt);
-			if(top->dt > 0. + 1e-8) {
+			if(top->dt > EPS) {
+				//ainda nao acabou - mudanca de contexto
+				context_change++;
 				top->done = 0;
 				puts("before thread");
 				pthread_create(top->thread,NULL,run_process,top);
@@ -125,16 +143,15 @@ void P(FILE* input, FILE* output, int ncores){
 
 		while(!queue_empty(awaiting_process) && (running_process->size < ncores)){
 			puts("while 4");
-			if(queue_empty(cpu_livre))
-				puts("FODEU");
+			assert(!queue_empty(cpu_livre)); // so pra garantir
 			id = *((int*) head(cpu_livre));
-			printf("cpu livre %d\n", id);
+			printf("pega cpu livre %d\n", id);
 			queue_pop(cpu_livre);
 			printf("awaiting process size %d\n", awaiting_process->size);
 			Process p = ((Process) head(awaiting_process));
 			double exe_time = p->dt;
-			if(exe_time > quantum)
-				exe_time = quantum;
+			if(exe_time > exec_time(p))
+				exe_time = exec_time(p);
 			printf("unlock process %s\n", p->name);
 			p->cpu = id; 
 			pthread_mutex_unlock(p->mutex);
@@ -142,6 +159,7 @@ void P(FILE* input, FILE* output, int ncores){
 			queue_pop(awaiting_process);
 		}
 	}
+	printf("Context changes: %d\n", context_change);
 	free(core);
 }
 
@@ -151,7 +169,19 @@ int main(){
 		puts("File input open error");
 	if(output == NULL)
 		puts("File output open error");
-	RR(trace, output, 4);
+	P(trace, output, 1);
 	fclose(trace);
 	fclose(output);
 }
+
+/*
+test 
+1 1 20 pro
+1 1 15 pro2
+
+saida
+10 context changes
+pro2 2.2 1.2
+pro 3.0 2.0
+
+*/
