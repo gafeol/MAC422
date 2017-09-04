@@ -34,5 +34,6 @@ calctime.o: calctime.c calctime.h
 
 constants.h:
 
-clean: rm ep1 ep1sh *.o *~
+clean: 
+	rm ep1 ep1sh *.o *~
 
