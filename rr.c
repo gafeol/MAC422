@@ -12,6 +12,8 @@ typedef struct exec_node {
 	process *proc;
 } exec_node;
 
+int context_change;
+
 typedef exec_node* Exec_node;
 typedef struct timeval timev;
 static timev start_time;
@@ -53,6 +55,7 @@ static void *run_process(void *pro){
 }
 
 void RR(FILE* input, FILE* output, int ncores){
+	context_change = 0;
 	char *line = NULL;
 	out = output;
 	Queue cpu_livre = queue_create();
@@ -113,6 +116,8 @@ void RR(FILE* input, FILE* output, int ncores){
 			queue_push(cpu_livre, &top->cpu);
 			printf("top process %s done  dt %.3f\n", top->name, top->dt);
 			if(top->dt > 0. + 1e-8) {
+				// Ainda nao acabou
+				context_change++;
 				top->done = 0;
 				puts("before thread");
 				pthread_create(top->thread,NULL,run_process,top);
@@ -141,7 +146,7 @@ void RR(FILE* input, FILE* output, int ncores){
 			queue_pop(awaiting_process);
 		}
 	}
-	puts("cabou");
+	printf("Context changes: %d\n", context_change);
 	free(core);
 	free(en);
 }
