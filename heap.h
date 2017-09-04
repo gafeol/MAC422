@@ -7,7 +7,7 @@ typedef struct heap_node {
 } heap_node;
 
 typedef struct heap {
-	heap_node *h[1024];
+	heap_node *h[8192];
 	int size;
 } heap;
 

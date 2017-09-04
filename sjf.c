@@ -32,10 +32,8 @@ static void *run_process(void *pro){
 	
 	tim.tv_sec = (long) p->dt;
 	tim.tv_nsec = (long) (1000000000.*(p->dt - tim.tv_sec));
-	printf("running_time %.3f\n", running_time());
 	nanosleep(&tim, &tim2);
-	printf("pos sleep running_time %.3f\n", running_time());
-	
+
 	fprintf(out, "%s %.1f %.1f\n", p->name, running_time(), running_time() - p->t0); 
 	print_output(p);
 	p->done = 1;
@@ -78,7 +76,6 @@ void SJF(FILE* input, FILE* output, int ncores){
 	Heap next_process = heap_create();
 
 	gettimeofday(&start_time, NULL);
-	printf("dei reset %.3f\n", running_time());
 
 	Process current_process = NULL;
 
