@@ -44,7 +44,7 @@ static void *run_process(void *pro){
 	tim.tv_nsec = (long) (1000000000.*(p->dt - tim.tv_sec));
 	nanosleep(&tim, &tim2);
 	p->done = 1;
-	fprintf(out, "%s %.1f %.1f\n", p->name, running_time(), running_time() - st); 
+	fprintf(out, "%s %.1f %.1f\n", p->name, running_time(), running_time() - p->t0); 
 	return NULL;
 }
 
@@ -125,7 +125,7 @@ int main(){
 		puts("File input open error");
 	if(output == NULL)
 		puts("File output open error");
-	SJF(trace, output, 5);
+	SJF(trace, output, 4);
 	fclose(trace);
 	fclose(output);
 }

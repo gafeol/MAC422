@@ -7,15 +7,10 @@
 #include <unistd.h>
 #include <pthread.h>
 
-typedef struct exec_node {
-	double exe_time;
-	process *proc;
-} exec_node;
-
-typedef exec_node* Exec_node;
 typedef struct timeval timev;
 static timev start_time;
 static FILE *out;
+double quantum = 0.1;
 
 double sec(timev t){
 	return t.tv_sec + t.tv_usec/1000000.;
@@ -52,13 +47,12 @@ static void *run_process(void *pro){
 	return NULL;
 }
 
-void RR(FILE* input, FILE* output, int ncores){
+void P(FILE* input, FILE* output, int ncores){
 	char *line = NULL;
 	out = output;
 	Queue cpu_livre = queue_create();
 	int *core;
 	core = malloc((ncores+1)*sizeof(int));
-	double quantum = 0.1;
 	int id;
 	Exec_node en = malloc(sizeof(exec_node));
 	for(id = 1; id <= ncores; id++) {
