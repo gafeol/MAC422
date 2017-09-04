@@ -161,7 +161,6 @@ void RR(FILE* input, FILE* output, int ncores){
 	free(cpu_livre);
 }
 
-/*
 int main(){
 	print_error = 1;
 
@@ -176,6 +175,7 @@ int main(){
 }
 
 
+/*
 
 test
 1 1 1 pro

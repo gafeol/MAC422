@@ -2,6 +2,7 @@
 #define PROCESS_H
 
 #include <stdio.h>
+#include <pthread.h>
 
 typedef struct process{
 	double t0, dt, deadline;
