@@ -1,5 +1,4 @@
 #include "p.h"
-#include "constants.h"
 
 #include "process.h"
 #include "queue.h"
@@ -27,7 +26,7 @@ static void *run_process(void *pro){
 	pthread_mutex_lock(p->mutex);
 	
 	long runtime = p->dt*1000000;
-	if(runtime > 1000000*exec_time(p) + EPS)
+	if(runtime > 1000000*exec_time(p) + 1e-4)
 		runtime = 1000000*exec_time(p);
 
 	p->dt -= runtime/1000000.;
@@ -39,7 +38,7 @@ static void *run_process(void *pro){
 
 	//p->done = 1;
 	
-	if(p->dt <= EPS){
+	if(p->dt <= 1e-4){
 		fprintf(out, "%s %.1f %.1f\n", p->name, running_time(), running_time() - p->t0); 
 		print_output(p);
 	}
@@ -126,7 +125,7 @@ void P(FILE* input, FILE* output, int ncores){
 
 			queue_push(cpu_livre, &top->cpu);
 		//	printf("top process %s done  dt %.3f\n", top->name, top->dt);
-			if(top->dt > EPS) {
+			if(top->dt > 1e-4) {
 				//ainda nao acabou - mudanca de contexto
 				context_change++;
 				top->done = 0;

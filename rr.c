@@ -1,11 +1,11 @@
 #include "rr.h"
-#include "constants.h"
+
+#include "calctime.h"
 
 #include "process.h"
 #include "queue.h"
 #include "heap.h"
 #include "print.h"
-#include "calctime.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,9 +17,9 @@
 static void *run_process(void *pro){
 	Process p = pro;
 	pthread_mutex_lock(p->mutex);
-	
+
 	long runtime = p->dt*1000000;
-	if(runtime > 100000. + EPS)
+	if(runtime > 100000. + 1e-4)
 		runtime = 100000;
 
 	p->dt -= runtime/1000000.;
@@ -32,9 +32,9 @@ static void *run_process(void *pro){
 
 	//p->done = 1;
 //	puts("p done = 1");
-	if(p->dt <= EPS){
+	if(p->dt <= 1e-4){
 //		puts("terminou");
-		fprintf(out, "%s %.1f %.1f\n", p->name, running_time(), running_time() - p->t0); 
+		fprintf(out, "%s %.1f %.1f\n", p->name, running_time(), running_time() - p->t0);
 		print_output(p);
 	}
 	return NULL;
@@ -73,7 +73,7 @@ void RR(FILE* input, FILE* output, int ncores){
 
 
 	gettimeofday(&start_time, NULL);
-	
+
 	Process current_process = NULL;
 	if(!heap_empty(ordered_process)){
 		current_process = heap_min_element(ordered_process);
@@ -107,7 +107,7 @@ void RR(FILE* input, FILE* output, int ncores){
 			print_cpu_liberation(top, top->cpu);
 			queue_push(cpu_livre, &top->cpu);
 		//	printf("top process %s done  dt %.3f\n", top->name, top->dt);
-			if(top->dt > EPS) {
+			if(top->dt > 1e-4) {
 				// Ainda nao acabou
 				context_change++;
 				top->done = 0;
@@ -132,7 +132,7 @@ void RR(FILE* input, FILE* output, int ncores){
 			if(exe_time > quantum)
 				exe_time = quantum;
 			//printf("unlock process %s\n", p->name);
-			p->cpu = id; 
+			p->cpu = id;
 			pthread_mutex_unlock(p->mutex);
 			heap_push(running_process, running_time() + exe_time, p);
 			queue_pop(awaiting_process);
