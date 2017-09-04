@@ -1,3 +1,6 @@
+#include "rr.h"
+#include "constants.h"
+
 #include "process.h"
 #include "queue.h"
 #include "heap.h"
@@ -8,8 +11,6 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <pthread.h>
-
-const double EPS = 1e-4;
 
 typedef struct timeval timev;
 static timev start_time;
@@ -157,6 +158,7 @@ void RR(FILE* input, FILE* output, int ncores){
 	free(cpu_livre);
 }
 
+/*
 int main(){
 	print_error = 1;
 
@@ -171,7 +173,6 @@ int main(){
 }
 
 
-/*
 
 test
 1 1 1 pro

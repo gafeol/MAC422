@@ -1,3 +1,5 @@
+#include "sjf.h"
+
 #include <stdlib.h>
 #include <pthread.h>
 #include <sys/time.h>
@@ -12,6 +14,10 @@ typedef struct timeval timev;
 
 static timev start_time;
 static FILE *out;
+
+Queue cpu_livre;
+
+Heap running_process;
 
 double sec(timev t){
 	return t.tv_sec + t.tv_usec/1000000.;
@@ -45,16 +51,16 @@ static void *run_process(void *pro){
 	tim.tv_sec = (long) p->dt;
 	tim.tv_nsec = (long) (1000000000.*(p->dt - tim.tv_sec));
 	nanosleep(&tim, &tim2);
-	p->done = 1;
-	print_output(p);
 	fprintf(out, "%s %.1f %.1f\n", p->name, running_time(), running_time() - p->t0); 
+	print_output(p);
+	p->done = 1;
 	return NULL;
 }
 
 void SJF(FILE* input, FILE* output, int ncores){
 	out = output;
 
-	Queue cpu_livre = queue_create(); 
+	cpu_livre = queue_create(); 
 	int *cores;
 	cores = malloc((ncores+1)*sizeof(int));
 	int id;
@@ -79,7 +85,7 @@ void SJF(FILE* input, FILE* output, int ncores){
 	}
 	free(line);
 
-	Heap running_process = heap_create();
+	running_process = heap_create();
 
 	Heap next_process = heap_create();
 
@@ -134,13 +140,17 @@ void SJF(FILE* input, FILE* output, int ncores){
 	free(cpu_livre);
 }
 
+/*
+
 int main(){
+	print_error = 1;
 	FILE *trace = fopen("test.txt", "r"), *output = fopen("saida.txt", "w");
 	if(trace == NULL)
 		puts("File input open error");
 	if(output == NULL)
 		puts("File output open error");
-	SJF(trace, output, 4);
+	SJF(trace, output, 1);
 	fclose(trace);
 	fclose(output);
 }
+*/

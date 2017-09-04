@@ -1,9 +1,23 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<pthread.h>
+#include <unistd.h>
+
+#include "p.h"
+#include "rr.h"
+#include "sjf.h"
+#include "print.h"
+#include "process.h"
+#include "queue.h"
+#include "heap.h"
+#include "constants.h"
+
 
 
 int main(int argc, char *argv[]){
+	lost_deadline = 0;
+	context_change = 0;
+
 	int type = atoi(argv[1]);
 	FILE *trace = fopen(argv[2], "r"), *output = fopen(argv[3], "w");
 	int ncores = sysconf(_SC_NPROCESSORS_ONLN);
@@ -25,6 +39,8 @@ int main(int argc, char *argv[]){
 			fprintf(stderr, "Escalonador invalido\n");
 			break;
 	} 
+	
+	printf("O escalonador desrespeitou %d deadlines\n", lost_deadline);
 
 	fclose(trace); fclose(output);
 	return 0;

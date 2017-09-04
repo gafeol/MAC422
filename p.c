@@ -1,3 +1,6 @@
+#include "p.h"
+#include "constants.h"
+
 #include "process.h"
 #include "queue.h"
 #include "heap.h"
@@ -8,8 +11,6 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <pthread.h>
-
-double EPS = 1e-4;
 
 typedef struct timeval timev;
 static timev start_time;
@@ -173,6 +174,7 @@ void P(FILE* input, FILE* output, int ncores){
 	free(cpu_livre);
 }
 
+/*
 int main(){
 	FILE *trace = fopen("test.txt", "r"), *output = fopen("saida.txt", "w");
 	print_error = 1;
@@ -185,7 +187,6 @@ int main(){
 	fclose(output);
 }
 
-/*
 test 
 1 1 20 pro
 1 1 15 pro2

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "process.h"
 
-int print_error, context_change, readline, printline;
+int print_error, context_change, readline, printline, lost_deadline;
 
 void print_trace(Process);
 
