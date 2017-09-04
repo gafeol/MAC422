@@ -127,7 +127,7 @@ void SJF(FILE* input, FILE* output, int ncores){
 }
 
 
-
+/*
 int main(){
 	print_error = 1;
 	FILE *trace = fopen("test.txt", "r"), *output = fopen("saida.txt", "w");
@@ -139,4 +139,4 @@ int main(){
 	fclose(trace);
 	fclose(output);
 }
-
+*/
