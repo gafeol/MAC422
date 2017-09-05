@@ -1,1 +1,0 @@
-O escalonador desrespeitou 3 deadlines

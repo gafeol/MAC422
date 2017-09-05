@@ -97,7 +97,7 @@ void RR(FILE* input, FILE* output, int ncores){
 		while(!heap_empty(running_process) && running_time() > heap_min_time(running_process)){
 			Process top = heap_min_element(running_process);
 			heap_pop(running_process);
-			fprintf(stderr, "top process %s %.3f\n", top->name, top->dt);
+//			fprintf(stderr, "top process %s %.3f\n", top->name, top->dt);
 			if(pthread_join(*(top->thread),NULL)) {
 				printf("error joining thread\n");
 				exit(1);

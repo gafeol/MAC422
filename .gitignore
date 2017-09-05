@@ -5,5 +5,3 @@ ep1
 out
 in
 *.o
-tests/*
-results/*

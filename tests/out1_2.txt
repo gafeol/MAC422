@@ -1,9 +1,0 @@
-process5 2.6 2.5
-process1 7.0 4.6
-process7 8.6 2.1
-process6 10.6 0.1
-process4 17.3 2.7
-process0 17.5 1.9
-process3 17.5 4.3
-process2 18.6 0.3
-process8 19.8 1.7
