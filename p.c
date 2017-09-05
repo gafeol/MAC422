@@ -125,7 +125,7 @@ void P(FILE* input, FILE* output, int ncores){
 
 			print_cpu_liberation(top, top->cpu);
 
-			queue_push(cpu_livre, &top->cpu);
+			queue_push(cpu_livre, &core[top->cpu]);
 		//	printf("top process %s done  dt %.3f\n", top->name, top->dt);
 			if(top->dt > 1e-4) {
 				//ainda nao acabou - mudanca de contexto

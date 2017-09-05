@@ -6,6 +6,7 @@
 #include "print.h"
 
 #include <stdlib.h>
+#include <assert.h>
 #include <pthread.h>
 #include <sys/time.h>
 #include <stdio.h>
@@ -95,6 +96,7 @@ void SJF(FILE* input, FILE* output, int ncores){
 
 		//boto todos que ja podem ser executador na next_process
 		while(!heap_empty(ordered_process) && running_time() > heap_min_time(ordered_process)){
+			assert(ncores - cpu_livre->size == running_process->size);
 			Process top = heap_min_element(ordered_process);
 		//	printf("pega processo %s e bota na next process\n", top->name);
 			heap_push(next_process, top->dt, top);
@@ -141,3 +143,4 @@ int main(){
 	fclose(output);
 }
 */
+>>>>>>> runtests

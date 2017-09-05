@@ -34,8 +34,8 @@ int main(int argc, char *argv[]){
 			break;
 	} 
 	
-	printf("O escalonador desrespeitou %d deadlines\n", lost_deadline);
-
+//	printf("O escalonador desrespeitou %d deadlines\n", lost_deadline);
+	printf("%d\n", lost_deadline);
 	fclose(trace); fclose(output);
 	return 0;
 }
