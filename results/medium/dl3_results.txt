@@ -1,0 +1,2 @@
+mudancas de contexto: 9.7 2.706
+deadlines: 2.9 1.47

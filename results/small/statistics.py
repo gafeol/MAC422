@@ -1,12 +1,7 @@
 import sys
 from math import sqrt
 
-if len(sys.argv) < 2:
-	print("Wrong number of parameters!");
-	print("usage: python statistics.py <number of files>");
-	exit(0);
-
-nfiles = int(sys.argv[1]);
+nfiles = 3;
 
 for arq in range(0, nfiles):
 	entrada = open("dl"+str(arq+1)+".txt", 'r')
@@ -36,8 +31,8 @@ for arq in range(0, nfiles):
 	desvio1 = sqrt(desvio1/(n-1))
 	desvio2 = sqrt(desvio2/(n-1))
 
-	saida.write("mudancas de contexto: " + str(media1) + " " + str(desvio1) + '\n')
-	saida.write("deadlines: " + str(media2) + " " + str(desvio2) + '\n')
+	saida.write("mudancas de contexto: " + str(round(media1, 3)) + " " + str(round(desvio1, 3)) + '\n')
+	saida.write("deadlines: " + str(round(media2, 3)) + " " + str(round(desvio2, 3)) + '\n')
 	
 	entrada.close()
 	saida.close()

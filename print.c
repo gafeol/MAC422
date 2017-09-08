@@ -21,7 +21,7 @@ void print_output(Process p){
 	if(print_error) fprintf(stderr, "Processo %s finalizou sua execução e foi impresso na linha %d do output\n", p->name, printline);
 }
 void print_context_change(){
-	printf("%d ", context_change);
+//	printf("%d ", context_change);
 	if(print_error) fprintf(stderr, "No total, o escalonador mudou de contexto %d vezes\n", context_change);
 }
 

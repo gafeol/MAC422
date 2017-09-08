@@ -1,5 +1,0 @@
-gcc sjf.c -c -o sjf.o
-gcc rr.c -c -o rr.o
-gcc p.c -c -o p.o
-gcc -pthread ep1.o sjf.o rr.o p.o print.o process.o queue.o heap.o calctime.o -o ep1
-O escalonador desrespeitou 70 deadlines

@@ -82,7 +82,6 @@ void execute_line(char *line)
 {
 	pid_t pid;
 	char** token = tokenize(line);
-	int pipe_arr[2];
 	char *buf = malloc(BUFLEN*sizeof(char));
 
 	if(strcmp(token[0], "date") == 0){
