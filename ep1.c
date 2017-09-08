@@ -11,14 +11,15 @@
 int main(int argc, char *argv[]){
 	lost_deadline = 0;
 	context_change = 0;
+	print_error = 0;
 
 	int type = atoi(argv[1]);
 	FILE *trace = fopen(argv[2], "r"), *output = fopen(argv[3], "w");
-	int ncores = sysconf(_SC_NPROCESSORS_ONLN);
-	print_error = 0;
 	if(argc > 4)
 		print_error = atoi(argv[4]);
 
+
+	int ncores = sysconf(_SC_NPROCESSORS_ONLN);
 	switch (type) {
 		case 1:
 			SJF(trace, output, ncores);
@@ -32,8 +33,8 @@ int main(int argc, char *argv[]){
 		default:
 			fprintf(stderr, "Escalonador invalido\n");
 			break;
-	} 
-	
+	}
+
 	printf("O escalonador desrespeitou %d deadlines\n", lost_deadline);
 //	printf("%d\n", lost_deadline);
 	fclose(trace); fclose(output);
