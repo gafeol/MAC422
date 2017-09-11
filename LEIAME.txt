@@ -4,10 +4,10 @@ Para compilar, basta executar o comando make.
 
 Para executar o shell, execute "./ep1sh" no terminal.
 
-Para executar os escalonadores, rode "./ep1 [escalonador] [arquivo de entrada] [arquivo de saida]"
+Para executar os escalonadores, rode "./ep1 [escalonador] [arquivo de entrada] [arquivo de saida] [OPCIONAL: flag para mostrar as saidas de stderr]"
 
 Note que temos a seguinte correspondencia:
 
 [escalonador] = 1 corresponde ao Shortest Job First
 [escalonador] = 2 corresponde ao Round Robin
-[escalonador] = 3 corresponde ao Escalonamento com Prioridade.
+[escalonador] = 3 corresponde ao Escalonamento com Prioridade
