@@ -9,7 +9,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <sys/time.h>
 #include <unistd.h>
 #include <pthread.h>
@@ -26,10 +25,7 @@ static void *run_process(void *pro){
 
 	usleep(runtime);
 
-	//p->done = 1;
-//	puts("p done = 1");
 	if(p->dt <= 1e-4){
-//		puts("terminou");
 		if(running_time() > p->deadline + 1e-4)
 			lost_deadline++;
 		fprintf(out, "%s %.1f %.1f\n", p->name, running_time(), running_time() - p->t0);
@@ -80,33 +76,26 @@ void RR(FILE* input, FILE* output, int ncores){
 
 	while(current_process != NULL || !heap_empty(running_process)){
 		while(current_process != NULL && running_time() >= current_process->t0) {
-		//	fprintf(stderr, "while 2 process %s\n", current_process->name);
-		//	puts("p done = 0");
 			queue_push(awaiting_process, current_process);
-		//	puts("deu break?");
 			if(heap_empty(ordered_process)){
 				current_process = NULL;
 				break;
 			}
-		//	puts("nao");
 			current_process = heap_min_element(ordered_process);
-		//	printf("curr process %s\n", current_process->name);
 			heap_pop(ordered_process);
 		}
 
 		while(!heap_empty(running_process) && running_time() > heap_min_time(running_process)){
 			Process top = heap_min_element(running_process);
 			heap_pop(running_process);
-//			fprintf(stderr, "top process %s %.3f\n", top->name, top->dt);
 			if(pthread_join(*(top->thread),NULL)) {
 				printf("error joining thread\n");
 				exit(1);
 			}
 			queue_push(cpu_livre, &core[top->cpu]);
 			print_cpu_liberation(top, top->cpu);
-		//	printf("top process %s done  dt %.3f\n", top->name, top->dt);
 			if(top->dt > 1e-4) {
-				// Ainda nao acabou
+				// Processo que rodou ainda nao acabou, precisa de mais quantum
 				context_change++;
 				top->done = 0;
 				pthread_mutex_destroy(top->mutex);
@@ -118,10 +107,8 @@ void RR(FILE* input, FILE* output, int ncores){
 		}
 
 		while(!queue_empty(awaiting_process) && (running_process->size < ncores)){
-			assert(!queue_empty(cpu_livre));
 			id = *((int*) head(cpu_livre));
 			queue_pop(cpu_livre);
-			//printf("awaiting process size %d\n", awaiting_process->size);
 			Process p = ((Process) head(awaiting_process));
 
 			print_cpu_usage(p, id);
@@ -129,7 +116,6 @@ void RR(FILE* input, FILE* output, int ncores){
 			double exe_time = p->dt;
 			if(exe_time > quantum)
 				exe_time = quantum;
-			//printf("unlock process %s\n", p->name);
 			p->cpu = id;
 			queue_pop(awaiting_process);
 			heap_push(running_process, running_time() + exe_time, p);
@@ -145,7 +131,10 @@ void RR(FILE* input, FILE* output, int ncores){
 	free(ordered_process);
 	free(cpu_livre);
 }
+
 /*
+MAIN para testes
+
 int main(){
 	print_error = 1;
 

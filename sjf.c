@@ -6,7 +6,6 @@
 #include "print.h"
 
 #include <stdlib.h>
-#include <assert.h>
 #include <pthread.h>
 #include <sys/time.h>
 #include <stdio.h>
@@ -21,7 +20,6 @@ void finish_process(Heap running_process, Queue cpu_livre){
 		Process ready = heap_min_element(running_process);
 		heap_pop(running_process);
 		//libera cpu
-		//printf("processo %s terminou e liberou cpu %d\n", ready->name, ready->cpu);
 		print_cpu_liberation(ready, ready->cpu);
 		queue_push(cpu_livre, &ready->cpu);
 	}
@@ -96,9 +94,7 @@ void SJF(FILE* input, FILE* output, int ncores){
 
 		//boto todos que ja podem ser executador na next_process
 		while(!heap_empty(ordered_process) && running_time() > heap_min_time(ordered_process)){
-			assert(ncores - cpu_livre->size == running_process->size);
 			Process top = heap_min_element(ordered_process);
-		//	printf("pega processo %s e bota na next process\n", top->name);
 			heap_push(next_process, top->dt, top);
 			heap_pop(ordered_process);
 		}
@@ -131,6 +127,8 @@ void SJF(FILE* input, FILE* output, int ncores){
 
 
 /*
+MAIN para testes
+
 int main(){
 	print_error = 1;
 	FILE *trace = fopen("test.txt", "r"), *output = fopen("saida.txt", "w");
