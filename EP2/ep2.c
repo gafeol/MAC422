@@ -11,72 +11,85 @@ int **pista;
 
 void *run_process(void * ii){
 	int i = *((int *)ii);
-	while(ciclistas[i].dist < 10){
+	while(ciclistas[i].dist < 1){
+		printf("PA!\n");
+		printf("%d parou no arrive\n", i);
 		pthread_mutex_unlock(ciclistas[i].arrive);
+		printf("%d passou no arrive\n", i);
+
+		printf("%d parou no continue\n", i);
 		pthread_mutex_lock(ciclistas[i].cont);
+		printf("%d passou no continue\n", i);
 		ciclistas[i].dist += 10;
 	}
 }
 
 void create_thread(int i){
+	ciclistas[i].arrive = malloc(sizeof(pthread_mutex_t));
 	pthread_mutex_init(ciclistas[i].arrive, NULL);
 	pthread_mutex_lock(ciclistas[i].arrive);
+	ciclistas[i].cont = malloc(sizeof(pthread_mutex_t));
 	pthread_mutex_init(ciclistas[i].cont, NULL);
 	pthread_mutex_lock(ciclistas[i].cont);
+	ciclistas[i].thread = malloc(sizeof(pthread_t));
 	pthread_create(ciclistas[i].thread, NULL, run_process, ciclistas[i].id); 
 }
 
+int *ind;
+
+int cmp(const void *aa, const void *bb){
+	int a = *(int *)aa;
+	int b = *(int *)bb;
+	return (ciclistas[a].dist > ciclistas[b].dist);
+}
+
 int main(int argc, char* argv[]){
-	printf("Aa\n");
+	printf("fodeu\n");
 	tam_pista = atoi(argv[1]);
 	num_ciclistas = atoi(argv[2]);
 	num_voltas = atoi(argv[3]);
-	printf("Aa\n");
 
-	printf("Aa\n");
 	pista = malloc(tam_pista*(sizeof (int *)));
-	printf("Aa\n");
 
 	int i = 0;
 	for(i = 0;i < tam_pista;i++)
 		pista[i] = malloc(10*sizeof(int));
 
-	printf("Aa\n");
 	ciclistas = malloc(num_ciclistas*(sizeof(ciclista)));
+	ind = malloc(num_ciclistas*(sizeof(ciclista)));
 
-	printf("Aa\n");
-
-	printf("Ca\n");
 	for(i=0;i<num_ciclistas;i++){
+		ind[i] = i;
 		ciclistas[i].id = malloc(sizeof(int));	
 		*ciclistas[i].id = i;
-		ciclistas[i].arrive = 0;	
-		ciclistas[i].cont = 0;	
 		ciclistas[i].dist = -(i/10);	
 		ciclistas[i].tempo = 0;
-		printf("Aa");
 		ciclistas[i].raia = (i%10);
 		ciclistas[i].velocidade = 30;
-		printf("Aa");
 		ciclistas[i].destruido = 0;
 		create_thread(i);
-		printf("Ba");
-	}
+		printf("Criou thread\n");
 
-	int cnt = 0;
-	while(!cnt){
+	}
+	int cnt = 2;
+
+	while(cnt){
+		i = 0;
+		printf("Coordenador parou no arrive\n");
+		while(pthread_mutex_lock(ciclistas[i++].arrive));
+		qsort(ind, num_ciclistas, sizeof(int), cmp);
+		for(int a=0;a<num_ciclistas;a++){
+				
+		}
 		//Coordenador
 		//Barreira de Sincronizacao
-		i = 0;
-		printf("Ba");
-		while(pthread_mutex_lock(ciclistas[i++].arrive));
 		// Sorteia velocidades e decide acoes
-		printf("Ba");
 		i = 0;
+		printf("Coordenador parou no continue\n");
 		while(pthread_mutex_unlock(ciclistas[i++].cont));
-		printf("Ba");
+		printf("Coordenador passoou no continue\n");
 		printf("Sincronizou!");
-		cnt++;
+		cnt--;
 	}
 	return 0;
 }

@@ -65,7 +65,7 @@ void SJF(FILE* input, FILE* output, int ncores){
 		print_trace(p);
 
 		heap_push(ordered_process, p->t0, p);
-	pthread_mutex_init(p->mutex, NULL);
+		pthread_mutex_init(p->mutex, NULL);
 		pthread_mutex_lock(p->mutex);
 		pthread_create(p->thread, NULL, run_process, p);
 	}

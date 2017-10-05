@@ -2,6 +2,7 @@
 #define CICLISTA_H
 
 #include <stdio.h>
+#include <pthread.h>
 
 typedef struct ciclista{
 	int* id;
