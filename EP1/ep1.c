@@ -19,7 +19,7 @@ int main(int argc, char *argv[]){
 		print_error = atoi(argv[4]);
 
 
-	int ncores = sysconf(_SC_NPROCESSORS_ONLN);
+	int ncores = 1; //sysconf(_SC_NPROCESSORS_ONLN);
 	switch (type) {
 		case 1:
 			SJF(trace, output, ncores);

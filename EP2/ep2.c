@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include "ciclista.h"
+
 int tam_pista, num_ciclistas, num_voltas;
 
 int **pista;

@@ -1,6 +1,9 @@
+#ifndef CICLISTA_H
+#define CICLISTA_H
+
 #include <stdio.h>
 
-struct ciclista{
+typedef struct ciclista{
 	int id;
 	int arrive, cont;
 	double dist;
@@ -10,4 +13,8 @@ struct ciclista{
 	int destruido;
 	pthread_t *thread;
 	pthread_mutex_t *mutex;
-}
+};
+
+void destroi_ciclista(int);
+
+#endif
