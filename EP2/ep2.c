@@ -13,6 +13,9 @@ int **pista;
 void *run_process(void * ii){
 	int i = *((int *)ii);
 	while(1){
+		/* Nao precisa atualizar o lap nem velocidade nem raia, nem tempo, isso o coordenador faz */
+		/* Atualizar dist, matriz de pista com a nova posição */
+
 		printf("PA!\n");
 		printf("%d parou no arrive\n", i);
 		pthread_mutex_unlock(ciclistas[i].arrive);
@@ -99,6 +102,8 @@ int main(int argc, char* argv[]){
 		printf("Coordenador parou no arrive\n");
 		barreira_threads();
 		qsort(ind, num_ciclistas, sizeof(int), cmp);
+
+		/* Verificacao de 20 pontos se o ind[0] ta uma rodada a mais que o segundo maior (ind[1]) */
 
 		/* Verifica se alguem quebrou e atualiza os laps */
 		for(int i=0;i<num_ciclistas;i++){
