@@ -114,6 +114,7 @@ int main(int argc, char* argv[]){
 			}
 		}
 
+		/* Arrumar: so faco o sorteio de velocidade se acabou de finalizar uma lap */
 		for(int ii=0;ii<num_ciclistas;ii++){
 			int i = ind[ii];
 			if(!vai_rodar(i)) continue;		
