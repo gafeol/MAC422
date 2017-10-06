@@ -4,6 +4,7 @@
 #include <time.h>
 
 #include "ciclista.h"
+#include "aleatorio.h"
 
 int tam_pista, num_ciclistas, num_voltas;
 
@@ -11,7 +12,7 @@ int **pista;
 
 void *run_process(void * ii){
 	int i = *((int *)ii);
-	while(ciclistas[i].dist < 1){
+	while(1){
 		printf("PA!\n");
 		printf("%d parou no arrive\n", i);
 		pthread_mutex_unlock(ciclistas[i].arrive);
@@ -20,7 +21,6 @@ void *run_process(void * ii){
 		printf("%d parou no continue\n", i);
 		pthread_mutex_lock(ciclistas[i].cont);
 		printf("%d passou no continue\n", i);
-		ciclistas[i].dist += 10;
 	}
 }
 
@@ -43,6 +43,27 @@ int cmp(const void *aa, const void *bb){
 	return (ciclistas[a].dist > ciclistas[b].dist);
 }
 
+int vai_rodar(int i){
+	return !(ciclistas[i].destruido == 1 ||
+				ciclistas[i].dist >= tam_pista);
+}
+
+void barreira_threads(){
+	int i;
+	for(i = 0;i < num_ciclistas;i++){
+		if(vai_rodar(i)) continue;
+		pthread_mutex_lock(ciclistas[i].arrive);
+	}
+}
+
+void libera_threads(){
+	int i;
+	for(i = 0;i < num_ciclistas;i++){
+		if(vai_rodar(i)) continue;
+		pthread_mutex_unlock(ciclistas[i].cont);
+	}
+}
+
 int main(int argc, char* argv[]){
 	printf("fodeu\n");
 	tam_pista = atoi(argv[1]);
@@ -63,6 +84,7 @@ int main(int argc, char* argv[]){
 		ciclistas[i].id = malloc(sizeof(int));	
 		*ciclistas[i].id = i;
 		ciclistas[i].dist = -(i/10);	
+		ciclistas[i].voltas = 0;
 		ciclistas[i].tempo = 0;
 		ciclistas[i].raia = (i%10);
 		ciclistas[i].velocidade = 30;
@@ -74,12 +96,41 @@ int main(int argc, char* argv[]){
 	int cnt = 2;
 
 	while(cnt){
-		i = 0;
 		printf("Coordenador parou no arrive\n");
-		while(pthread_mutex_lock(ciclistas[i++].arrive));
+		barreira_threads();
 		qsort(ind, num_ciclistas, sizeof(int), cmp);
-		for(int a=0;a<num_ciclistas;a++){
+
+		/* Verifica se alguem quebrou e atualiza os laps */
+		for(int i=0;i<num_ciclistas;i++){
+			if(!vai_rodar(i)) continue;	
+			if(ciclistas[i].dist/tam_pista > ciclistas[i].voltas){
+				ciclistas[i].voltas = ciclistas[i].dist/tam_pista;
 				
+			}
+		}
+
+		for(int ii=0;ii<num_ciclistas;ii++){
+			int i = ind[ii];
+			if(!vai_rodar(i)) continue;		
+			switch (ciclistas[i].velocidade){
+				case 30:
+					if(sorteio(70)){
+						/* 70% de chance de rodar a 60km/h */
+					}
+					else{
+						/* 30% de chance de rodar a 60km/h */
+
+					}
+				break;
+				case 60:
+
+				break;
+				case 90:
+
+				break;
+				default :
+					printf("Ciclista %d: Valor inesperado de velocidade %d\n", i, ciclistas[i].velocidade);
+			}
 		}
 		//Coordenador
 		//Barreira de Sincronizacao

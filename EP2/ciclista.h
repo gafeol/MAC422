@@ -7,6 +7,7 @@
 typedef struct ciclista{
 	int* id;
 	double dist;
+	int voltas;
 	int tempo;
 	int raia; /* de 0 a 9 a raia do ciclista */
 	int velocidade; /* em km/h */
