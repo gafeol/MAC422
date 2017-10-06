@@ -43,7 +43,7 @@ int *ind;
 int cmp(const void *aa, const void *bb){
 	int a = *(int *)aa;
 	int b = *(int *)bb;
-	return (ciclistas[a].dist > ciclistas[b].dist);
+	return (ciclistas[a].dist > ciclistas[b].dist || (ciclistas[a].dist == ciclistas[b].dist && ciclistas[a].raia < ciclistas[b].raia));
 }
 
 int vai_rodar(int i){
