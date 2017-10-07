@@ -13,27 +13,36 @@ int dt;
 
 void *run_process(void * ii){
 	int i = *((int *)ii);
-	/* Thread vai simular dt ms da corrida para o ciclista i */
-	int pos = ((int)ciclistas[i].dist)%tam_pista;
-
-	/* Vetor de mutexes pra lockar a linha e a proxima pra quando eu for colocar meu cara na pista */
-	pthread_mutex_lock(pista[pos].linha);
-	pthread_mutex_lock(pista[(pos+1)%tam_pista].linha);
 
 	while(1){
-		/* Atualizar o lap e tempo */
+		/* Thread vai simular dt ms da corrida para o ciclista i */
+		int pos = ((int)ciclistas[i].dist)%tam_pista;
+
+		/* Vetor de mutexes pra lockar a linha e a proxima pra quando eu for colocar meu cara na pista */
+		pthread_mutex_lock(pista[pos].linha);
+		pthread_mutex_lock(pista[(pos+1)%tam_pista].linha);
 		/* Atualizar dist, matriz de pista com a nova posição */
+		pthread_mutex_unlock(pista[pos].linha);
+		pthread_mutex_unlock(pista[(post+1)%tam_pista].linha);
+
+
+
 
 		/* Verificacao de 20 pontos se o ind[0] ta uma rodada a mais que o segundo maior (ind[1]) */
 		printf("PA!\n");
 		printf("%d parou no arrive\n", i);
 	
+		/* Atualizar o lap e tempo */
 		if(ciclistas[i].dist/tam_pista > ciclistas[i].voltas){
 			ciclistas[i].voltas++;
 			ciclistas[i].completou_volta = 1;
 		}
 
-		verifica_quebrou(i); /* TODO */
+		if(testa_quebrou(i)){
+			pthread_mutex_lock(pista[pos]);
+			remove_pista(i); 
+			pthread_mutex_unlock(pista[pos]);
+		}
 		sorteia_velocidade(i); /* TODO */
 		
 		/* Thread sorteia velocidade da proxima rodada */

@@ -28,6 +28,22 @@ void inicializa_ciclistas(int n){
 	}
 }
 
+int testa_quebrou(int i){
+	if(!ciclistas[i].completou_volta || ciclistas[i].voltas%15 != 0) return 0;
+	int ciclistas_ativos = 0;
+	int i;
+	for(i = 0;ciclistas[i].id != NULL;i++){
+		ciclistas_ativos += 1 - ciclistas[i].destruido;
+	}
+	if(ciclistas_ativos <= 5)
+		return 0;
+	if(sorteio(1)){
+		ciclistas[i].destruido = 1;
+		return 1;
+	}
+	return 0;
+}
+
 int vai_rodar(int i){
 	return !(ciclistas[i].destruido == 1 || 
 			ciclistas[i].terminou == 1);
