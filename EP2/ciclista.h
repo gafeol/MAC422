@@ -12,6 +12,7 @@ typedef struct ciclista{
 	int raia; /* de 0 a 9 a raia do ciclista */
 	int velocidade; /* em km/h */
 	int destruido;
+	int terminou;
 	pthread_t *thread;
 	pthread_mutex_t *arrive;
 	pthread_mutex_t *cont;

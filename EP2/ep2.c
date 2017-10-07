@@ -8,10 +8,11 @@
 
 int tam_pista, num_ciclistas, num_voltas;
 
-int **pista;
-
 void *run_process(void * ii){
 	int i = *((int *)ii);
+
+	/* Vetor de mutexes pra lockar a linha e a proxima pra quando eu for colocar meu cara na pista */
+
 	while(1){
 		/* Nao precisa atualizar o lap nem velocidade nem raia, nem tempo, isso o coordenador faz */
 		/* Atualizar dist, matriz de pista com a nova posição */
@@ -73,6 +74,8 @@ int main(int argc, char* argv[]){
 	num_ciclistas = atoi(argv[2]);
 	num_voltas = atoi(argv[3]);
 
+	pista = inicializa_pista(tam_pista);
+
 	pista = malloc(tam_pista*(sizeof (int *)));
 
 	int i = 0;
@@ -92,6 +95,7 @@ int main(int argc, char* argv[]){
 		ciclistas[i].raia = (i%10);
 		ciclistas[i].velocidade = 30;
 		ciclistas[i].destruido = 0;
+		ciclistas[i].terminou = 0;
 		create_thread(i);
 		printf("Criou thread\n");
 
