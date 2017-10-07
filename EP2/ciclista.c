@@ -31,9 +31,9 @@ void inicializa_ciclistas(int n){
 int testa_quebrou(int i){
 	if(!ciclistas[i].completou_volta || ciclistas[i].voltas%15 != 0) return 0;
 	int ciclistas_ativos = 0;
-	int i;
-	for(i = 0;ciclistas[i].id != NULL;i++){
-		ciclistas_ativos += 1 - ciclistas[i].destruido;
+	int j;
+	for(j = 0;ciclistas[j].id != NULL;j++){
+		ciclistas_ativos += 1 - ciclistas[j].destruido;
 	}
 	if(ciclistas_ativos <= 5)
 		return 0;
@@ -42,6 +42,23 @@ int testa_quebrou(int i){
 		return 1;
 	}
 	return 0;
+}
+
+void sorteia_velocidade(int i)
+{
+	if(!ciclistas[i].completou_volta) return;
+	if(ciclistas[i].velocidade == 30) {
+		if(sorteio(70))
+			ciclistas[i].velocidade = 60;
+		else
+			ciclistas[i].velocidade = 30;
+	}
+	else {
+		if(sorteio(50))
+			ciclistas[i].velocidade = 60;
+		else
+			ciclistas[i].velocidade = 30;
+	}
 }
 
 int vai_rodar(int i){

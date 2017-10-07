@@ -4,13 +4,14 @@
 #include <stdlib.h>
 #include <time.h>
 
-void semente()
-{
-	srand((unsigned)time(NULL));
-}
+int semente = 0;
 
 int sorteio(int p)
 {
+	if(semente == 0) {
+		srand((unsigned)time(NULL));
+		semente = 1;
+	}
 	int x = rand() % 100;
 	return (x < p) ? 1 : 0;  
 }
