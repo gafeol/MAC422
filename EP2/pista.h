@@ -12,4 +12,6 @@ typedef struct matriz_pista{
 
 matriz_pista *pista;
 
+void inicializa_pista(int);
+
 #endif

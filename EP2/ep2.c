@@ -8,20 +8,24 @@
 
 int tam_pista, num_ciclistas, num_voltas;
 
+int dt;
+
 void *run_process(void * ii){
 	int i = *((int *)ii);
+	/* Thread vai simular dt ms da corrida para o ciclista i */
 
 	/* Vetor de mutexes pra lockar a linha e a proxima pra quando eu for colocar meu cara na pista */
 
 	while(1){
-		/* Nao precisa atualizar o lap nem velocidade nem raia, nem tempo, isso o coordenador faz */
+		/* Atualizar o lap e tempo */
 		/* Atualizar dist, matriz de pista com a nova posição */
 
 		printf("PA!\n");
 		printf("%d parou no arrive\n", i);
+
+		/* Thread sorteia velocidade da proxima rodada */
 		pthread_mutex_unlock(ciclistas[i].arrive);
 		printf("%d passou no arrive\n", i);
-
 		printf("%d parou no continue\n", i);
 		pthread_mutex_lock(ciclistas[i].cont);
 		printf("%d passou no continue\n", i);
@@ -74,38 +78,15 @@ int main(int argc, char* argv[]){
 	num_ciclistas = atoi(argv[2]);
 	num_voltas = atoi(argv[3]);
 
-	pista = inicializa_pista(tam_pista);
-
-	pista = malloc(tam_pista*(sizeof (int *)));
-
-	int i = 0;
-	for(i = 0;i < tam_pista;i++)
-		pista[i] = malloc(10*sizeof(int));
+	inicializa_pista(tam_pista);
 
 	ciclistas = malloc(num_ciclistas*(sizeof(ciclista)));
-	ind = malloc(num_ciclistas*(sizeof(ciclista)));
 
-	for(i=0;i<num_ciclistas;i++){
-		ind[i] = i;
-		ciclistas[i].id = malloc(sizeof(int));	
-		*ciclistas[i].id = i;
-		ciclistas[i].dist = -(i/10);	
-		ciclistas[i].voltas = 0;
-		ciclistas[i].tempo = 0;
-		ciclistas[i].raia = (i%10);
-		ciclistas[i].velocidade = 30;
-		ciclistas[i].destruido = 0;
-		ciclistas[i].terminou = 0;
-		create_thread(i);
-		printf("Criou thread\n");
-
-	}
 	int cnt = 2;
 
 	while(cnt){
 		printf("Coordenador parou no arrive\n");
 		barreira_threads();
-		qsort(ind, num_ciclistas, sizeof(int), cmp);
 
 		/* Verificacao de 20 pontos se o ind[0] ta uma rodada a mais que o segundo maior (ind[1]) */
 

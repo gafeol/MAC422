@@ -20,6 +20,8 @@ typedef struct ciclista{
 
 ciclista *ciclistas;
 
+int vai_rodar(int);
+void inicializa_ciclistas(int);
 void destroi_ciclista(int);
 
 #endif
