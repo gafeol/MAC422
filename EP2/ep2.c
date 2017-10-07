@@ -5,6 +5,7 @@
 
 #include "ciclista.h"
 #include "aleatorio.h"
+#include "pista.h"
 
 int tam_pista, num_ciclistas, num_voltas;
 
@@ -13,17 +14,30 @@ int dt;
 void *run_process(void * ii){
 	int i = *((int *)ii);
 	/* Thread vai simular dt ms da corrida para o ciclista i */
+	int pos = ((int)ciclistas[i].dist)%tam_pista;
 
 	/* Vetor de mutexes pra lockar a linha e a proxima pra quando eu for colocar meu cara na pista */
+	pthread_mutex_lock(pista[pos].linha);
+	pthread_mutex_lock(pista[(pos+1)%tam_pista].linha);
 
 	while(1){
 		/* Atualizar o lap e tempo */
 		/* Atualizar dist, matriz de pista com a nova posição */
 
+		/* Verificacao de 20 pontos se o ind[0] ta uma rodada a mais que o segundo maior (ind[1]) */
 		printf("PA!\n");
 		printf("%d parou no arrive\n", i);
+	
+		if(ciclistas[i].dist/tam_pista > ciclistas[i].voltas){
+			ciclistas[i].voltas++;
+			ciclistas[i].completou_volta = 1;
+		}
 
+		verifica_quebrou(i); /* TODO */
+		sorteia_velocidade(i); /* TODO */
+		
 		/* Thread sorteia velocidade da proxima rodada */
+		ciclistas[i].completou_volta = 0;
 		pthread_mutex_unlock(ciclistas[i].arrive);
 		printf("%d passou no arrive\n", i);
 		printf("%d parou no continue\n", i);
@@ -88,45 +102,11 @@ int main(int argc, char* argv[]){
 		printf("Coordenador parou no arrive\n");
 		barreira_threads();
 
-		/* Verificacao de 20 pontos se o ind[0] ta uma rodada a mais que o segundo maior (ind[1]) */
 
-		/* Verifica se alguem quebrou e atualiza os laps */
-		for(int i=0;i<num_ciclistas;i++){
-			if(!vai_rodar(i)) continue;	
-			if(ciclistas[i].dist/tam_pista > ciclistas[i].voltas){
-				ciclistas[i].voltas = ciclistas[i].dist/tam_pista;
-				
-			}
-		}
-
-		/* Arrumar: so faco o sorteio de velocidade se acabou de finalizar uma lap */
-		for(int ii=0;ii<num_ciclistas;ii++){
-			int i = ind[ii];
-			if(!vai_rodar(i)) continue;		
-			switch (ciclistas[i].velocidade){
-				case 30:
-					if(sorteio(70)){
-						/* 70% de chance de rodar a 60km/h */
-					}
-					else{
-						/* 30% de chance de rodar a 60km/h */
-
-					}
-				break;
-				case 60:
-
-				break;
-				case 90:
-
-				break;
-				default :
-					printf("Ciclista %d: Valor inesperado de velocidade %d\n", i, ciclistas[i].velocidade);
-			}
-		}
 		//Coordenador
 		//Barreira de Sincronizacao
 		// Sorteia velocidades e decide acoes
-		i = 0;
+		int i = 0;
 		printf("Coordenador parou no continue\n");
 		while(pthread_mutex_unlock(ciclistas[i++].cont));
 		printf("Coordenador passoou no continue\n");

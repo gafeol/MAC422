@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <pthread.h>
 
+#include "pista.h"
+
 void inicializa_pista(int tam){
 	pista = malloc(tam*sizeof(matriz_pista));
 	int i;

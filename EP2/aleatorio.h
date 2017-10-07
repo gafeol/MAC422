@@ -9,7 +9,7 @@ void semente()
 	srand((unsigned)time(NULL));
 }
 
-void sorteio(int p)
+int sorteio(int p)
 {
 	int x = rand() % 100;
 	return (x < p) ? 1 : 0;  

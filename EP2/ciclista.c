@@ -8,10 +8,10 @@ void destroi_ciclista(int i){
 }
 
 void inicializa_ciclistas(int n){
-	ciclistas = malloc(num_ciclistas*(sizeof(ciclista)));
+	ciclistas = malloc(n*(sizeof(ciclista)));
 
 	int i;
-	for(i=0;i<num_ciclistas;i++){
+	for(i=0;i<n;i++){
 		ciclistas[i].id = malloc(sizeof(int));	
 		*ciclistas[i].id = i;
 		ciclistas[i].dist = -(i/10);	
@@ -21,6 +21,7 @@ void inicializa_ciclistas(int n){
 		ciclistas[i].velocidade = 30;
 		ciclistas[i].destruido = 0;
 		ciclistas[i].terminou = 0;
+		ciclistas[i].completou_volta = 0;
 		create_thread(i);
 		printf("Criou thread\n");
 
