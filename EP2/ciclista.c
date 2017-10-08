@@ -47,18 +47,26 @@ int testa_quebrou(int i){
 void sorteia_velocidade(int i)
 {
 	if(!ciclistas[i].completou_volta) return;
+	if((num_voltas - ciclistas[i].volta) == 2 && i == ciclista_sortudo) {
+		ciclistas[i].velocidade = 90;
+		return;
+	} 
 	if(ciclistas[i].velocidade == 30) {
-		if(sorteio(70))
-			ciclistas[i].velocidade = 60;
-		else
-			ciclistas[i].velocidade = 30;
+			if(sorteio(70))
+				ciclistas[i].velocidade = 60;
+			else
+				ciclistas[i].velocidade = 30;
+		}
+		else {
+			if(sorteio(50))
+				ciclistas[i].velocidade = 60;
+			else
+				ciclistas[i].velocidade = 30;
 	}
-	else {
-		if(sorteio(50))
-			ciclistas[i].velocidade = 60;
-		else
-			ciclistas[i].velocidade = 30;
-	}
+}
+
+void ciclista_avanca(int i)
+{
 }
 
 int vai_rodar(int i){

@@ -14,6 +14,7 @@ typedef struct ciclista{
 	int velocidade; /* em km/h */
 	int destruido;
 	int terminou;
+	int steps;
 	pthread_t *thread;
 	pthread_mutex_t *arrive;
 	pthread_mutex_t *cont;
@@ -24,5 +25,7 @@ ciclista *ciclistas;
 int vai_rodar(int);
 void inicializa_ciclistas(int);
 void destroi_ciclista(int);
+void sorteia_velocidade(int);
+void testa_quebrou(int);
 
 #endif

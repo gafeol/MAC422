@@ -13,5 +13,6 @@ typedef struct matriz_pista{
 matriz_pista *pista;
 
 void inicializa_pista(int);
+void remove_ciclista_pista(int);
 
 #endif

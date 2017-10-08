@@ -8,6 +8,7 @@
 #include "pista.h"
 
 int tam_pista, num_ciclistas, num_voltas;
+int ciclista_sortudo; //índice do ciclista sorteado para andar à 90km/h
 
 int dt;
 
@@ -22,6 +23,7 @@ void *run_process(void * ii){
 		pthread_mutex_lock(pista[pos].linha);
 		pthread_mutex_lock(pista[(pos+1)%tam_pista].linha);
 		/* Atualizar dist, matriz de pista com a nova posição */
+		ciclista_avanca(i);
 		pthread_mutex_unlock(pista[pos].linha);
 		pthread_mutex_unlock(pista[(post+1)%tam_pista].linha);
 
@@ -39,9 +41,9 @@ void *run_process(void * ii){
 		}
 
 		if(testa_quebrou(i)){
-			pthread_mutex_lock(pista[pos]);
-			remove_pista(i); 
-			pthread_mutex_unlock(pista[pos]);
+			pthread_mutex_lock(pista[pos].linha);
+			remove_ciclista_pista(i); 
+			pthread_mutex_unlock(pista[pos].linha);
 		}
 		sorteia_velocidade(i); /* TODO */
 		
@@ -100,6 +102,7 @@ int main(int argc, char* argv[]){
 	tam_pista = atoi(argv[1]);
 	num_ciclistas = atoi(argv[2]);
 	num_voltas = atoi(argv[3]);
+	sorteio_ciclista_sortudo();
 
 	inicializa_pista(tam_pista);
 
@@ -110,7 +113,6 @@ int main(int argc, char* argv[]){
 	while(cnt){
 		printf("Coordenador parou no arrive\n");
 		barreira_threads();
-
 
 		//Coordenador
 		//Barreira de Sincronizacao
