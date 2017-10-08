@@ -10,6 +10,9 @@
 int tam_pista, num_ciclistas, num_voltas;
 int ciclista_sortudo; //índice do ciclista sorteado para andar à 90km/h
 
+Queue *resultados;
+
+
 int dt;
 
 void *run_process(void * ii){
@@ -107,10 +110,14 @@ int main(int argc, char* argv[]){
 
 	inicializa_pista(tam_pista);
 
+	/* Queue de resultados */
+	resultados = malloc(num_voltas*sizeof(Queue));
+	for(int i = 0;i < num_voltas;i++)
+		resultados[i] = queue_create();
+
 	ciclistas = malloc(num_ciclistas*(sizeof(ciclista)));
 
 	int cnt = 2;
-
 	while(cnt){
 		printf("Coordenador parou no arrive\n");
 		barreira_threads();
@@ -118,7 +125,6 @@ int main(int argc, char* argv[]){
 		//Coordenador
 		//Barreira de Sincronizacao
 		// Sorteia velocidades e decide acoes
-		int i = 0;
 		printf("Coordenador parou no continue\n");
 		while(pthread_mutex_unlock(ciclistas[i++].cont));
 		printf("Coordenador passoou no continue\n");
@@ -127,3 +133,9 @@ int main(int argc, char* argv[]){
 	}
 	return 0;
 }
+
+/* TODO
+	Criar queues de colocacoes
+	Fazer a contagem de pontos por volta
+	Verificacao de size de queue = n pra imprimir e dar free
+*/
