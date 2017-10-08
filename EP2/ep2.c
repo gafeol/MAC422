@@ -38,6 +38,7 @@ void *run_process(void * ii){
 		if(ciclistas[i].dist/tam_pista > ciclistas[i].voltas){
 			ciclistas[i].voltas++;
 			ciclistas[i].completou_volta = 1;
+			/* Colocar o cara na lista ligada da lap ciclistas[i].volta */
 		}
 
 		if(testa_quebrou(i)){
@@ -45,7 +46,7 @@ void *run_process(void * ii){
 			remove_ciclista_pista(i); 
 			pthread_mutex_unlock(pista[pos].linha);
 		}
-		sorteia_velocidade(i); /* TODO */
+		sorteia_velocidade(i); 
 		
 		/* Thread sorteia velocidade da proxima rodada */
 		ciclistas[i].completou_volta = 0;
