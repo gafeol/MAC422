@@ -56,8 +56,8 @@ void sorteia_velocidade(int i)
 				ciclistas[i].velocidade = 60;
 			else
 				ciclistas[i].velocidade = 30;
-		}
-		else {
+	}
+	else {
 			if(sorteio(50))
 				ciclistas[i].velocidade = 60;
 			else
@@ -67,9 +67,52 @@ void sorteia_velocidade(int i)
 
 void ciclista_avanca(int i)
 {
+	int atual_pos = ((int)ciclistas[i].dist)%tam_pista;
+	int prox_pos = ((int)ciclistas[i].dist + distancia_a_percorrer(ciclistas[i].velocidade, dt));
+	int raia = ciclistas[i].raia;
+	if(atual_pos == prox_pos) {
+		ciclistas[i].dist += distancia_a_percorrer(ciclistas[i].velocidade, dt);
+		if(!(pista[prox_pos].raia) )
+		return;
+	}
+	if(!(pista[prox_pos].raia[raia])) { //tem alguém?
+		int ciclista_frente = pista[prox_pos].raia;
+		if((raia+1 <= 9)! && !(pista[prox_pos].raia[raia+1])) { //é possível ultrapassar?
+			ciclistas[i].dist += distancia_a_percorrer(ciclistas[i].velocidade, dt);
+			desloca_ciclista_pista(i,-1);
+		}
+		else { //nesse caso, o ciclista não se desloca
+			ciclistas[i].velocidade = ciclistas[ciclistas_frente].velocidade;
+			ciclistas[i].dist += distancia_a_percorrer(ciclistas[i].velocidade, dt);
+		}
+	}
+	else { //então pode ir sem medo de ser feliz
+		ciclistas[i].dist += distancia_a_percorrer(ciclistas[i].velocidade, dt);
+		desloca_ciclista_pista(i,0);
+	}
 }
 
 int vai_rodar(int i){
 	return !(ciclistas[i].destruido == 1 || 
 			ciclistas[i].terminou == 1);
+}
+
+double distancia_a_percorrer(int vel, int dt)
+{
+	switch(vel) {
+		case 30:
+			if(dt == 60)
+				return 0.5;
+			else 
+				return 0.5/3;
+			break;
+		case 60:
+			if(dt == 60)
+				return 1;
+			else
+				return 1.0/3;
+			break;
+		case 90:
+			return 0.5;
+	}
 }

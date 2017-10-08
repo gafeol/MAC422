@@ -23,5 +23,13 @@ void remove_ciclista_pista(int i)
 	(pista[pos].raia)[raia] = -1;
 }
 
-
+//dir = -1 -> direita, 0 -> reto, 1 -> esquerda
+void desloca_ciclista_pista(int i, int dir) 
+{
+	int raia = ciclistas[i].raia;
+	int pos = ((int)ciclistas[i].dist) % tam_pista;
+	int ant_pos = (pos - 1 + tam_pista) % tam_pista;
+	(pista[ant_pos].raia)[raia+dir] = -1;
+	(pista[pos].raia)[raia] = i;
+}
 
