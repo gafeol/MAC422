@@ -72,17 +72,17 @@ void ciclista_avanca(int i)
 	int raia = ciclistas[i].raia;
 	if(atual_pos == prox_pos) {
 		ciclistas[i].dist += distancia_a_percorrer(ciclistas[i].velocidade, dt);
-		if(!(pista[prox_pos].raia) )
+		if(pista[prox_pos].raia) )
 		return;
 	}
-	if(!(pista[prox_pos].raia[raia])) { //tem alguém?
+	if(pista[prox_pos].raia[raia] != -1) { //tem alguém?
 		int ciclista_frente = pista[prox_pos].raia;
-		if((raia+1 <= 9)! && !(pista[prox_pos].raia[raia+1])) { //é possível ultrapassar?
+		if((raia+1 <= 9)! && (pista[prox_pos].raia[raia+1] == -1)) { //é possível ultrapassar?
 			ciclistas[i].dist += distancia_a_percorrer(ciclistas[i].velocidade, dt);
 			desloca_ciclista_pista(i,-1);
 		}
 		else { //nesse caso, o ciclista não se desloca
-			ciclistas[i].velocidade = ciclistas[ciclistas_frente].velocidade;
+			ciclistas[i].velocidade = ciclistas[ciclista_frente].velocidade;
 			ciclistas[i].dist += distancia_a_percorrer(ciclistas[i].velocidade, dt);
 		}
 	}
