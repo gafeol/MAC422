@@ -11,7 +11,7 @@ int tam_pista, num_ciclistas, num_voltas;
 int ciclista_sortudo; //índice do ciclista sorteado para andar à 90km/h
 
 Queue *resultados;
-
+pthread_mutex_p **mutex_resultados;
 
 int dt;
 
@@ -30,9 +30,6 @@ void *run_process(void * ii){
 		pthread_mutex_unlock(pista[pos].linha);
 		pthread_mutex_unlock(pista[(post+1)%tam_pista].linha);
 
-
-
-
 		/* Verificacao de 20 pontos se o ind[0] ta uma rodada a mais que o segundo maior (ind[1]) */
 		printf("PA!\n");
 		printf("%d parou no arrive\n", i);
@@ -41,7 +38,13 @@ void *run_process(void * ii){
 		if(ciclistas[i].dist/tam_pista > ciclistas[i].voltas){
 			ciclistas[i].voltas++;
 			ciclistas[i].completou_volta = 1;
+
+			int novalap = ciclistas[i].voltas;
 			/* Colocar o cara na lista ligada da lap ciclistas[i].volta */
+			pthread_mutex_lock(mutex_resultados[novalap]);
+			queue_push(resultados[novalap], i);
+			printf("Ciclista %d terminou como o %d-esimo da %d-esima volta\n", i, queue_size(resultados[novalap]), novalap-1);
+			pthread_mutex_unlock(mutex_resultados[novalap]);
 		}
 
 		if(testa_quebrou(i)){
@@ -110,10 +113,13 @@ int main(int argc, char* argv[]){
 
 	inicializa_pista(tam_pista);
 
-	/* Queue de resultados */
+	/* Queue e mutex de resultados */
 	resultados = malloc(num_voltas*sizeof(Queue));
-	for(int i = 0;i < num_voltas;i++)
+	mutex_resultados = malloc(num_voltas*sizeof(pthred_mutex_p*));
+	for(int i = 0;i < num_voltas;i++){
 		resultados[i] = queue_create();
+		pthread_mutex_init(mutex_resultados[i], NULL);
+	}
 
 	ciclistas = malloc(num_ciclistas*(sizeof(ciclista)));
 
