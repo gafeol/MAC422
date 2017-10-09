@@ -309,7 +309,7 @@ int main(int argc, char* argv[]){
 
 	sorteio_ciclista_sortudo();
 
-	while(volta_atual != num_voltas){
+	while(volta_atual != num_voltas+1){
 	//	printf("Coordenador parou no arrive\n");
 		printf("%d\n", volta_atual);
 		printf("tam:%d\n", queue_size(resultados[volta_atual-1]));
