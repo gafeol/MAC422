@@ -16,12 +16,12 @@ int queue_empty(Queue q){
 }
 
 int head(Queue q){
-	if(q->first == NULL) return NULL;
+	if(q->first == NULL) return -1;
 	return q->first->value;
 }
 
 int tail(Queue q){
-	if(q->last == NULL) return NULL;
+	if(q->last == NULL) return -1;
 	return q->last->value;
 }
 
