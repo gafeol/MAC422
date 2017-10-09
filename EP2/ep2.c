@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <time.h>
 
+#define mod(a) ((tam_pista + (a%tam_pista))%tam_pista)
+
 
 #include "global.h"
 
@@ -28,14 +30,20 @@ void sorteio_ciclista_sortudo()
 //#include "pista.h"
 void inicializa_pista(){
 	pista = malloc(tam_pista*sizeof(matriz_pista));
+	pista_aux = malloc(tam_pista*sizeof(matriz_pista));
 	int i,j;
 	for(i = 0;i < tam_pista;i++) {
 		pista[i].raia = malloc(10*sizeof(int));
-		for(j = 0; j < 10; j++)
+		pista_aux[i].raia = malloc(10*sizeof(int));
+		for(j = 0; j < 10; j++){
 			pista[i].raia[j] = -1;
+			pista_aux[i].raia[j] = -1;
+		}
+
+		pista_aux[i].linha = malloc(sizeof(pthread_mutex_t));
 		pista[i].linha = malloc(sizeof(pthread_mutex_t));
+		pthread_mutex_init(pista_aux[i].linha, NULL);
 		pthread_mutex_init(pista[i].linha, NULL);
-	//	pthread_mutex_unlock(pista[i].linha);
 	}
 }
 
@@ -46,7 +54,7 @@ void remove_ciclista_pista(int i)
 	(pista[pos].raia)[raia] = -1;
 }
 
-//dir = -1 -> direita, 0 -> reto, 1 -> esquerda
+/*dir = -1 -> direita, 0 -> reto, 1 -> esquerda
 void desloca_ciclista_pista(int i, int dir)
 {
 	int raia = ciclistas[i].raia;
@@ -55,6 +63,7 @@ void desloca_ciclista_pista(int i, int dir)
 	(pista[ant_pos].raia)[raia+dir] = -1;
 	(pista[pos].raia)[raia] = i;
 }
+*/
 
 //#include "ciclista.h"
 void destroi_ciclista(int i){
@@ -120,29 +129,36 @@ double distancia_a_percorrer(int vel, int dt)
 
 void ciclista_avanca(int i)
 {
-	int atual_pos = ((int)ciclistas[i].dist)%tam_pista;
-	int prox_pos = ((int)ciclistas[i].dist + distancia_a_percorrer(ciclistas[i].velocidade, dt));
+	int atual_pos = mod((int)ciclistas[i].dist);
+	int prox_pos = mod((int)(ciclistas[i].dist + distancia_a_percorrer(ciclistas[i].velocidade, dt)));
 	int raia = ciclistas[i].raia;
-	if(atual_pos == prox_pos) {
+
+	if(atual_pos == prox_pos){
 		ciclistas[i].dist += distancia_a_percorrer(ciclistas[i].velocidade, dt);
-		if(pista[prox_pos].raia)
-			return;
+		pista_aux[atual_pos].raia[raia] = i;
+		printf("cara %d andou %f\n", i, ciclistas[i].dist); 
+		return ;
 	}
-	if(pista[prox_pos].raia[raia] != -1) { //tem alguém?
-		int ciclista_frente = pista[prox_pos].raia[raia+1];
-		if((raia+1 <= 9) && (pista[prox_pos].raia[raia+1] == -1)) { //é possível ultrapassar?
+
+	if(pista_aux[prox_pos].raia[raia] != -1) { //tem alguém?
+		int ciclista_frente = pista_aux[prox_pos].raia[raia];
+		if((raia+1 <= 9) && (pista_aux[prox_pos].raia[raia+1] == -1)) { //é possível ultrapassar?
 			ciclistas[i].dist += distancia_a_percorrer(ciclistas[i].velocidade, dt);
-			desloca_ciclista_pista(i,-1);
+			//desloca_ciclista_pista(i,-1);
+			pista_aux[prox_pos].raia[raia+1] = i;
 		}
 		else { //nesse caso, o ciclista não se desloca
 			ciclistas[i].velocidade = ciclistas[ciclista_frente].velocidade;
 			ciclistas[i].dist += distancia_a_percorrer(ciclistas[i].velocidade, dt);
+			pista_aux[atual_pos].raia[raia] = i;
 		}
 	}
 	else { //então pode ir sem medo de ser feliz
 		ciclistas[i].dist += distancia_a_percorrer(ciclistas[i].velocidade, dt);
-		desloca_ciclista_pista(i,0);
+		//desloca_ciclista_pista(i,0);
+		pista_aux[prox_pos].raia[raia] = i;
 	}
+
 }
 
 #include "queue.h"
@@ -150,11 +166,17 @@ void ciclista_avanca(int i)
 Queue *resultados;
 pthread_mutex_t **mutex_resultados;
 
+int vai_rodar(int i){
+	return !(ciclistas[i].destruido == 1 ||
+				ciclistas[i].dist >= tam_pista);
+}
+
+
 void *run_process(void * ii){
 	int i = *((int *)ii);
 	printf("run process cara %d\n", i);
 
-	while(1){
+	while(vai_rodar(i)){
 		printf("entra while %d\n", i);
 		/* Thread vai simular dt ms da corrida para o ciclista i */
 		int pos = (tam_pista + ((int)ciclistas[i].dist)%tam_pista)%tam_pista;
@@ -231,7 +253,6 @@ void inicializa_ciclistas(){
 		ciclistas[i].terminou = 0;
 		ciclistas[i].completou_volta = 0;
 		create_thread(i);
-		printf("Criou thread\n");
 
 	}
 }
@@ -242,17 +263,11 @@ int cmp(const void *aa, const void *bb){
 	return (ciclistas[a].dist > ciclistas[b].dist || (ciclistas[a].dist == ciclistas[b].dist && ciclistas[a].raia < ciclistas[b].raia));
 }
 
-int vai_rodar(int i){
-	return !(ciclistas[i].destruido == 1 ||
-				ciclistas[i].dist >= tam_pista);
-}
-
 void barreira_threads(){
 	int i;
 	for(i = 0;i < num_ciclistas;i++){
 		if(!vai_rodar(i)) continue;
 		pthread_mutex_lock(ciclistas[i].arrive);
-		printf("passou do cara %d\n", i);
 	}
 }
 
@@ -268,6 +283,11 @@ int main(int argc, char* argv[]){
 	tam_pista = atoi(argv[1]);
 	num_ciclistas = atoi(argv[2]);
 	num_voltas = atoi(argv[3]);
+
+	dt = 60;
+
+	if(argc > 4)
+		debug = (argv[4][0] == 'd' ? 1 : 0);
 
 	inicializa_pista();
 
@@ -288,19 +308,42 @@ int main(int argc, char* argv[]){
 
 
 
-	int cnt = 2;
-	while(cnt){
-		printf("Coordenador parou no arrive\n");
+	while(queue_size(resultados[num_voltas-1]) != num_ciclistas){
+	//	printf("Coordenador parou no arrive\n");
 		barreira_threads();
+	//	printf("Coordenador passou no arrive\n");
+		
+		for(int i=0;i<tam_pista;i++){
+			for(int j=0;j<10;j++){
+				pista[i].raia[j] = pista_aux[i].raia[j];
+				pista_aux[i].raia[j] = -1;
+			}
+		}
 
-		//Coordenador
-		//Barreira de Sincronizacao
-		// Sorteia velocidades e decide acoes
-		printf("Coordenador parou no continue\n");
+		/* Printa o debug */
+		if(debug){
+			for(int i=tam_pista-1;i>=0;i--){
+				for(int r=0;r<10;r++){
+					if(pista[i].raia[r] == -1)
+						printf("%3c", 'X');
+					else
+						printf("%3d", pista[i].raia[r]);
+				}
+				putchar('\n');
+			}
+		}
+	//	printf("Coordenador parou no continue\n");
 		libera_threads();
-		printf("Coordenador passoou no continue\n");
+		/* Libera os de 30
+			libera queue
+			libera 60
+			libera 90
+			*/
+
+		/* Compacta caras na esquerda */
+
+	//	printf("Coordenador passoou no continue\n");
 		printf("Sincronizou!");
-		cnt--;
 	}
 	return 0;
 }

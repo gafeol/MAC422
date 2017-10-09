@@ -6,6 +6,8 @@
 int num_ciclistas, num_voltas, tam_pista, dt;
 int ciclista_sortudo;
 
+int debug;
+
 int semente = 0;
 
 typedef struct ciclista{
@@ -31,6 +33,6 @@ typedef struct matriz_pista{
 	pthread_mutex_t *linha;
 } matriz_pista;
 
-matriz_pista *pista;
+matriz_pista *pista, *pista_aux;
 
 #endif
