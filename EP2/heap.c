@@ -70,7 +70,7 @@ int heap_min_element(heap* H) {
 	return H->h[0]->element;
 }
 
-double heap_min_time(heap* H) {
+double heap_min_priority(heap* H) {
 	return H->h[0]->priority;
 }
 

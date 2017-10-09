@@ -2,7 +2,7 @@
 #define HEAP_H
 
 typedef struct heap_node {
-	double priority;
+	int priority;
 	int element;	
 } heap_node;
 
@@ -15,7 +15,7 @@ typedef heap* Heap;
 
 heap *heap_create();
 int heap_empty(heap*);
-double heap_min_time(heap*);
+double heap_min_priority(heap*);
 int heap_min_element(heap*);
 void heap_push(heap*, double, int);
 void heap_pop(heap*);

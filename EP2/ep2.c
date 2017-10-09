@@ -7,6 +7,7 @@
 
 
 #include "global.h"
+#include "heap.h"
 
 //#include "aleatorio.h"
 int sorteio(int p)
@@ -155,7 +156,7 @@ void ciclista_avanca(int i)
 		ciclistas[i].dist += distancia_a_percorrer(ciclistas[i].velocidade, dt);
 		pista_aux[atual_pos].raia[raia] = i;
 		printf("cara %d andou %f\n", i, ciclistas[i].dist); 
-		return ;
+		return;
 	}
 
 	if(pista_aux[prox_pos].raia[raia] != -1) { //tem alguém?
@@ -366,14 +367,14 @@ int main(int argc, char* argv[]){
 
 		if(queue_size(resultados[volta_atual-1]) == num_ciclistas) {
 			int colocacao = 1;
-			int flag_acc = (volta_atual%10 == 0 ? 1 : 0);
+			int flag_acc = (volta_atual%10 == 0 ? 1 : 0); //é uma volta múltipla de 10?
 			printf("Volta %d:\n", volta_atual);
-			if(flag_acc == 0) {
+			if(flag_acc == 0) { // se não for, é só partir para o abraço
 				while(!queue_empty(resultados[volta_atual-1])) {
 					int atual = head(resultados[volta_atual-1]);
 					queue_pop(resultados[volta_atual-1]);
 					//if(volta_atual%10 != 0)
-					//	printf("Colocacao %d: %d\n", colocacao++, atual);
+					printf("Colocacao %d: %d\n", colocacao++, atual);
 					//else {
 					//int pont = head(pontuacoes[volta_atual-1]);
 					//queue_pop(pontuacoes[volta_atual-1]);
@@ -381,15 +382,22 @@ int main(int argc, char* argv[]){
 					//}
 				}
 			}
-			else {
+			else { //aí o negócio complica
+				Heap hp = heap_create();
 				while(!queue_empty(resultados[volta_atual-1])) {
 					int atual = head(resultados[volta_atual-1]);
 					queue_pop(resultados[volta_atual-1]);
 					int pont = head(pontuacoes[volta_atual-1]);
 					queue_pop(pontuacoes[volta_atual-1]);
+					heap_push(hp, -pont, atual);				
+				}
+				while(!heap_empty(hp)){
+					int atual = heap_min_element(hp);
+					int pont = -heap_min_priority(hp);
+					heap_pop(hp);
+					printf("Colocacao %d: %d %d\n", colocacao++, atual, pont);
 				}
 			}
-			while(!queue_empty(resultados))
 			volta_atual++;
 		}
 
