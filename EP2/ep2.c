@@ -393,7 +393,8 @@ int main(int argc, char* argv[]){
 			}
 		}
 
-		int voltas_extra = (ciclistas[primeiro_ciclista].dist - ciclistas[segundo_ciclista].dist)/tam_pista;
+		int voltas_extra = (ciclistas[primeiro_ciclista].dist - ciclistas[segundo_ciclista].dist - 1)/tam_pista;
+		printf("voltas extra %d\n", voltas_extra);
 		if(ciclistas[primeiro_ciclista].max_volta_extra < voltas_extra){
 			printf("RELAMPAGO MARQUINHOS de indice %d\n", primeiro_ciclista);
 			ciclistas[primeiro_ciclista].max_volta_extra++;
