@@ -222,9 +222,10 @@ void *run_process(void * ii){
 			int novalap = ciclistas[i].voltas;
 			/* Colocar o cara na lista ligada da lap ciclistas[i].volta */
 			pthread_mutex_lock(mutex_resultados[novalap-1]);
+			int pont = devolve_pontuacao(queue_size(resultados[novalap-1]));
+			ciclistas[i].pontuacao += pont;
 			if(novalap%10==0) {
-				int pont = devolve_pontuacao(queue_size(resultados[novalap-1]));
-				queue_push(pontuacoes[novalap-1], pont);
+				queue_push(pontuacoes[novalap-1], ciclistas[i].pontuacao);
 			}
 			queue_push(resultados[novalap-1], i);
 			pthread_mutex_unlock(mutex_resultados[novalap-1]);
