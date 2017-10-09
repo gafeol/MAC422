@@ -343,6 +343,9 @@ int main(int argc, char* argv[]){
 	num_voltas = atoi(argv[3]);
 	volta_atual = 1;
 
+	primeiro_ciclista = 0;
+	segundo_ciclista = 1;
+
 	dt = 60;
 
 	if(argc > 4)
@@ -394,7 +397,7 @@ int main(int argc, char* argv[]){
 		}
 
 		int voltas_extra = (ciclistas[primeiro_ciclista].dist - ciclistas[segundo_ciclista].dist - 1)/tam_pista;
-		printf("voltas extra %d\n", voltas_extra);
+		printf("voltas extra %d = (%f - %f - 1)/%d\n", voltas_extra, ciclistas[primeiro_ciclista].dist, ciclistas[segundo_ciclista].dist, tam_pista);
 		if(ciclistas[primeiro_ciclista].max_volta_extra < voltas_extra){
 			printf("RELAMPAGO MARQUINHOS de indice %d\n", primeiro_ciclista);
 			ciclistas[primeiro_ciclista].max_volta_extra++;
