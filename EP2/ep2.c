@@ -164,11 +164,12 @@ void ciclista_avanca(int i)
 #include "queue.h"
 
 Queue *resultados;
+Queue *pontuacoes;
 pthread_mutex_t **mutex_resultados;
 
 int vai_rodar(int i){
 	return !(ciclistas[i].destruido == 1 ||
-				ciclistas[i].dist >= tam_pista);
+				ciclistas[i].dist >= tam_pista*num_voltas);
 }
 
 
@@ -283,6 +284,7 @@ int main(int argc, char* argv[]){
 	tam_pista = atoi(argv[1]);
 	num_ciclistas = atoi(argv[2]);
 	num_voltas = atoi(argv[3]);
+	volta_atual = 1;
 
 	dt = 60;
 
@@ -293,9 +295,11 @@ int main(int argc, char* argv[]){
 
 	/* Queue e mutex de resultados */
 	resultados = malloc(num_voltas*sizeof(Queue));
+	pontuacoes = malloc(num_voltas*sizeof(Queue));
 	mutex_resultados = malloc(num_voltas*sizeof(pthread_mutex_t*));
 	for(int i = 0;i < num_voltas;i++){
 		resultados[i] = queue_create();
+		pontuacoes[i] = queue_create();
 		mutex_resultados[i] = malloc(sizeof(pthread_mutex_t));
 		pthread_mutex_init(mutex_resultados[i], NULL);
 	}
@@ -308,10 +312,11 @@ int main(int argc, char* argv[]){
 
 
 
-	while(queue_size(resultados[num_voltas-1]) != num_ciclistas){
+	while(volta_atual != num_voltas){
 	//	printf("Coordenador parou no arrive\n");
+		printf("%d\n", volta_atual);
+		printf("tam:%d\n", queue_size(resultados[volta_atual-1]));
 		barreira_threads();
-	//	printf("Coordenador passou no arrive\n");
 		
 		for(int i=0;i<tam_pista;i++){
 			for(int j=0;j<10;j++){
@@ -332,6 +337,18 @@ int main(int argc, char* argv[]){
 				putchar('\n');
 			}
 		}
+
+
+		if(queue_size(resultados[volta_atual-1]) == num_ciclistas) {
+			int colocacao = 1;
+			printf("Volta %d:\n", volta_atual);
+			while(!queue_empty(resultados[volta_atual-1])) {
+				int atual = head(resultados[volta_atual-1]);
+				queue_pop(resultados[volta_atual-1]);
+				printf("Colocacao %d: %d\n", colocacao++, atual);
+			}
+			volta_atual++;
+		}
 	//	printf("Coordenador parou no continue\n");
 		libera_threads();
 		/* Libera os de 30
@@ -343,7 +360,7 @@ int main(int argc, char* argv[]){
 		/* Compacta caras na esquerda */
 
 	//	printf("Coordenador passoou no continue\n");
-		printf("Sincronizou!");
+		//printf("Sincronizou!\n");
 	}
 	return 0;
 }

@@ -5,6 +5,7 @@
 
 int num_ciclistas, num_voltas, tam_pista, dt;
 int ciclista_sortudo;
+int volta_atual;
 
 int debug;
 
