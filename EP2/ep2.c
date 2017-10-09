@@ -5,9 +5,10 @@
 
 #define mod(a) ((tam_pista + (a%tam_pista))%tam_pista)
 
-
 #include "global.h"
 #include "heap.h"
+
+int primeiro_ciclista, segundo_ciclista;
 
 //#include "aleatorio.h"
 int sorteio(int p)
@@ -90,6 +91,11 @@ int testa_quebrou(int i){
 
 void sorteia_velocidade(int i)
 {
+	if(i == 0)
+		ciclistas[i].velocidade = 60;
+	else
+		ciclistas[i].velocidade = 30;
+	return;
 	if(!ciclistas[i].completou_volta) return;
 	if((num_voltas - ciclistas[i].voltas) == 2 && i == ciclista_sortudo) {
 		ciclistas[i].velocidade = 90;
@@ -191,6 +197,29 @@ int vai_rodar(int i){
 				ciclistas[i].dist >= tam_pista*num_voltas);
 }
 
+void atualiza_posicoes(int i){
+	if(num_ciclistas < 2) return ;
+
+	int aux = primeiro_ciclista;
+	if(i == primeiro_ciclista)
+		return ;
+	if(i == segundo_ciclista){
+		if(ciclistas[i].dist > ciclistas[primeiro_ciclista].dist){
+			primeiro_ciclista = i;
+			segundo_ciclista = aux;
+		}
+		return ;
+	}
+	if(ciclistas[i].dist > ciclistas[primeiro_ciclista].dist){
+		primeiro_ciclista = i;
+		segundo_ciclista = aux;
+	}
+	else{
+		if(ciclistas[i].dist > ciclistas[segundo_ciclista].dist)
+			segundo_ciclista = i;
+	}
+}
+
 
 void *run_process(void * ii){
 	int i = *((int *)ii);
@@ -207,6 +236,7 @@ void *run_process(void * ii){
 		pthread_mutex_lock(pista[mod(pos+1)].linha);
 		/* OK Atualizar dist, matriz de pista com a nova posição */
 		ciclista_avanca(i);
+		atualiza_posicoes(i);
 		pthread_mutex_unlock(pista[mod(pos)].linha);
 		pthread_mutex_unlock(pista[mod(pos+1)].linha);
 
@@ -282,7 +312,6 @@ void inicializa_ciclistas(){
 		ciclistas[i].pontuacao = 0;
 		ciclistas[i].max_volta_extra = 0;
 		create_thread(i);
-
 	}
 }
 
@@ -340,8 +369,7 @@ int main(int argc, char* argv[]){
 
 	while(volta_atual != num_voltas+1){
 	//	printf("Coordenador parou no arrive\n");
-		printf("%d\n", volta_atual);
-		printf("tam:%d\n", queue_size(resultados[volta_atual-1]));
+		printf("Queue volta atual %d tam:%d\n", volta_atual-1,  queue_size(resultados[volta_atual-1]));
 		barreira_threads();
 		printf("Coordenador parou no arrive\n");
 		
@@ -357,12 +385,19 @@ int main(int argc, char* argv[]){
 			for(int i=tam_pista-1;i>=0;i--){
 				for(int r=0;r<10;r++){
 					if(pista[i].raia[r] == -1)
-						printf("%3c", 'X');
+						printf("%2c", 'X');
 					else
-						printf("%3d", pista[i].raia[r]);
+						printf("%2d", pista[i].raia[r]);
 				}
 				putchar('\n');
 			}
+		}
+
+		int voltas_extra = (ciclistas[primeiro_ciclista].dist - ciclistas[segundo_ciclista].dist)/tam_pista;
+		if(ciclistas[primeiro_ciclista].max_volta_extra < voltas_extra){
+			printf("RELAMPAGO MARQUINHOS de indice %d\n", primeiro_ciclista);
+			ciclistas[primeiro_ciclista].max_volta_extra++;
+			ciclistas[primeiro_ciclista].pontuacao += 20;
 		}
 
 		if(queue_size(resultados[volta_atual-1]) == num_ciclistas) {
@@ -400,7 +435,6 @@ int main(int argc, char* argv[]){
 			}
 			volta_atual++;
 		}
-
 		printf("Coordenador parou no continue\n");
 		libera_threads();
 		/* Libera os de 30
@@ -416,9 +450,3 @@ int main(int argc, char* argv[]){
 	}
 	return 0;
 }
-
-/* TODO
-	Criar queues de colocacoes
-	Fazer a contagem de pontos por volta
-	Verificacao de size de queue = n pra imprimir e dar free
-*/
