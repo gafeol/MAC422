@@ -10,6 +10,14 @@
 
 int primeiro_ciclista, segundo_ciclista;
 
+double floor(double x){
+	int base = (int)x;
+	if(x > 0)
+		return base;
+	else
+		return base - (int)!(x == base);
+}
+
 //#include "aleatorio.h"
 int sorteio(int p)
 {
@@ -151,11 +159,10 @@ int devolve_pontuacao(int pos)
 	}
 }
 
-void ciclista_avanca(int i)
-{
-	printf("AVANCA %d\n", i);
-	int atual_pos = mod((int)ciclistas[i].dist);
-	int prox_pos = mod((int)(ciclistas[i].dist + distancia_a_percorrer(ciclistas[i].velocidade, dt)));
+void ciclista_avanca(int i){
+	int atual_pos = mod((int)floor(ciclistas[i].dist));
+	int prox_pos = mod((int)floor(ciclistas[i].dist + distancia_a_percorrer(ciclistas[i].velocidade, dt)));
+	printf("AVANCA %d atualpos %d prox pos %d\n", i, atual_pos, prox_pos);
 	int raia = ciclistas[i].raia;
 
 	if(atual_pos == prox_pos){
@@ -167,18 +174,22 @@ void ciclista_avanca(int i)
 
 	if(pista_aux[prox_pos].raia[raia] != -1) { //tem alguém?
 		int ciclista_frente = pista_aux[prox_pos].raia[raia];
+		printf("ULTRAPASSAGEM: apressadinho %d lerdao %d\n", i, ciclista_frente);
 		if((raia+1 <= 9) && (pista_aux[prox_pos].raia[raia+1] == -1)) { //é possível ultrapassar?
+			printf("ULTRAPASSAGEM: do lado ta livre pos %d %d\n", prox_pos, raia+1);
 			ciclistas[i].dist += distancia_a_percorrer(ciclistas[i].velocidade, dt);
 			//desloca_ciclista_pista(i,-1);
 			pista_aux[prox_pos].raia[raia+1] = i;
 		}
 		else { //nesse caso, o ciclista não se desloca
+			printf("ULTRAPASSAGEM: do lado nao ta livre pos %d %d\n", prox_pos, raia+1);
 			ciclistas[i].velocidade = ciclistas[ciclista_frente].velocidade;
 			ciclistas[i].dist += distancia_a_percorrer(ciclistas[i].velocidade, dt);
 			pista_aux[atual_pos].raia[raia] = i;
 		}
 	}
 	else { //então pode ir sem medo de ser feliz
+		printf("ULTRAPASSAGEM: nao tem ninguem na frente do cara %d\n", i);
 		ciclistas[i].dist += distancia_a_percorrer(ciclistas[i].velocidade, dt);
 		//desloca_ciclista_pista(i,0);
 		pista_aux[prox_pos].raia[raia] = i;
@@ -271,6 +282,7 @@ void *run_process(void * ii){
 			pthread_mutex_unlock(pista[pos].linha);
 		}
 		sorteia_velocidade(i);
+		ciclistas[i].completou_volta = 0;
 
 		/* Thread sorteia velocidade da proxima rodada */
 		pthread_mutex_unlock(ciclistas[i].arrive);
@@ -278,7 +290,6 @@ void *run_process(void * ii){
 		printf("%d parou no continue\n", i);
 		pthread_mutex_lock(ciclistas[i].cont);
 		printf("%d passou no continue\n", i);
-		ciclistas[i].completou_volta = 0;
 	}
 }
 
