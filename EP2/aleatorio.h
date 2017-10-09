@@ -7,8 +7,6 @@
 
 #include "global.h"
 
-int semente = 0;
-
 int sorteio(int p)
 {
 	if(semente == 0) {

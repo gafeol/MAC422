@@ -5,16 +5,16 @@ all: ep2
 ep2: ep2.o ciclista.o pista.o queue.o
 		$(CC) -pthread $^ -o $@
 
-ep2.o: ep2.c ciclista.h pista.h queue.h aleatorio.h global.h
+ep2.o: ep2.c 
 		$(CC) ep2.c -c -o $@
 
-ciclista.o: ciclista.c ciclista.h pista.h aleatorio.h global.h
+ciclista.o: ciclista.c ciclista.h 
 		$(CC) ciclista.c -pthread -c -o $@
 
-pista.o: pista.c ciclista.h pista.h ciclista.h aleatorio.h global.h
+pista.o: pista.c pista.h 
 		$(CC) pista.c -pthread -c -o $@
 
-queue.o: queue.c
+queue.o: queue.c queue.h
 		$(CC) queue.c -c -o $@
 
 clean: 

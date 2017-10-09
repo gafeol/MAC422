@@ -2,15 +2,15 @@
 #include <stdlib.h>
 #include <pthread.h>
 
-#include "ciclista.h"
 #include "pista.h"
+#include "global.h"
 
 void inicializa_pista(int tam){
 	pista = malloc(tam*sizeof(matriz_pista));
 	int i,j;
 	for(i = 0;i < tam;i++) {
 		pista[i].raia = malloc(10*sizeof(int));
-		for(j = 0; j < 10; i++)
+		for(j = 0; j < 10; j++)
 			pista[i].raia[j] = -1;
 		pista[i].linha = malloc(sizeof(pthread_mutex_t));
 		pthread_mutex_init(pista[i].linha, NULL);
