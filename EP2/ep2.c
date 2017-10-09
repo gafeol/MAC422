@@ -204,7 +204,7 @@ void *run_process(void * ii){
 
 		pthread_mutex_lock(pista[mod(pos)].linha);
 		pthread_mutex_lock(pista[mod(pos+1)].linha);
-		/* Atualizar dist, matriz de pista com a nova posição */
+		/* OK Atualizar dist, matriz de pista com a nova posição */
 		ciclista_avanca(i);
 		pthread_mutex_unlock(pista[mod(pos)].linha);
 		pthread_mutex_unlock(pista[mod(pos+1)].linha);
@@ -220,7 +220,6 @@ void *run_process(void * ii){
 			ciclistas[i].completou_volta = 1;
 
 			int novalap = ciclistas[i].voltas;
-			/* Colocar o cara na lista ligada da lap ciclistas[i].volta */
 			pthread_mutex_lock(mutex_resultados[novalap-1]);
 			int pont = devolve_pontuacao(queue_size(resultados[novalap-1]));
 			ciclistas[i].pontuacao += pont;
@@ -280,6 +279,7 @@ void inicializa_ciclistas(){
 		ciclistas[i].terminou = 0;
 		ciclistas[i].completou_volta = 0;
 		ciclistas[i].pontuacao = 0;
+		ciclistas[i].max_volta_extra = 0;
 		create_thread(i);
 
 	}

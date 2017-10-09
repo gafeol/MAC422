@@ -22,6 +22,7 @@ typedef struct ciclista{
 	int destruido;
 	int terminou;
 	int pontuacao;
+	int max_volta_extra;
 	pthread_t *thread;
 	pthread_mutex_t *arrive;
 	pthread_mutex_t *cont;
