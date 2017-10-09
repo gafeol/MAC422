@@ -27,7 +27,7 @@ void *run_process(void * ii){
 		/* Atualizar dist, matriz de pista com a nova posição */
 		ciclista_avanca(i);
 		pthread_mutex_unlock(pista[pos].linha);
-		pthread_mutex_unlock(pista[(post+1)%tam_pista].linha);
+		pthread_mutex_unlock(pista[(pos+1)%tam_pista].linha);
 
 		/* Verificacao de 20 pontos se o ind[0] ta uma rodada a mais que o segundo maior (ind[1]) */
 		printf("PA!\n");
@@ -134,7 +134,7 @@ int main(int argc, char* argv[]){
 
 	/* Queue e mutex de resultados */
 	resultados = malloc(num_voltas*sizeof(Queue));
-	mutex_resultados = malloc(num_voltas*sizeof(pthred_mutex_p*));
+	mutex_resultados = malloc(num_voltas*sizeof(pthread_mutex_t*));
 	for(int i = 0;i < num_voltas;i++){
 		resultados[i] = queue_create();
 		pthread_mutex_init(mutex_resultados[i], NULL);
@@ -151,6 +151,7 @@ int main(int argc, char* argv[]){
 		//Barreira de Sincronizacao
 		// Sorteia velocidades e decide acoes
 		printf("Coordenador parou no continue\n");
+		int i = 0;
 		while(pthread_mutex_unlock(ciclistas[i++].cont));
 		printf("Coordenador passoou no continue\n");
 		printf("Sincronizou!");

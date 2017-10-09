@@ -5,7 +5,7 @@ all: ep2
 ep2: ep2.o
 		$(CC) -pthread $^ -o $@
 
-ep2.o: ep2.c ciclista.o pista.o queue.o
+ep2.o: ep2.c ciclista.o pista.o queue.o aleatorio.h global.h
 		$(CC) ep2.c -c -o $@
 
 ciclista.o: ciclista.c ciclista.h pista.h aleatorio.h global.h
