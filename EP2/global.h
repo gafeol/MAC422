@@ -23,6 +23,9 @@ typedef struct ciclista{
 	int terminou;
 	int pontuacao;
 	int max_volta_extra;
+
+	int flag;
+
 	pthread_t *thread;
 	pthread_mutex_t *arrive;
 	pthread_mutex_t *cont;
@@ -37,5 +40,7 @@ typedef struct matriz_pista{
 } matriz_pista;
 
 matriz_pista *pista, *pista_aux;
+
+//pthread_barrier_t *trinta, *flag1, *flag2, *sessenta;
 
 #endif

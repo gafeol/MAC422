@@ -231,65 +231,71 @@ void atualiza_posicoes(int i){
 	}
 }
 
+void roda(int i){
+
+	/* Thread vai simular dt ms da corrida para o ciclista i */
+	int pos = (tam_pista + ((int)ciclistas[i].dist)%tam_pista)%tam_pista;
+
+	/* Vetor de mutexes pra lockar a linha e a proxima pra quando eu for colocar meu cara na pista */
+
+	pthread_mutex_lock(pista[mod(pos)].linha);
+	pthread_mutex_lock(pista[mod(pos+1)].linha);
+	/* OK! Atualizar dist, matriz de pista com a nova posição */
+	ciclista_avanca(i);
+	atualiza_posicoes(i);
+	pthread_mutex_unlock(pista[mod(pos)].linha);
+	pthread_mutex_unlock(pista[mod(pos+1)].linha);
+
+	/* OK! Verificacao de 20 pontos se o ind[0] ta uma rodada a mais que o segundo maior (ind[1]) */
+	printf("PA!\n");
+	printf("%d parou no arrive\n", i);
+
+	/* Atualizar o lap e tempo */
+	if(((int)ciclistas[i].dist)/tam_pista > ciclistas[i].voltas){
+		printf("cara %d dist %lf tam pista %d voltas %d\n", i, ciclistas[i].dist, tam_pista, ciclistas[i].voltas); 
+		ciclistas[i].voltas++;
+		ciclistas[i].completou_volta = 1;
+
+		int novalap = ciclistas[i].voltas;
+		pthread_mutex_lock(mutex_resultados[novalap-1]);
+		int pont = devolve_pontuacao(queue_size(resultados[novalap-1]));
+		ciclistas[i].pontuacao += pont;
+		if(novalap%10==0) {
+			queue_push(pontuacoes[novalap-1], ciclistas[i].pontuacao);
+		}
+		queue_push(resultados[novalap-1], i);
+		pthread_mutex_unlock(mutex_resultados[novalap-1]);
+		if(novalap == num_voltas){
+			remove_ciclista_pista(i);
+		}
+	}
+
+	if(testa_quebrou(i)){
+		printf("QUEBROUUUUUUUUUUUUUUU %d\n", i);
+		pthread_mutex_lock(pista[pos].linha);
+		remove_ciclista_pista(i);
+		pthread_mutex_unlock(pista[pos].linha);
+	}
+	sorteia_velocidade(i);
+	ciclistas[i].completou_volta = 0;
+
+	/* Thread sorteia velocidade da proxima rodada */
+	pthread_mutex_unlock(ciclistas[i].arrive);
+	printf("%d passou no arrive\n", i);
+	printf("%d parou no continue\n", i);
+	pthread_mutex_lock(ciclistas[i].cont);
+	printf("%d passou no continue\n", i);
+}
 
 void *run_process(void * ii){
 	int i = *((int *)ii);
 	printf("run process cara %d\n", i);
-
 	while(vai_rodar(i)){
-		printf("entra while %d\n", i);
-		/* Thread vai simular dt ms da corrida para o ciclista i */
-		int pos = (tam_pista + ((int)ciclistas[i].dist)%tam_pista)%tam_pista;
-
-		/* Vetor de mutexes pra lockar a linha e a proxima pra quando eu for colocar meu cara na pista */
-
-		pthread_mutex_lock(pista[mod(pos)].linha);
-		pthread_mutex_lock(pista[mod(pos+1)].linha);
-		/* OK Atualizar dist, matriz de pista com a nova posição */
-		ciclista_avanca(i);
-		atualiza_posicoes(i);
-		pthread_mutex_unlock(pista[mod(pos)].linha);
-		pthread_mutex_unlock(pista[mod(pos+1)].linha);
-
-		/* Verificacao de 20 pontos se o ind[0] ta uma rodada a mais que o segundo maior (ind[1]) */
-		printf("PA!\n");
-		printf("%d parou no arrive\n", i);
-
-		/* Atualizar o lap e tempo */
-		if(((int)ciclistas[i].dist)/tam_pista > ciclistas[i].voltas){
-			printf("cara %d dist %lf tam pista %d voltas %d\n", i, ciclistas[i].dist, tam_pista, ciclistas[i].voltas); 
-			ciclistas[i].voltas++;
-			ciclistas[i].completou_volta = 1;
-
-			int novalap = ciclistas[i].voltas;
-			pthread_mutex_lock(mutex_resultados[novalap-1]);
-			int pont = devolve_pontuacao(queue_size(resultados[novalap-1]));
-			ciclistas[i].pontuacao += pont;
-			if(novalap%10==0) {
-				queue_push(pontuacoes[novalap-1], ciclistas[i].pontuacao);
-			}
-			queue_push(resultados[novalap-1], i);
-			pthread_mutex_unlock(mutex_resultados[novalap-1]);
-			if(novalap == num_voltas){
-				remove_ciclista_pista(i);
-			}
-		}
-
-		if(testa_quebrou(i)){
-			printf("QUEBROUUUUUUUUUUUUUUU %d\n", i);
-			pthread_mutex_lock(pista[pos].linha);
-			remove_ciclista_pista(i);
-			pthread_mutex_unlock(pista[pos].linha);
-		}
-		sorteia_velocidade(i);
-		ciclistas[i].completou_volta = 0;
-
-		/* Thread sorteia velocidade da proxima rodada */
-		pthread_mutex_unlock(ciclistas[i].arrive);
-		printf("%d passou no arrive\n", i);
-		printf("%d parou no continue\n", i);
-		pthread_mutex_lock(ciclistas[i].cont);
-		printf("%d passou no continue\n", i);
+//	while(!queue_size(resultado[num_voltas-1] == num_ciclistas)){
+//		if(vai_rodar(i) && ciclistas[i].velocidade == 30){
+//		}
+//	}
+		roda(i);
 	}
 }
 
@@ -382,11 +388,11 @@ int main(int argc, char* argv[]){
 	sorteio_ciclista_sortudo();
 
 	while(volta_atual != num_voltas+1){
-	//	printf("Coordenador parou no arrive\n");
+		//	printf("Coordenador parou no arrive\n");
 		printf("Queue volta atual %d tam:%d\n", volta_atual-1,  queue_size(resultados[volta_atual-1]));
 		barreira_threads();
 		printf("Coordenador parou no arrive\n");
-		
+
 		for(int i=0;i<tam_pista;i++){
 			for(int j=0;j<10;j++){
 				pista[i].raia[j] = pista_aux[i].raia[j];
@@ -453,10 +459,10 @@ int main(int argc, char* argv[]){
 		printf("Coordenador parou no continue\n");
 		libera_threads();
 		/* Libera os de 30
-			libera queue
-			libera 60
-			libera 90
-			*/
+		   libera queue
+		   libera 60
+		   libera 90
+		 */
 
 		/* Compacta caras na esquerda */
 
@@ -465,3 +471,12 @@ int main(int argc, char* argv[]){
 	}
 	return 0;
 }
+
+/*
+   TODO
+   Barreiras na run process
+   Empacotamento na esquerda
+
+   Testar cara de 90
+   Testar ultrapassagem
+ */
