@@ -203,10 +203,9 @@ void *run_process(void * ii){
 
 			int novalap = ciclistas[i].voltas;
 			/* Colocar o cara na lista ligada da lap ciclistas[i].volta */
-			pthread_mutex_lock(mutex_resultados[novalap]);
-			queue_push(resultados[novalap], i);
-			printf("Ciclista %d terminou como o %d-esimo da %d-esima volta\n", i, queue_size(resultados[novalap]), novalap-1);
-			pthread_mutex_unlock(mutex_resultados[novalap]);
+			pthread_mutex_lock(mutex_resultados[novalap-1]);
+			queue_push(resultados[novalap-1], i);
+			pthread_mutex_unlock(mutex_resultados[novalap-1]);
 		}
 
 		if(testa_quebrou(i)){
@@ -310,13 +309,12 @@ int main(int argc, char* argv[]){
 
 	sorteio_ciclista_sortudo();
 
-
-
 	while(volta_atual != num_voltas){
 	//	printf("Coordenador parou no arrive\n");
 		printf("%d\n", volta_atual);
 		printf("tam:%d\n", queue_size(resultados[volta_atual-1]));
 		barreira_threads();
+		printf("Coordenador parou no arrive\n");
 		
 		for(int i=0;i<tam_pista;i++){
 			for(int j=0;j<10;j++){
@@ -338,7 +336,6 @@ int main(int argc, char* argv[]){
 			}
 		}
 
-
 		if(queue_size(resultados[volta_atual-1]) == num_ciclistas) {
 			int colocacao = 1;
 			printf("Volta %d:\n", volta_atual);
@@ -349,7 +346,8 @@ int main(int argc, char* argv[]){
 			}
 			volta_atual++;
 		}
-	//	printf("Coordenador parou no continue\n");
+
+		printf("Coordenador parou no continue\n");
 		libera_threads();
 		/* Libera os de 30
 			libera queue
@@ -359,8 +357,8 @@ int main(int argc, char* argv[]){
 
 		/* Compacta caras na esquerda */
 
-	//	printf("Coordenador passoou no continue\n");
-		//printf("Sincronizou!\n");
+		printf("Coordenador passoou no continue\n");
+		printf("Sincronizou!\n");
 	}
 	return 0;
 }
