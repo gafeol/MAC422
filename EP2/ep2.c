@@ -366,18 +366,30 @@ int main(int argc, char* argv[]){
 
 		if(queue_size(resultados[volta_atual-1]) == num_ciclistas) {
 			int colocacao = 1;
+			int flag_acc = (volta_atual%10 == 0 ? 1 : 0);
 			printf("Volta %d:\n", volta_atual);
-			while(!queue_empty(resultados[volta_atual-1])) {
-				int atual = head(resultados[volta_atual-1]);
-				queue_pop(resultados[volta_atual-1]);
-				if(volta_atual%10 != 0)
-					printf("Colocacao %d: %d\n", colocacao++, atual);
-				else {
-					int pont = head(pontuacoes[volta_atual-1]);
-					queue_pop(pontuacoes[volta_atual-1]);
-					printf("Colocacao %d: %d %d\n", colocacao++, atual, pont++);
+			if(flag_acc == 0) {
+				while(!queue_empty(resultados[volta_atual-1])) {
+					int atual = head(resultados[volta_atual-1]);
+					queue_pop(resultados[volta_atual-1]);
+					//if(volta_atual%10 != 0)
+					//	printf("Colocacao %d: %d\n", colocacao++, atual);
+					//else {
+					//int pont = head(pontuacoes[volta_atual-1]);
+					//queue_pop(pontuacoes[volta_atual-1]);
+					//printf("Colocacao %d: %d %d\n", colocacao++, atual, pont++);
+					//}
 				}
 			}
+			else {
+				while(!queue_empty(resultados[volta_atual-1])) {
+					int atual = head(resultados[volta_atual-1]);
+					queue_pop(resultados[volta_atual-1]);
+					int pont = head(pontuacoes[volta_atual-1]);
+					queue_pop(pontuacoes[volta_atual-1]);
+				}
+			}
+			while(!queue_empty(resultados))
 			volta_atual++;
 		}
 
