@@ -19,9 +19,9 @@ Queue queue_create();
 
 int queue_empty(Queue);
 
-void *head(Queue);
+int head(Queue);
 
-void *tail(Queue);
+int tail(Queue);
 
 void queue_push(Queue, int);
 

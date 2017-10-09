@@ -1,8 +1,11 @@
 #ifndef ALEATORIO_H
 #define ALEATORIO_H
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+
+#include "global.h"
 
 int semente = 0;
 
@@ -16,10 +19,10 @@ int sorteio(int p)
 	return (x < p) ? 1 : 0;  
 }
 
-int sorteio_ciclista_sortudo()
+void sorteio_ciclista_sortudo()
 {
 	if(sorteio(10))
-		ciclista_sortudo = rand() % num_ciclistas;
+		ciclista_sortudo = (rand() % num_ciclistas);
 	else 
 		ciclista_sortudo = -1;
 }

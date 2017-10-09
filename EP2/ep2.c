@@ -3,17 +3,15 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "ciclista.h"
+
+#include "global.h"
 #include "aleatorio.h"
+#include "ciclista.h"
 #include "pista.h"
 
-int tam_pista, num_ciclistas, num_voltas;
-int ciclista_sortudo; //índice do ciclista sorteado para andar à 90km/h
 
 Queue *resultados;
 pthread_mutex_p **mutex_resultados;
-
-int dt;
 
 void *run_process(void * ii){
 	int i = *((int *)ii);
@@ -75,7 +73,26 @@ void create_thread(int i){
 	pthread_create(ciclistas[i].thread, NULL, run_process, ciclistas[i].id); 
 }
 
-int *ind;
+void inicializa_ciclistas(int n){
+	ciclistas = malloc(n*(sizeof(ciclista)));
+
+	int i;
+	for(i=0;i<n;i++){
+		ciclistas[i].id = malloc(sizeof(int));	
+		*ciclistas[i].id = i;
+		ciclistas[i].dist = -(i/10);	
+		ciclistas[i].voltas = 0;
+		ciclistas[i].tempo = 0;
+		ciclistas[i].raia = (i%10);
+		ciclistas[i].velocidade = 30;
+		ciclistas[i].destruido = 0;
+		ciclistas[i].terminou = 0;
+		ciclistas[i].completou_volta = 0;
+		create_thread(i);
+		printf("Criou thread\n");
+
+	}
+}
 
 int cmp(const void *aa, const void *bb){
 	int a = *(int *)aa;
@@ -109,6 +126,7 @@ int main(int argc, char* argv[]){
 	tam_pista = atoi(argv[1]);
 	num_ciclistas = atoi(argv[2]);
 	num_voltas = atoi(argv[3]);
+
 	sorteio_ciclista_sortudo();
 
 	inicializa_pista(tam_pista);

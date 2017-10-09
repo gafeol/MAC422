@@ -1,6 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <pthread.h>
 
+#include "ciclista.h"
 #include "pista.h"
 
 void inicializa_pista(int tam){
@@ -11,8 +13,8 @@ void inicializa_pista(int tam){
 		for(j = 0; j < 10; i++)
 			pista[i].raia[j] = -1;
 		pista[i].linha = malloc(sizeof(pthread_mutex_t));
-		pthread_mutex_init(ciclistas[i].linha, NULL);
-		pthread_mutex_lock(ciclistas[i].linha);
+		pthread_mutex_init(pista[i].linha, NULL);
+		pthread_mutex_lock(pista[i].linha);
 	}
 }
 

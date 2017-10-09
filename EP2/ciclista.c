@@ -1,31 +1,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "global.h"
 #include "ciclista.h"
+#include "aleatorio.h"
+#include "pista.h"
 
 void destroi_ciclista(int i){
 	ciclistas[i].destruido = 1;
-}
-
-void inicializa_ciclistas(int n){
-	ciclistas = malloc(n*(sizeof(ciclista)));
-
-	int i;
-	for(i=0;i<n;i++){
-		ciclistas[i].id = malloc(sizeof(int));	
-		*ciclistas[i].id = i;
-		ciclistas[i].dist = -(i/10);	
-		ciclistas[i].voltas = 0;
-		ciclistas[i].tempo = 0;
-		ciclistas[i].raia = (i%10);
-		ciclistas[i].velocidade = 30;
-		ciclistas[i].destruido = 0;
-		ciclistas[i].terminou = 0;
-		ciclistas[i].completou_volta = 0;
-		create_thread(i);
-		printf("Criou thread\n");
-
-	}
 }
 
 int testa_quebrou(int i){
@@ -47,7 +29,7 @@ int testa_quebrou(int i){
 void sorteia_velocidade(int i)
 {
 	if(!ciclistas[i].completou_volta) return;
-	if((num_voltas - ciclistas[i].volta) == 2 && i == ciclista_sortudo) {
+	if((num_voltas - ciclistas[i].voltas) == 2 && i == ciclista_sortudo) {
 		ciclistas[i].velocidade = 90;
 		return;
 	} 
@@ -72,12 +54,12 @@ void ciclista_avanca(int i)
 	int raia = ciclistas[i].raia;
 	if(atual_pos == prox_pos) {
 		ciclistas[i].dist += distancia_a_percorrer(ciclistas[i].velocidade, dt);
-		if(pista[prox_pos].raia) )
-		return;
+		if(pista[prox_pos].raia)
+			return;
 	}
 	if(pista[prox_pos].raia[raia] != -1) { //tem alguém?
-		int ciclista_frente = pista[prox_pos].raia;
-		if((raia+1 <= 9)! && (pista[prox_pos].raia[raia+1] == -1)) { //é possível ultrapassar?
+		int ciclista_frente = pista[prox_pos].raia[raia+1];
+		if((raia+1 <= 9) && (pista[prox_pos].raia[raia+1] == -1)) { //é possível ultrapassar?
 			ciclistas[i].dist += distancia_a_percorrer(ciclistas[i].velocidade, dt);
 			desloca_ciclista_pista(i,-1);
 		}
