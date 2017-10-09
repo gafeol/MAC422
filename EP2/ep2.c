@@ -258,6 +258,7 @@ void inicializa_ciclistas(){
 		ciclistas[i].destruido = 0;
 		ciclistas[i].terminou = 0;
 		ciclistas[i].completou_volta = 0;
+		ciclistas[i].pontuacao = 0;
 		create_thread(i);
 
 	}
