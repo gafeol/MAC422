@@ -28,5 +28,5 @@ void destroi_ciclista(int);
 void sorteia_velocidade(int);
 int testa_quebrou(int);
 double distancia_a_percorrer(int,int);
-
+void ciclista_avanca(int);
 #endif

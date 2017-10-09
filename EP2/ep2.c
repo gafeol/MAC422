@@ -8,10 +8,11 @@
 #include "aleatorio.h"
 #include "ciclista.h"
 #include "pista.h"
+#include "queue.h"
 
 
 Queue *resultados;
-pthread_mutex_p **mutex_resultados;
+pthread_mutex_t **mutex_resultados;
 
 void *run_process(void * ii){
 	int i = *((int *)ii);
