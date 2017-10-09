@@ -50,8 +50,9 @@ void inicializa_pista(){
 void remove_ciclista_pista(int i)
 {
 	int raia = ciclistas[i].raia;
-	int pos = ((int)ciclistas[i].dist)%tam_pista;
-	(pista[pos].raia)[raia] = -1;
+	int pos = mod((int)ciclistas[i].dist);
+	printf("REMOVE DA PISTA %d que ta na pista[%d].raia %d = %d\n", i, pos, raia, pista[pos].raia[raia]);
+	pista_aux[pos].raia[raia] = -1;
 }
 
 /*dir = -1 -> direita, 0 -> reto, 1 -> esquerda
@@ -129,6 +130,7 @@ double distancia_a_percorrer(int vel, int dt)
 
 void ciclista_avanca(int i)
 {
+	printf("AVANCA %d\n", i);
 	int atual_pos = mod((int)ciclistas[i].dist);
 	int prox_pos = mod((int)(ciclistas[i].dist + distancia_a_percorrer(ciclistas[i].velocidade, dt)));
 	int raia = ciclistas[i].raia;
@@ -184,12 +186,12 @@ void *run_process(void * ii){
 
 		/* Vetor de mutexes pra lockar a linha e a proxima pra quando eu for colocar meu cara na pista */
 
-		pthread_mutex_lock(pista[pos].linha);
-		pthread_mutex_lock(pista[(pos+1)%tam_pista].linha);
+		pthread_mutex_lock(pista[mod(pos)].linha);
+		pthread_mutex_lock(pista[mod(pos+1)].linha);
 		/* Atualizar dist, matriz de pista com a nova posição */
 		ciclista_avanca(i);
-		pthread_mutex_unlock(pista[pos].linha);
-		pthread_mutex_unlock(pista[(pos+1)%tam_pista].linha);
+		pthread_mutex_unlock(pista[mod(pos)].linha);
+		pthread_mutex_unlock(pista[mod(pos+1)].linha);
 
 		/* Verificacao de 20 pontos se o ind[0] ta uma rodada a mais que o segundo maior (ind[1]) */
 		printf("PA!\n");
@@ -206,9 +208,13 @@ void *run_process(void * ii){
 			pthread_mutex_lock(mutex_resultados[novalap-1]);
 			queue_push(resultados[novalap-1], i);
 			pthread_mutex_unlock(mutex_resultados[novalap-1]);
+			if(novalap == num_voltas){
+				remove_ciclista_pista(i);
+			}
 		}
 
 		if(testa_quebrou(i)){
+			printf("QUEBROUUUUUUUUUUUUUUU %d\n", i);
 			pthread_mutex_lock(pista[pos].linha);
 			remove_ciclista_pista(i);
 			pthread_mutex_unlock(pista[pos].linha);
@@ -216,12 +222,12 @@ void *run_process(void * ii){
 		sorteia_velocidade(i);
 
 		/* Thread sorteia velocidade da proxima rodada */
-		ciclistas[i].completou_volta = 0;
 		pthread_mutex_unlock(ciclistas[i].arrive);
 		printf("%d passou no arrive\n", i);
 		printf("%d parou no continue\n", i);
 		pthread_mutex_lock(ciclistas[i].cont);
 		printf("%d passou no continue\n", i);
+		ciclistas[i].completou_volta = 0;
 	}
 }
 
