@@ -128,6 +128,22 @@ double distancia_a_percorrer(int vel, int dt)
 	}
 }
 
+int devolve_pontuacao(int pos)
+{
+	switch(pos) {
+		case 0:
+			return 5;
+		case 1:
+			return 3;
+		case 2:
+			return 2;
+		case 3:
+			return 1;
+		default:
+			return 0;
+	}
+}
+
 void ciclista_avanca(int i)
 {
 	printf("AVANCA %d\n", i);
@@ -206,6 +222,10 @@ void *run_process(void * ii){
 			int novalap = ciclistas[i].voltas;
 			/* Colocar o cara na lista ligada da lap ciclistas[i].volta */
 			pthread_mutex_lock(mutex_resultados[novalap-1]);
+			if(novalap%10==0) {
+				int pont = devolve_pontuacao(queue_size(resultados[novalap-1]));
+				queue_push(pontuacoes[novalap-1], pont);
+			}
 			queue_push(resultados[novalap-1], i);
 			pthread_mutex_unlock(mutex_resultados[novalap-1]);
 			if(novalap == num_voltas){
@@ -349,7 +369,13 @@ int main(int argc, char* argv[]){
 			while(!queue_empty(resultados[volta_atual-1])) {
 				int atual = head(resultados[volta_atual-1]);
 				queue_pop(resultados[volta_atual-1]);
-				printf("Colocacao %d: %d\n", colocacao++, atual);
+				if(volta_atual%10 != 0)
+					printf("Colocacao %d: %d\n", colocacao++, atual);
+				else {
+					int pont = head(pontuacoes[volta_atual-1]);
+					queue_pop(pontuacoes[volta_atual-1]);
+					printf("Colocacao %d: %d %d\n", colocacao++, atual, pont++);
+				}
 			}
 			volta_atual++;
 		}
