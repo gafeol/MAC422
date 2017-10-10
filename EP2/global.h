@@ -3,7 +3,7 @@
 
 #include <pthread.h>
 
-int num_ciclistas, num_voltas, tam_pista, dt;
+int num_ciclistas, num_voltas, tam_pista, dt, tempo;
 int ciclista_sortudo;
 int volta_atual;
 int quebrou = 0;
@@ -25,6 +25,7 @@ typedef struct ciclista{
 	int terminou;
 	int pontuacao;
 	int max_volta_extra;
+	int tempo_chegada;
 
 	int flag;
 

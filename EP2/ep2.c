@@ -86,7 +86,7 @@ int testa_quebrou(int i){
 	if(!ciclistas[i].completou_volta || ciclistas[i].voltas%15 != 0) return 0;
 	if(ciclistas_ativos <= 5)
 		return 0;
-	if(sorteio(1)){
+	if(sorteio(99)){  /* TA 20 PORCENTO ERA PRA SER 1! */
 		ciclistas[i].destruido = 1;
 		pthread_mutex_lock(quebrado);
 		ciclistas_ativos--;
@@ -253,14 +253,17 @@ void roda(int i){
 		int novalap = ciclistas[i].voltas;
 		pthread_mutex_lock(mutex_resultados[novalap-1]);
 		int pont = devolve_pontuacao(queue_size(resultados[novalap-1]));
+
 		ciclistas[i].pontuacao += pont;
-		if(novalap%10==0) {
+
+		if(novalap%10==0) 
 			queue_push(pontuacoes[novalap-1], ciclistas[i].pontuacao);
-		}
+
 		queue_push(resultados[novalap-1], i);
 		pthread_mutex_unlock(mutex_resultados[novalap-1]);
 		if(novalap == num_voltas){
 			remove_ciclista_pista(i);
+			ciclistas[i].tempo_chegada = tempo;
 		}
 	}
 
@@ -284,7 +287,7 @@ void roda(int i){
 	if(ciclistas[i].destruido)
 		return;
 	if(queue_size(resultados[num_voltas-1]) == num_ciclistas)
-		return;
+		return ;
 
 
 	//pthread_mutex_lock(ciclistas[i].cont);
@@ -304,7 +307,7 @@ void *run_process(void * ii){
 			pthread_barrier_wait(arrive);
 			pthread_barrier_wait(cont);
 			if(queue_size(resultados[num_voltas-1]) == num_ciclistas)
-				exit(0);
+				break;
 		}
 	}
 }
@@ -338,6 +341,7 @@ void inicializa_ciclistas(){
 		ciclistas[i].completou_volta = 0;
 		ciclistas[i].pontuacao = 0;
 		ciclistas[i].max_volta_extra = 0;
+		ciclistas[i].tempo_chegada = 0;
 		create_thread(i);
 	}
 }
@@ -423,10 +427,11 @@ int main(int argc, char* argv[]){
 	sorteio_ciclista_sortudo();
 
 	while(volta_atual != num_voltas+1){
-		//	printf("Coordenador parou no arrive\n");
+		tempo += dt;
 		printf("Queue volta atual %d tam:%d\n", volta_atual-1,  queue_size(resultados[volta_atual-1]));
-		barreira_threads();
 		printf("Coordenador parou no arrive\n");
+		barreira_threads();
+		printf("Coordenador passou no arrive\n");
 
 		for(int i=0;i<tam_pista;i++){
 			for(int j=0;j<10;j++){
@@ -497,7 +502,13 @@ int main(int argc, char* argv[]){
 		printf("Coordenador passoou no continue\n");
 		printf("Sincronizou!\n");
 	}
-	//printf("%d", (int)(floor(-0.5))); 
+	for(int a=0;a<num_ciclistas;a++){
+		printf("Ciclista %d: ", a);
+		if(ciclistas[a].destruido)
+			printf("destruido na volta %d (sem completa-la)\n", ciclistas[a].voltas + 1);
+		else
+			printf("terminou a corrida em %d ms\n", ciclistas[a].tempo_chegada);
+	}
 	return 0;
 }
 
