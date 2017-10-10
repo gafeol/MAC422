@@ -41,6 +41,6 @@ typedef struct matriz_pista{
 
 matriz_pista *pista, *pista_aux;
 
-//pthread_barrier_t *trinta, *flag1, *flag2, *sessenta;
+pthread_barrier_t *arrive, *cont; 
 
 #endif
