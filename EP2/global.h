@@ -47,4 +47,7 @@ matriz_pista *pista, *pista_aux;
 pthread_barrier_t *arrive, *cont; 
 pthread_mutex_t *quebrado;
 
+int volta, imprvolta;
+pthread_mutex_t *mutex_volta;
+
 #endif
