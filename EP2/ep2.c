@@ -233,9 +233,14 @@ void roda(int i){
 	int pos = (tam_pista + ((int)ciclistas[i].dist)%tam_pista)%tam_pista;
 
 	/* Vetor de mutexes pra lockar a linha e a proxima pra quando eu for colocar meu cara na pista */
-
-	pthread_mutex_lock(pista[mod(pos)].linha);
-	pthread_mutex_lock(pista[mod(pos+1)].linha);
+	if(pos == 0) {
+		pthread_mutex_lock(pista[mod(pos+1)].linha);
+		pthread_mutex_lock(pista[mod(pos)].linha);
+	}
+	else {
+		pthread_mutex_lock(pista[mod(pos)].linha);
+		pthread_mutex_lock(pista[mod(pos+1)].linha);
+	}
 	/* OK! Atualizar dist, matriz de pista com a nova posição */
 	ciclista_avanca(i);
 	atualiza_posicoes(i);
