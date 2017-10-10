@@ -306,7 +306,7 @@ void *run_process(void * ii){
 		else{
 			pthread_barrier_wait(arrive);
 			pthread_barrier_wait(cont);
-			if(queue_size(resultados[num_voltas-1]) == num_ciclistas)
+			if(queue_size(resultados[num_voltas-1]) == ciclistas_ativos)
 				break;
 		}
 	}
@@ -371,14 +371,14 @@ void barreira_threads(){
 void libera_threads(){
 	pthread_barrier_wait(cont);
 	if(quebrou) {
-		pthread_barrier_destroy(arrive);
-		pthread_barrier_init(arrive, NULL, ciclistas_ativos);
+		pthread_barrier_destroy(cont);
+		pthread_barrier_init(cont, NULL, ciclistas_ativos);
 		quebrou = 0;
 	}
 	/*
 	int i;
 	for(i = 0;i < num_ciclistas;i++){
-		if(!vai_rodar(i)) continue;
+		if(!vai_rodar(i)) cotinue;
 		pthread_mutex_unlock(ciclistas[i].cont);
 	}
 	*/
@@ -462,7 +462,7 @@ int main(int argc, char* argv[]){
 			ciclistas[primeiro_ciclista].pontuacao += 20;
 		}
 
-		if(queue_size(resultados[volta_atual-1]) == num_ciclistas) {
+		if(queue_size(resultados[volta_atual-1]) == ciclistas_ativos) {
 			int colocacao = 1;
 			int flag_acc = (volta_atual%10 == 0 ? 1 : 0); //é uma volta múltipla de 10?
 			printf("Volta %d:\n", volta_atual);
