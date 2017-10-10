@@ -403,7 +403,7 @@ int main(int argc, char* argv[]){
 	if(argc > 4)
 		debug = (argv[4][0] == 'd' ? 1 : 0);
 
-	imprvolta = 0;
+	imprvolta = 1;
 	volta = 0;
 
 	arrive = malloc(sizeof(pthread_barrier_t));
@@ -434,7 +434,7 @@ int main(int argc, char* argv[]){
 
 	sorteio_ciclista_sortudo();
 
-	while(volta < num_voltas+1){
+	while(volta < num_voltas){
 		printf("volta_atual %d num_voltas %d\n", volta_atual, num_voltas);
 		tempo += dt;
 		printf("Queue volta atual %d tam:%d\n", volta_atual-1,  queue_size(resultados[volta_atual-1]));
@@ -480,14 +480,14 @@ int main(int argc, char* argv[]){
 			ciclistas[primeiro_ciclista].pontuacao += 20;
 		}
 
-		while(imprvolta < num_voltas && volta >= imprvolta) {
+		while(imprvolta <= num_voltas && volta >= imprvolta) {
 			int colocacao = 1;
-			int flag_acc = (imprvolta%10 == 9 ? 1 : 0); //é uma volta múltipla de 10?
+			int flag_acc = (imprvolta%10 == 0 ? 1 : 0); //é uma volta múltipla de 10?
 			printf("Volta %d:\n", imprvolta);
 			if(flag_acc == 0) { // se não for, é só partir para o abraço
-				while(!queue_empty(resultados[imprvolta])) {
-					int atual = head(resultados[imprvolta]);
-					queue_pop(resultados[imprvolta]);
+				while(!queue_empty(resultados[imprvolta-1])) {
+					int atual = head(resultados[imprvolta-1]);
+					queue_pop(resultados[imprvolta-1]);
 					//if(imprvolta%10 != 0)
 					printf("Colocacao %d: %d\n", colocacao++, atual);
 					//else {
@@ -499,12 +499,12 @@ int main(int argc, char* argv[]){
 			}
 			else { //aí o negócio complica
 				Heap hp = heap_create();
-				while(!queue_empty(resultados[imprvolta])) {
-					int atual = head(resultados[imprvolta]);
-					queue_pop(resultados[imprvolta]);
+				while(!queue_empty(resultados[imprvolta-1])) {
+					int atual = head(resultados[imprvolta-1]);
+					queue_pop(resultados[imprvolta-1]);
 					printf("passou\n");
-					int pont = head(pontuacoes[imprvolta]);
-					queue_pop(pontuacoes[imprvolta]);
+					int pont = head(pontuacoes[imprvolta-1]);
+					queue_pop(pontuacoes[imprvolta-1]);
 					heap_push(hp, -pont, atual);				
 				}
 				while(!heap_empty(hp)){
