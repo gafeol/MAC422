@@ -6,6 +6,8 @@
 int num_ciclistas, num_voltas, tam_pista, dt;
 int ciclista_sortudo;
 int volta_atual;
+int quebrou = 0;
+int ciclistas_ativos;
 
 int debug;
 
@@ -42,5 +44,6 @@ typedef struct matriz_pista{
 matriz_pista *pista, *pista_aux;
 
 pthread_barrier_t *arrive, *cont; 
+pthread_mutex_t *quebrado;
 
 #endif

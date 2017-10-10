@@ -84,15 +84,13 @@ void destroi_ciclista(int i){
 
 int testa_quebrou(int i){
 	if(!ciclistas[i].completou_volta || ciclistas[i].voltas%15 != 0) return 0;
-	int ciclistas_ativos = 0;
-	int j;
-	for(j = 0;ciclistas[j].id != NULL;j++){
-		ciclistas_ativos += 1 - ciclistas[j].destruido;
-	}
 	if(ciclistas_ativos <= 5)
 		return 0;
 	if(sorteio(1)){
 		ciclistas[i].destruido = 1;
+		pthread_mutex_lock(quebrado);
+		ciclistas_ativos--;
+		pthread_mutex_unlock(quebrado);
 		return 1;
 	}
 	return 0;
@@ -283,8 +281,10 @@ void roda(int i){
 	printf("%d parou no continue\n", i);
 	pthread_barrier_wait(cont);
 	printf("%d passou no continue\n", i);
+	if(ciclistas[i].destruido)
+		return;
 	if(queue_size(resultados[num_voltas-1]) == num_ciclistas)
-		exit(0);
+		return;
 
 
 	//pthread_mutex_lock(ciclistas[i].cont);
@@ -350,6 +350,11 @@ int cmp(const void *aa, const void *bb){
 
 void barreira_threads(){
 	pthread_barrier_wait(arrive);
+	//atualizar destruidos
+	if(quebrou) {
+		pthread_barrier_destroy(arrive);
+		pthread_barrier_init(arrive, NULL, ciclistas_ativos);
+	}
 	/*
 	int i;
 	for(i = 0;i < num_ciclistas;i++){
@@ -361,6 +366,11 @@ void barreira_threads(){
 
 void libera_threads(){
 	pthread_barrier_wait(cont);
+	if(quebrou) {
+		pthread_barrier_destroy(arrive);
+		pthread_barrier_init(arrive, NULL, ciclistas_ativos);
+		quebrou = 0;
+	}
 	/*
 	int i;
 	for(i = 0;i < num_ciclistas;i++){
@@ -372,7 +382,7 @@ void libera_threads(){
 
 int main(int argc, char* argv[]){
 	tam_pista = atoi(argv[1]);
-	num_ciclistas = atoi(argv[2]);
+	ciclistas_ativos = num_ciclistas = atoi(argv[2]);
 	num_voltas = atoi(argv[3]);
 	volta_atual = 1;
 
@@ -401,6 +411,10 @@ int main(int argc, char* argv[]){
 		mutex_resultados[i] = malloc(sizeof(pthread_mutex_t));
 		pthread_mutex_init(mutex_resultados[i], NULL);
 	}
+
+	/* Inicializa mutex para ciclista_ativos */
+	quebrado = malloc(sizeof(pthread_mutex_t));
+	pthread_mutex_init(quebrado, NULL);
 
 	ciclistas = malloc(num_ciclistas*(sizeof(ciclista)));
 
@@ -483,7 +497,7 @@ int main(int argc, char* argv[]){
 		printf("Coordenador passoou no continue\n");
 		printf("Sincronizou!\n");
 	}
-	printf("%d", (int)(floor(-0.5))); 
+	//printf("%d", (int)(floor(-0.5))); 
 	return 0;
 }
 
