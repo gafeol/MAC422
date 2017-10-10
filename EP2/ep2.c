@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 
 #define mod(a) ((tam_pista + (a%tam_pista))%tam_pista)
 
@@ -482,6 +483,7 @@ int main(int argc, char* argv[]){
 		printf("Coordenador passoou no continue\n");
 		printf("Sincronizou!\n");
 	}
+	printf("%d", (int)(floor(-0.5))); 
 	return 0;
 }
 
