@@ -35,7 +35,7 @@ int sorteio(int p)
 
 void sorteio_ciclista_sortudo()
 {
-	if(sorteio(10))
+	if(sorteio(100))
 		ciclista_sortudo = (rand() % num_ciclistas);
 	else
 		ciclista_sortudo = -1;
@@ -108,7 +108,7 @@ void sorteia_velocidade(int i){
 	if((num_voltas - ciclistas[i].voltas) <= 2 && i == ciclista_sortudo) {
 		ciclistas[i].velocidade = 90;
 		dt = 20;
-		printf("VELOCIDADE %d = 90\n", i);
+		debug("VELOCIDADE %d = 90\n", i);
 		return;
 	}
 	if(ciclistas[i].velocidade == 30) {
@@ -285,19 +285,23 @@ void roda(int i){
 	ciclistas[i].completou_volta = 0;
 
 	int impr = pthread_barrier_wait(imprime);
-	if(impr == PTHREAD_BARRIER_SERIAL_THREAD && debug){
-		for(int a=tam_pista-1;a>=0;a--){
-			for(int b=0;b<10;b++){
-				if(pista[a].raia[b] == -1)
-					printf("%3c", 'X');
-				else
-					printf("%3d", pista[a].raia[b]);
+	if(impr == PTHREAD_BARRIER_SERIAL_THREAD){
+		tempo += dt;
+		if(debug){
+//			printf("tempo %lld\n", tempo);
+			for(int a=tam_pista-1;a>=0;a--){
+				for(int b=0;b<10;b++){
+					if(pista[a].raia[b] == -1)
+						printf("%3c", 'X');
+					else
+						printf("%3d", pista[a].raia[b]);
+				}
+				printf("\n");
 			}
 			printf("\n");
 		}
-			printf("\n");
 	}
-	
+
 	/* Testa se mudo de quadrado */
 	ciclistas[i].avanca = 0;
 	if(floor(ciclistas[i].dist) != floor(ciclistas[i].dist + distancia_a_percorrer(ciclistas[i].velocidade, dt))){
@@ -402,26 +406,41 @@ void roda(int i){
 	debug("%d passou no continue\n", i);
 
 
-	if(ciclistas[i].destruido)
+	if(ciclistas[i].destruido){
+		pthread_exit(NULL);
 		return;
+	}
 	if(queue_size(resultados[num_voltas-1]) == ciclistas_ativos){
-		debug("cara %d vaza com tempo %d\n", i, ciclistas[i].tempo_chegada);
 		return ;
 	}
-	debug("cara %d vaza com tempo %d\n", i, ciclistas[i].tempo_chegada);
-
 }
 
 void *run_process(void * ii){
 	int i = *((int *)ii);
 	debug("run process cara %d\n", i);
-	while(1){
+	while(volta < num_voltas){
 		if(vai_rodar(i))
 			roda(i);
 		else if(!ciclistas[i].destruido){
 			debug("cara %d jacabou\n", i);
 
-			pthread_barrier_wait(imprime);
+			int impr = pthread_barrier_wait(imprime);
+			if(impr == PTHREAD_BARRIER_SERIAL_THREAD){
+				tempo += dt;
+				if(debug){
+	//				printf("tempo %lld\n", tempo);
+					for(int a=tam_pista-1;a>=0;a--){
+						for(int b=0;b<10;b++){
+							if(pista[a].raia[b] == -1)
+								printf("%3c", 'X');
+							else
+								printf("%3d", pista[a].raia[b]);
+						}
+						printf("\n");
+					}
+					printf("\n");
+				}
+			}
 
 			pthread_barrier_wait(intencoes);
 			/* Barreira adicional*/
@@ -573,7 +592,6 @@ int main(int argc, char* argv[]){
 	sorteio_ciclista_sortudo();
 
 	while(volta < num_voltas){
-		tempo += dt;
 		debug("volta_atual %d num_voltas %d\n", volta_atual, num_voltas);
 		debug("Queue volta atual %d tam:%d\n", volta_atual-1,  queue_size(resultados[volta_atual-1]));
 		debug("Coordenador parou no arrive ativos %d\n", ciclistas_ativos);
@@ -639,11 +657,14 @@ int main(int argc, char* argv[]){
 		debug("Sincronizou!\n");
 	}
 	for(int a=0;a<num_ciclistas;a++){
+		pthread_join(*ciclistas[a].thread, NULL);
+	}
+	for(int a=0;a<num_ciclistas;a++){
 		printf("Ciclista %d: ", a);
 		if(ciclistas[a].destruido)
 			printf("destruido na volta %d\n", ciclistas[a].voltas);
 		else
-			printf("terminou a corrida em %d ms\n", ciclistas[a].tempo_chegada);
+			printf("terminou a corrida em %lld ms\n", ciclistas[a].tempo_chegada);
 	}
 	return 0;
 }
