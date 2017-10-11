@@ -6,7 +6,7 @@
 #include <assert.h>
 
 #define mod(a) ((tam_pista + (a%tam_pista))%tam_pista)
-#define debug(args...) printf(args)
+#define debug(args...) fprintf(stderr, args)
 
 
 #include "global.h"
@@ -66,6 +66,7 @@ void remove_ciclista_pista(int i)
 	int raia = ciclistas[i].raia;
 	int pos = mod((int)ciclistas[i].dist);
 	debug("REMOVE DA PISTA %d que ta na pista[%d].raia %d = %d\n", i, pos, raia, pista[pos].raia[raia]);
+	assert(pista_aux[pos].raia[raia] == i);
 	pista_aux[pos].raia[raia] = -1;
 }
 
@@ -337,6 +338,68 @@ void roda(int i){
 	}
 	fprintf(stderr, "\n");
 
+
+	
+	sorteia_velocidade(i);
+	ciclistas[i].completou_volta = 0;
+
+
+	/* Testa se mudo de quadrado */
+	ciclistas[i].avanca = 0;
+	if(floor(ciclistas[i].dist) != floor(ciclistas[i].dist + distancia_a_percorrer(ciclistas[i].velocidade, dt))){
+		ciclistas[i].avanca = 1;
+	} 
+
+	
+	/* Barreira das intencoes, a partir daqui todos ja sabem se querem seguir em frente ou nao */
+	int rc = pthread_barrier_wait(intencoes);
+	if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
+		pthread_barrier_destroy(intencoes);
+		pthread_barrier_init(intencoes, NULL, ciclistas_ativos);
+	}
+	/* Rodo os caras que vao ficar parados e analiso os que sao reduzidos */
+	if(vai_rodar(i) && ciclistas[i].avanca == 0){
+		int pos = mod((int)floor(ciclistas[i].dist));
+		int raia = ciclistas[i].raia;
+		fprintf(stderr, "nao avanca %d\n", i);
+		int nxt_pos = mod(pos-1);
+		int nxt = pista[nxt_pos].raia[raia];
+		while(nxt != -1 && ciclistas[nxt].avanca == 1 && !pode_ultrapassar(nxt)){
+			fprintf(stderr, "atrasa o cara %d\n", nxt);
+			ciclistas[nxt].avanca = 0;
+			pista_aux[nxt_pos].raia[raia] = nxt;
+			pista[nxt_pos].raia[raia] = -1;
+			nxt_pos = mod(nxt_pos-1);
+			nxt = pista[nxt_pos].raia[raia];
+		}
+		pista_aux[pos].raia[raia] = i;
+		pista[pos].raia[raia] = -1;
+		fprintf(stderr, "pista_aux[%d][%d] = %d\n", pos, raia, pista_aux[pos].raia[raia]);
+		ciclistas[i].dist += distancia_a_percorrer(ciclistas[i].velocidade, dt);
+	}
+	fprintf(stderr, "cara %d para na barreira\n", i);
+	rc = pthread_barrier_wait(ciclistas_parados);
+	fprintf(stderr, "cara %d passa da barreira\n", i);
+	if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
+		debug("cara %d destroi ciclistas_parados\n", i);
+		pthread_barrier_destroy(ciclistas_parados);
+		debug("cara %d cria ciclistas_parados com %d\n", i, ciclistas_ativos);
+		pthread_barrier_init(ciclistas_parados, NULL, ciclistas_ativos);
+	}
+	if(vai_rodar(i) && ciclistas[i].avanca == 1){
+		int pos = mod((int)floor(ciclistas[i].dist));
+		int raia = ciclistas[i].raia;
+		debug("cara %d avanca\n", i);
+		int nxt_pos = mod(pos+1);
+		int nxt = pista[nxt_pos].raia[raia];
+		if(nxt != -1) //ultrapasso
+			pista_aux[mod(pos+1)].raia[raia+1] = i;
+		else // so anda
+			pista_aux[mod(pos+1)].raia[raia] = i;
+		pista[pos].raia[raia] = -1;
+		ciclistas[i].dist += distancia_a_percorrer(ciclistas[i].velocidade, dt);
+	}
+
 	/* Atualizar o lap e tempo */
 	if(((int)ciclistas[i].dist)/tam_pista > ciclistas[i].voltas){
 		debug("cara %d dist %lf tam pista %d voltas %d\n", i, ciclistas[i].dist, tam_pista, ciclistas[i].voltas); 
@@ -366,62 +429,7 @@ void roda(int i){
 		remove_ciclista_pista(i);
 		pthread_mutex_unlock(pista[pos].linha);
 	}
-
-	
-	sorteia_velocidade(i);
-	ciclistas[i].completou_volta = 0;
-
-
-	/* Testa se mudo de quadrado */
-	ciclistas[i].avanca = 0;
-	if(floor(ciclistas[i].dist) != floor(ciclistas[i].dist + distancia_a_percorrer(ciclistas[i].velocidade, dt))){
-		ciclistas[i].avanca = 1;
-	} 
-
-	
-	/* Barreira das intencoes, a partir daqui todos ja sabem se querem seguir em frente ou nao */
-	int rc = pthread_barrier_wait(intencoes);
-	if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
-		pthread_barrier_destroy(intencoes);
-		pthread_barrier_init(intencoes, NULL, ciclistas_ativos);
-	}
-	/* Rodo os caras que vao ficar parados e analiso os que sao reduzidos */
-	if(vai_rodar(i) && ciclistas[i].avanca == 0){
-		int pos = mod((int)floor(ciclistas[i].dist));
-		int raia = ciclistas[i].raia;
-		fprintf(stderr, "nao avanca %d\n", i);
-		int nxt_pos = mod(pos-1);
-		int nxt = pista[nxt_pos].raia[raia];
-		while(nxt != -1 && ciclistas[nxt].avanca == 1 && !pode_ultrapassar(nxt)){
-			ciclistas[nxt].avanca = 0;
-			pista_aux[nxt_pos].raia[raia] = nxt;
-			pista[nxt_pos].raia[raia] = -1;
-			nxt_pos = mod(nxt_pos-1);
-			nxt = pista[nxt_pos].raia[raia];
-		}
-		pista_aux[pos].raia[raia] = i;
-		pista[pos].raia[raia] = -1;
-		fprintf(stderr, "pista_aux[%d][%d] = %d\n", pos, raia, pista_aux[pos].raia[raia]);
-		ciclistas[i].dist += distancia_a_percorrer(ciclistas[i].velocidade, dt);
-	}
-	rc = pthread_barrier_wait(ciclistas_parados);
-	if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
-		pthread_barrier_destroy(ciclistas_parados);
-		pthread_barrier_init(ciclistas_parados, NULL, ciclistas_ativos);
-	}
-	if(vai_rodar(i) && ciclistas[i].avanca == 1){
-		int pos = mod((int)floor(ciclistas[i].dist));
-		int raia = ciclistas[i].raia;
-		int nxt_pos = mod(pos+1);
-		int nxt = pista[nxt_pos].raia[raia];
-		if(nxt != -1) //ultrapasso
-			pista_aux[mod(pos+1)].raia[raia+1] = i;
-		else // so anda
-			pista_aux[mod(pos+1)].raia[raia] = i;
-		pista[pos].raia[raia] = -1;
-		ciclistas[i].dist += distancia_a_percorrer(ciclistas[i].velocidade, dt);
-	}
-
+	//pthread_mutex_lock(ciclistas[i].cont);
 
 	/* Thread sorteia velocidade da proxima rodada */
 	//pthread_mutex_unlock(ciclistas[i].arrive);
@@ -431,14 +439,17 @@ void roda(int i){
 	debug("%d parou no continue\n", i);
 	pthread_barrier_wait(cont);
 	debug("%d passou no continue\n", i);
+
+
 	if(ciclistas[i].destruido)
 		return;
-	if(queue_size(resultados[num_voltas-1]) == num_ciclistas)
+	if(queue_size(resultados[num_voltas-1]) == ciclistas_ativos){
+		debug("cara %d vaza com tempo %d\n", i, ciclistas[i].tempo_chegada);
 		return ;
-
-
-		//pthread_mutex_lock(ciclistas[i].cont);
 	}
+	debug("cara %d vaza com tempo %d\n", i, ciclistas[i].tempo_chegada);
+
+}
 
 void *run_process(void * ii){
 	int i = *((int *)ii);
@@ -613,7 +624,7 @@ int main(int argc, char* argv[]){
 					volta = ciclistas[i].voltas;
 			}
 		}
-		printf("volta = %d\n", volta);
+		debug("volta = %d\n", volta);
 
 		/*
 		for(int i=0;i<tam_pista;i++){
@@ -639,7 +650,7 @@ int main(int argc, char* argv[]){
 			fprintf(stderr, "============pista_aux==========\n");
 			for(int i=tam_pista-1;i>=0;i--){
 				for(int r=0;r<10;r++){
-					if(pista[i].raia[r] == -1)
+					if(pista_aux[i].raia[r] == -1)
 						fprintf(stderr, "%3c", 'X');
 					else
 						fprintf(stderr, "%3d", pista_aux[i].raia[r]);
