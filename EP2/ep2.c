@@ -35,7 +35,7 @@ int sorteio(int p)
 
 void sorteio_ciclista_sortudo()
 {
-	if(sorteio(100))
+	if(sorteio(10))
 		ciclista_sortudo = (rand() % num_ciclistas);
 	else
 		ciclista_sortudo = -1;
@@ -288,7 +288,7 @@ void roda(int i){
 	if(impr == PTHREAD_BARRIER_SERIAL_THREAD){
 		tempo += dt;
 		if(debug){
-//			printf("tempo %lld\n", tempo);
+			printf("tempo %lld\n", tempo-dt);
 			for(int a=tam_pista-1;a>=0;a--){
 				for(int b=0;b<10;b++){
 					if(pista[a].raia[b] == -1)
@@ -428,7 +428,7 @@ void *run_process(void * ii){
 			if(impr == PTHREAD_BARRIER_SERIAL_THREAD){
 				tempo += dt;
 				if(debug){
-	//				printf("tempo %lld\n", tempo);
+					printf("tempo %lld\n", tempo-dt);
 					for(int a=tam_pista-1;a>=0;a--){
 						for(int b=0;b<10;b++){
 							if(pista[a].raia[b] == -1)
