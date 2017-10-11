@@ -351,8 +351,11 @@ void roda(int i){
 	pthread_mutex_unlock(pista[mod(pos)].linha);
 	pthread_mutex_unlock(pista[mod(pos+1)].linha);
 
+
+	
 	sorteia_velocidade(i);
 	ciclistas[i].completou_volta = 0;
+
 
 	/* Testa se mudo de quadrado */
 	ciclistas[i].avanca = 0;
@@ -414,8 +417,8 @@ void roda(int i){
 		}
 		assert(pista_aux[pos].raia[raia] == -1);
 		pista_aux[pos].raia[raia] = i;
-		assert(pista[pos].raia[raia] == i);
 		pista[pos].raia[raia] = -1;
+		fprintf(stderr, "pista_aux[%d][%d] = %d\n", pos, raia, pista_aux[pos].raia[raia]);
 		ciclistas[i].dist += distancia_a_percorrer(ciclistas[i].velocidade, dt);
 	}
 	//	fprintf(stderr, "cara %d para na barreira\n", i);
@@ -518,11 +521,12 @@ void roda(int i){
 
 	if(ciclistas[i].destruido)
 		return;
-
 	if(queue_size(resultados[num_voltas-1]) == ciclistas_ativos){
 		debug("cara %d vaza com tempo %d\n", i, ciclistas[i].tempo_chegada);
 		return ;
 	}
+	debug("cara %d vaza com tempo %d\n", i, ciclistas[i].tempo_chegada);
+
 }
 
 void *run_process(void * ii){
@@ -681,8 +685,9 @@ int main(int argc, char* argv[]){
 	ciclistas = malloc(num_ciclistas*(sizeof(ciclista)));
 
 	inicializa_ciclistas();
-	for(int a=0;a<num_ciclistas;a++)
+	for(int a=0;a<num_ciclistas;a++){
 		create_thread(a);
+	}
 
 	sorteio_ciclista_sortudo();
 
