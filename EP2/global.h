@@ -3,7 +3,8 @@
 
 #include <pthread.h>
 
-int num_ciclistas, num_voltas, tam_pista, dt, tempo;
+int num_ciclistas, num_voltas, tam_pista, dt;
+long long tempo;
 int ciclista_sortudo;
 int volta_atual;
 int quebrou = 0;
@@ -25,7 +26,7 @@ typedef struct ciclista{
 	int terminou;
 	int pontuacao;
 	int max_volta_extra;
-	int tempo_chegada;
+	long long tempo_chegada;
 
 	int avanca;
 
@@ -45,7 +46,7 @@ typedef struct matriz_pista{
 matriz_pista *pista, *pista_aux;
 
 pthread_barrier_t *arrive, *barreira_andou, *cont; 
-pthread_barrier_t *intencoes, *ciclistas_parados;
+pthread_barrier_t *intencoes, *ciclistas_parados, *imprime;
 pthread_mutex_t *quebrado;
 
 int volta, imprvolta;
