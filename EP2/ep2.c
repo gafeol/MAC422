@@ -611,8 +611,8 @@ int main(int argc, char* argv[]){
 	sorteio_ciclista_sortudo();
 
 	while(volta < num_voltas){
-		debug("volta_atual %d num_voltas %d\n", volta_atual, num_voltas);
 		tempo += dt;
+		debug("volta_atual %d num_voltas %d\n", volta_atual, num_voltas);
 		debug("Queue volta atual %d tam:%d\n", volta_atual-1,  queue_size(resultados[volta_atual-1]));
 		debug("Coordenador parou no arrive ativos %d\n", ciclistas_ativos);
 		barreira_threads();
