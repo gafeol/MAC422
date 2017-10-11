@@ -223,6 +223,8 @@ void anda_esquerda(int i){
 void ciclista_avanca(int i){
 	int pos = mod((int)floor(ciclistas[i].dist));
 	int raia = ciclistas[i].raia;
+	/*
+
 	fprintf(stderr, "cara %d pos %d raia %d pista %d\n", i, pos, raia, pista[pos].raia[raia]);
 	fprintf(stderr, "pista_aux[%d][%d] = %d\n", pos, raia, pista_aux[pos].raia[raia]);
 	fprintf(stderr, "==================pista antes avanca==========\n");
@@ -247,6 +249,8 @@ void ciclista_avanca(int i){
 		fprintf(stderr, "\n");
 	}
 	fprintf(stderr, "\n");
+
+	*/
 //	assert(pista_aux[pos].raia[raia] == i);
 
 	if(raia == 0){
@@ -257,6 +261,7 @@ void ciclista_avanca(int i){
 		anda_esquerda(i);
 	else
 		fica(i);
+	/*
 	fprintf(stderr, "cara %d pos %d raia %d pista %d\n", i, pos, raia, pista[pos].raia[raia]);
 	fprintf(stderr, "pista_aux[%d][%d] = %d\n", pos, raia, pista_aux[pos].raia[raia]);
 	fprintf(stderr, "==================pista apos avanca==========\n");
@@ -281,6 +286,7 @@ void ciclista_avanca(int i){
 		fprintf(stderr, "\n");
 	}
 	fprintf(stderr, "\n");
+	*/
 }
 
 #include "queue.h"
@@ -366,11 +372,11 @@ void roda(int i){
 	if(vai_rodar(i) && ciclistas[i].avanca == 0){
 		int pos = mod((int)floor(ciclistas[i].dist));
 		int raia = ciclistas[i].raia;
-		fprintf(stderr, "nao avanca %d\n", i);
+	//	fprintf(stderr, "nao avanca %d\n", i);
 		int nxt_pos = mod(pos-1);
 		int nxt = pista[nxt_pos].raia[raia];
 		while(nxt != -1 && ciclistas[nxt].avanca == 1 && !pode_ultrapassar(nxt)){
-			fprintf(stderr, "atrasa o cara %d\n", nxt);
+	//		fprintf(stderr, "atrasa o cara %d\n", nxt);
 			ciclistas[nxt].avanca = 0;
 			pista_aux[nxt_pos].raia[raia] = nxt;
 			pista[nxt_pos].raia[raia] = -1;
@@ -383,9 +389,9 @@ void roda(int i){
 		pista[pos].raia[raia] = -1;
 		ciclistas[i].dist += distancia_a_percorrer(ciclistas[i].velocidade, dt);
 	}
-	fprintf(stderr, "cara %d para na barreira\n", i);
+//	fprintf(stderr, "cara %d para na barreira\n", i);
 	rc = pthread_barrier_wait(ciclistas_parados);
-	fprintf(stderr, "cara %d passa da barreira\n", i);
+//	fprintf(stderr, "cara %d passa da barreira\n", i);
 	if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
 		debug("cara %d destroi ciclistas_parados\n", i);
 		pthread_barrier_destroy(ciclistas_parados);
