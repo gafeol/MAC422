@@ -45,7 +45,7 @@ typedef struct matriz_pista{
 matriz_pista *pista, *pista_aux;
 
 pthread_barrier_t *arrive, *barreira_andou, *cont; 
-ptread_barrier_t *intencoes, *ciclistas_parados, *ciclistas_avancam;
+pthread_barrier_t *intencoes, *ciclistas_parados;
 pthread_mutex_t *quebrado;
 
 int volta, imprvolta;
