@@ -107,6 +107,7 @@ void sorteia_velocidade(int i){
 	debug("SORTEIA PRO I %d\n", i);
 	if((num_voltas - ciclistas[i].voltas) <= 2 && i == ciclista_sortudo) {
 		ciclistas[i].velocidade = 90;
+		dt = 20;
 		printf("VELOCIDADE %d = 90\n", i);
 		return;
 	}
@@ -283,13 +284,6 @@ void roda(int i){
 	sorteia_velocidade(i);
 	ciclistas[i].completou_volta = 0;
 
-
-	/* Testa se mudo de quadrado */
-	ciclistas[i].avanca = 0;
-	if(floor(ciclistas[i].dist) != floor(ciclistas[i].dist + distancia_a_percorrer(ciclistas[i].velocidade, dt))){
-		ciclistas[i].avanca = 1;
-	} 
-
 	int impr = pthread_barrier_wait(imprime);
 	if(impr == PTHREAD_BARRIER_SERIAL_THREAD && debug){
 		for(int a=tam_pista-1;a>=0;a--){
@@ -304,6 +298,11 @@ void roda(int i){
 			printf("\n");
 	}
 	
+	/* Testa se mudo de quadrado */
+	ciclistas[i].avanca = 0;
+	if(floor(ciclistas[i].dist) != floor(ciclistas[i].dist + distancia_a_percorrer(ciclistas[i].velocidade, dt))){
+		ciclistas[i].avanca = 1;
+	} 
 	/* Barreira das intencoes, a partir daqui todos ja sabem se querem seguir em frente ou nao */
 	/* Caras devem estar na pista e nao na pista_aux */
 	pthread_barrier_wait(intencoes);
