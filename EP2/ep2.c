@@ -107,7 +107,7 @@ void sorteia_velocidade(int i){
 	debug("SORTEIA PRO I %d\n", i);
 	if((num_voltas - ciclistas[i].voltas) <= 2 && i == ciclista_sortudo) {
 		ciclistas[i].velocidade = 90;
-		debug("VELOCIDADE = 90\n");
+		printf("VELOCIDADE %d = 90\n", i);
 		return;
 	}
 	if(ciclistas[i].velocidade == 30) {
@@ -182,6 +182,30 @@ void anda_esquerda(int i){
 void ciclista_avanca(int i){
 	int pos = mod((int)floor(ciclistas[i].dist));
 	int raia = ciclistas[i].raia;
+	if(pista_aux[pos].raia[raia] != i){
+		printf("pista\n");
+		for(int a=tam_pista-1;a>=0;a--){
+			for(int b=0;b<10;b++){
+				if(pista[pos].raia[raia] == -1)
+					printf("%3c", 'X');
+				else
+					printf("%3d", pista[pos].raia[raia]);
+			}
+			printf("\n");
+		}
+		printf("\n");
+		printf("pista_aux\n");
+		for(int a=tam_pista-1;a>=0;a--){
+			for(int b=0;b<10;b++){
+				if(pista_aux[pos].raia[raia] == -1)
+					printf("%3c", 'X');
+				else
+					printf("%3d", pista_aux[pos].raia[raia]);
+			}
+			printf("\n");
+		}
+		printf("\n");
+	}
 	assert(pista_aux[pos].raia[raia] == i);
 	if(raia == 0){
 		fica(i);
@@ -302,7 +326,7 @@ void roda(int i){
 		assert(pista_aux[pos].raia[raia] == -1);
 		pista_aux[pos].raia[raia] = i;
 		pista[pos].raia[raia] = -1;
-		fprintf(stderr, "pista_aux[%d][%d] = %d\n", pos, raia, pista_aux[pos].raia[raia]);
+		//fprintf(stderr, "pista_aux[%d][%d] = %d\n", pos, raia, pista_aux[pos].raia[raia]);
 		ciclistas[i].dist += distancia_a_percorrer(ciclistas[i].velocidade, dt);
 	}
 	//	fprintf(stderr, "cara %d para na barreira\n", i);
@@ -550,10 +574,6 @@ int main(int argc, char* argv[]){
 	sorteio_ciclista_sortudo();
 
 	while(volta < num_voltas){
-		//BOTA 20
-		if(ciclista_sortudo != -1 && ciclistas[ciclista_sortudo].voltas >= num_voltas - 2)
-			dt = 20;
-
 		tempo += dt;
 		debug("volta_atual %d num_voltas %d\n", volta_atual, num_voltas);
 		debug("Queue volta atual %d tam:%d\n", volta_atual-1,  queue_size(resultados[volta_atual-1]));
