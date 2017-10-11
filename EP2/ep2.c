@@ -203,6 +203,7 @@ void ciclista_avanca(int i){
 void fica(int i){
 	int pos = mod((int)floor(ciclistas[i].dist));
 	int raia = ciclistas[i].raia;
+	debug("fica %d\n", i);
 	pista[pos].raia[raia] = i;
 	assert(pista_aux[pos].raia[raia] == i);
 	pista_aux[pos].raia[raia] = -1;
@@ -211,6 +212,7 @@ void fica(int i){
 void anda_esquerda(int i){
 	int pos = mod((int)floor(ciclistas[i].dist));
 	int raia = ciclistas[i].raia;
+	debug("anda esquerda %d\n", i);
 	assert(pista[pos].raia[raia-1] == -1);
 	pista[pos].raia[raia-1] = i;
 	assert(pista_aux[pos].raia[raia] == i);
@@ -220,6 +222,7 @@ void anda_esquerda(int i){
 void ciclista_avanca(int i){
 	int pos = mod((int)floor(ciclistas[i].dist));
 	int raia = ciclistas[i].raia;
+	assert(pista_aux[pos].raia[raia] == i);
 
 	if(raia == 0){
 		fica(i);
@@ -276,32 +279,9 @@ int pode_ultrapassar(int i){
 
 void roda(int i){
 	/* Thread vai simular dt ms da corrida para o ciclista i */
-	int pos = (tam_pista + ((int)ciclistas[i].dist)%tam_pista)%tam_pista;
+	int pos = mod((int)ciclistas[i].dist);
 
 	/* Vetor de mutexes pra lockar a linha e a proxima pra quando eu for colocar meu cara na pista */
-	fprintf(stderr, "==================pista antes avanca==========\n");
-	for(int a=tam_pista-1;a>=0;a--){
-		for(int b=0;b<10;b++){
-			if(pista[a].raia[b] != -1)
-				fprintf(stderr, "%3d", pista[a].raia[b]);
-			else
-				fprintf(stderr, "%3c", 'X');
-		}
-		fprintf(stderr, "\n");
-	}
-	fprintf(stderr, "\n");
-	fprintf(stderr, "==============pista aux antes avanca==========\n");
-	for(int a=tam_pista-1;a>=0;a--){
-		for(int b=0;b<10;b++){
-			if(pista_aux[a].raia[b] != -1)
-				fprintf(stderr, "%3d", pista_aux[a].raia[b]);
-			else
-				fprintf(stderr, "%3c", 'X');
-		}
-		fprintf(stderr, "\n");
-	}
-	fprintf(stderr, "\n");
-
 	if(pos == 0){
 		pthread_mutex_lock(pista[mod(pos+1)].linha);
 		pthread_mutex_lock(pista[mod(pos)].linha);
@@ -314,29 +294,6 @@ void roda(int i){
 	atualiza_posicoes(i);
 	pthread_mutex_unlock(pista[mod(pos)].linha);
 	pthread_mutex_unlock(pista[mod(pos+1)].linha);
-
-	fprintf(stderr, "==================pista apos avanca==========\n");
-	for(int a=tam_pista-1;a>=0;a--){
-		for(int b=0;b<10;b++){
-			if(pista[a].raia[b] != -1)
-				fprintf(stderr, "%3d", pista[a].raia[b]);
-			else
-				fprintf(stderr, "%3c", 'X');
-		}
-		fprintf(stderr, "\n");
-	}
-	fprintf(stderr, "\n");
-	fprintf(stderr, "==============pista aux apos avanca==========\n");
-	for(int a=tam_pista-1;a>=0;a--){
-		for(int b=0;b<10;b++){
-			if(pista_aux[a].raia[b] != -1)
-				fprintf(stderr, "%3d", pista_aux[a].raia[b]);
-			else
-				fprintf(stderr, "%3c", 'X');
-		}
-		fprintf(stderr, "\n");
-	}
-	fprintf(stderr, "\n");
 
 
 	
@@ -356,7 +313,32 @@ void roda(int i){
 	if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
 		pthread_barrier_destroy(intencoes);
 		pthread_barrier_init(intencoes, NULL, ciclistas_ativos);
+
+		fprintf(stderr, "==================pista apos avanca==========\n");
+		for(int a=tam_pista-1;a>=0;a--){
+			for(int b=0;b<10;b++){
+				if(pista[a].raia[b] != -1)
+					fprintf(stderr, "%3d", pista[a].raia[b]);
+				else
+					fprintf(stderr, "%3c", 'X');
+			}
+			fprintf(stderr, "\n");
+		}
+		fprintf(stderr, "\n");
+		fprintf(stderr, "==============pista aux apos avanca==========\n");
+		for(int a=tam_pista-1;a>=0;a--){
+			for(int b=0;b<10;b++){
+				assert(pista_aux[a].raia[b] == -1);
+				if(pista_aux[a].raia[b] != -1)
+					fprintf(stderr, "%3d", pista_aux[a].raia[b]);
+				else
+					fprintf(stderr, "%3c", 'X');
+			}
+			fprintf(stderr, "\n");
+		}
+		fprintf(stderr, "\n");
 	}
+
 	/* Rodo os caras que vao ficar parados e analiso os que sao reduzidos */
 	if(vai_rodar(i) && ciclistas[i].avanca == 0){
 		int pos = mod((int)floor(ciclistas[i].dist));
@@ -514,7 +496,7 @@ void inicializa_ciclistas(){
 		ciclistas[i].max_volta_extra = 0;
 		ciclistas[i].tempo_chegada = 0;
 		ciclistas[i].avanca = 0;
-		create_thread(i);
+		//create_thread(i);
 	}
 }
 
@@ -607,6 +589,9 @@ int main(int argc, char* argv[]){
 	ciclistas = malloc(num_ciclistas*(sizeof(ciclista)));
 
 	inicializa_ciclistas();
+	for(int a=0;a<num_ciclistas;a++){
+		create_thread(a);
+	}
 
 	sorteio_ciclista_sortudo();
 
