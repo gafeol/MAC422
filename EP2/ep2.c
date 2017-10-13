@@ -82,17 +82,6 @@ void remove_ciclista_pista(int i)
 	pista_aux[pos].raia[raia] = -1;
 }
 
-/*dir = -1 -> direita, 0 -> reto, 1 -> esquerda
-void desloca_ciclista_pista(int i, int dir)
-{
-	int raia = ciclistas[i].raia;
-	int pos = ((int)ciclistas[i].dist) % tam_pista;
-	int ant_pos = (pos - 1 + tam_pista) % tam_pista;
-	(pista[ant_pos].raia)[raia+dir] = -1;
-	(pista[pos].raia)[raia] = i;
-}
-*/
-
 //#include "ciclista.h"
 void destroi_ciclista(int i){
 	ciclistas[i].destruido = 1;
@@ -158,8 +147,7 @@ double distancia_a_percorrer(int vel, int dt)
 	}
 }
 
-int devolve_pontuacao(int pos)
-{
+int devolve_pontuacao(int pos) {
 	switch(pos) {
 		case 0:
 			return 5;
@@ -533,6 +521,8 @@ void libera_threads(){
 }
 
 int main(int argc, char* argv[]){
+	clock_t clk = clock();
+
 	tam_pista = atoi(argv[1]);
 	ciclistas_ativos = num_ciclistas = atoi(argv[2]);
 	num_voltas = atoi(argv[3]);
@@ -616,22 +606,16 @@ int main(int argc, char* argv[]){
 
 		while(imprvolta <= num_voltas && volta >= imprvolta) {
 			int colocacao = 1;
-			int flag_acc = (imprvolta%10 == 0 ? 1 : 0); //é uma volta múltipla de 10?
+			int flag_acc = (imprvolta%10 == 0 ? 1 : 0); 
 			printf("Volta %d:\n", imprvolta);
-			if(flag_acc == 0) { // se não for, é só partir para o abraço
+			if(flag_acc == 0) { 
 				while(!queue_empty(resultados[imprvolta-1])) {
 					int atual = head(resultados[imprvolta-1]);
 					queue_pop(resultados[imprvolta-1]);
-					//if(imprvolta%10 != 0)
 					printf("Colocacao %d: %d\n", colocacao++, atual);
-					//else {
-					//int pont = head(pontuacoes[imprvolta-1]);
-					//queue_pop(pontuacoes[imprvolta-1]);
-					//printf("Colocacao %d: %d %d\n", colocacao++, atual, pont++);
-					//}
 				}
 			}
-			else { //aí o negócio complica
+			else { 
 				Heap hp = heap_create();
 				while(!queue_empty(resultados[imprvolta-1])) {
 					int atual = head(resultados[imprvolta-1]);
@@ -689,5 +673,7 @@ int main(int argc, char* argv[]){
 	free(quebrado);
 
 	desaloca_ciclistas();
+	
+	printf("%.10f\n", (((double)(clock() - clk))/CLOCKS_PER_SEC));
 	return 0;
 }
