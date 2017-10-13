@@ -61,6 +61,18 @@ void inicializa_pista(){
 	}
 }
 
+void desaloca_pista(){
+	int i;
+	for(i = 0;i < tam_pista;i++) {
+		free(pista[i].raia); 
+		free(pista_aux[i].raia);
+		free(pista_aux[i].linha);
+		free(pista[i].linha);
+	}
+	free(pista);
+	free(pista_aux);
+}
+
 void remove_ciclista_pista(int i)
 {
 	int raia = ciclistas[i].raia;
@@ -501,6 +513,17 @@ void inicializa_ciclistas(){
 	}
 }
 
+void desaloca_ciclistas(){
+	int i;
+	for(i=0;i<num_ciclistas;i++){
+		free(ciclistas[i].id);
+		free(ciclistas[i].arrive);
+		free(ciclistas[i].cont); 
+		free(ciclistas[i].thread);
+	}
+	free(ciclistas); 
+}
+
 int cmp(const void *aa, const void *bb){
 	int a = *(int *)aa;
 	int b = *(int *)bb;
@@ -637,7 +660,6 @@ int main(int argc, char* argv[]){
 				while(!queue_empty(resultados[imprvolta-1])) {
 					int atual = head(resultados[imprvolta-1]);
 					queue_pop(resultados[imprvolta-1]);
-					debug("passou\n");
 					int pont = head(pontuacoes[imprvolta-1]);
 					queue_pop(pontuacoes[imprvolta-1]);
 					heap_push(hp, -pont, atual);				
@@ -666,15 +688,31 @@ int main(int argc, char* argv[]){
 		else
 			printf("terminou a corrida em %lld ms\n", ciclistas[a].tempo_chegada);
 	}
+
+
+	free(intencoes);
+	free(ciclistas_parados);
+	free(imprime);
+
+	free(arrive);
+	free(barreira_andou);
+	free(cont);
+
+	desaloca_pista();
+
+	/* Queue e mutex de resultados */
+	for(int i = 0;i < num_voltas;i++){
+		queue_delete(resultados[i]);
+		queue_delete(pontuacoes[i]);
+		free(mutex_resultados[i]);
+	}
+	free(resultados);
+	free(pontuacoes); 
+	free(mutex_resultados);
+
+	/* Inicializa mutex para ciclista_ativos */
+	free(quebrado);
+
+	desaloca_ciclistas();
 	return 0;
 }
-
-/*
-   TODO
-   Barreiras na run process
-   Empacotamento na esquerda
-
-   Testar cara de 90
-   Testar ultrapassagem
- */
-
