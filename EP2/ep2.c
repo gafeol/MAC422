@@ -122,7 +122,7 @@ int testa_quebrou(int i){
 		return 0;
 	}
 	if(sorteio(100)){ 
-		fprintf(stderr, "QUEBROUUUUUUUUUUUUU %d\n", i); 
+		//fprintf(stderr, "QUEBROUUUUUUUUUUUUU %d\n", i); 
 		ciclistas[i].destruido = 1;
 		quebrou = 1;
 		ciclistas_ativos--;
@@ -403,7 +403,7 @@ void roda(int i){
 	debug("%d parou no arrive\n", i);
 	int rc = pthread_barrier_wait(arrive);
 	debug("%d passou no arrive\n", i);
-	if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
+/*	if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
 		pthread_barrier_destroy(imprime);
 		pthread_barrier_init(imprime, NULL, ciclistas_ativos);
 		pthread_barrier_destroy(intencoes);
@@ -413,14 +413,14 @@ void roda(int i){
 		pthread_barrier_destroy(arrive);
 		pthread_barrier_init(arrive, NULL, ciclistas_ativos+1);
 	}
-	debug("%d parou no continue\n", i);
+*/	debug("%d parou no continue\n", i);
 	rc = pthread_barrier_wait(cont);
 	debug("%d passou no continue\n", i);
-	if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
+/*	if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
 		pthread_barrier_destroy(cont);
 		pthread_barrier_init(cont, NULL, ciclistas_ativos+1);
 	}
-
+*/
 
 	if(ciclistas[i].destruido){
 		//	pthread_exit(NULL);
@@ -437,7 +437,8 @@ void *run_process(void * ii){
 	while(volta < num_voltas){
 		if(vai_rodar(i))
 			roda(i);
-		else if(!ciclistas[i].destruido){
+		//else if(!ciclistas[i].destruido){
+		else{
 			debug("cara %d jacabou\n", i);
 
 			int impr = pthread_barrier_wait(imprime);
@@ -466,7 +467,7 @@ void *run_process(void * ii){
 
 			int rc = pthread_barrier_wait(arrive);	
 
-			if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
+	/*		if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
 				pthread_barrier_destroy(arrive);
 				pthread_barrier_init(arrive, NULL, ciclistas_ativos+1);
 				pthread_barrier_destroy(imprime);
@@ -476,16 +477,16 @@ void *run_process(void * ii){
 				pthread_barrier_destroy(ciclistas_parados);
 				pthread_barrier_init(ciclistas_parados, NULL, ciclistas_ativos);
 			}
-
+*/
 			rc = pthread_barrier_wait(cont);
-			if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
+/*			if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
 				pthread_barrier_destroy(cont);
 				pthread_barrier_init(cont, NULL, ciclistas_ativos+1);
 			}
-			
+*/			
 		}
-		else 
-			break;
+	//	else 
+	//		break;
 	}
 }
 
@@ -548,7 +549,7 @@ void barreira_threads(){
 		pthread_barrier_destroy(arrive);
 		pthread_barrier_init(arrive, NULL, ciclistas_ativos+1);
 	}*/
-	if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
+	/*if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
 		pthread_barrier_destroy(arrive);
 		pthread_barrier_init(arrive, NULL, ciclistas_ativos+1);
 		pthread_barrier_destroy(imprime);
@@ -557,16 +558,16 @@ void barreira_threads(){
 		pthread_barrier_init(intencoes, NULL, ciclistas_ativos);
 		pthread_barrier_destroy(ciclistas_parados);
 		pthread_barrier_init(ciclistas_parados, NULL, ciclistas_ativos);
-	}
+	}*/
 }
 
 void libera_threads(){
 	int rc = pthread_barrier_wait(cont);
-	if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
+	/*if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
 		pthread_barrier_destroy(cont);
 		pthread_barrier_init(cont, NULL, ciclistas_ativos+1);
 		quebrou = 0;
-	}
+	}*/
 }
 
 int main(int argc, char* argv[]){
@@ -690,9 +691,9 @@ int main(int argc, char* argv[]){
 		debug("Coordenador passoou no continue\n");
 		debug("Sincronizou!\n");
 	}
-	for(int a=0;a<num_ciclistas;a++){
-		pthread_join(*ciclistas[a].thread, NULL);
-	}
+//	for(int a=0;a<num_ciclistas;a++){
+//		pthread_join(*ciclistas[a].thread, NULL);
+//	}
 	for(int a=0;a<num_ciclistas;a++){
 		printf("Ciclista %d: ", a);
 		if(ciclistas[a].destruido)
