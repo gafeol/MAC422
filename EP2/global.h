@@ -50,6 +50,5 @@ pthread_barrier_t *intencoes, *ciclistas_parados, *imprime;
 pthread_mutex_t *quebrado;
 
 int volta, imprvolta;
-pthread_mutex_t *mutex_volta;
 
 #endif

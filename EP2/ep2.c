@@ -195,30 +195,6 @@ void anda_esquerda(int i){
 void ciclista_avanca(int i){
 	int pos = mod((int)floor(ciclistas[i].dist));
 	int raia = ciclistas[i].raia;
-	if(pista_aux[pos].raia[raia] != i){
-		printf("pista\n");
-		for(int a=tam_pista-1;a>=0;a--){
-			for(int b=0;b<10;b++){
-				if(pista[pos].raia[raia] == -1)
-					printf("%3c", 'X');
-				else
-					printf("%3d", pista[pos].raia[raia]);
-			}
-			printf("\n");
-		}
-		printf("\n");
-		printf("pista_aux\n");
-		for(int a=tam_pista-1;a>=0;a--){
-			for(int b=0;b<10;b++){
-				if(pista_aux[pos].raia[raia] == -1)
-					printf("%3c", 'X');
-				else
-					printf("%3d", pista_aux[pos].raia[raia]);
-			}
-			printf("\n");
-		}
-		printf("\n");
-	}
 	assert(pista_aux[pos].raia[raia] == i);
 	if(raia == 0){
 		fica(i);
@@ -670,6 +646,7 @@ int main(int argc, char* argv[]){
 					heap_pop(hp);
 					printf("Colocacao %d: %d %d\n", colocacao++, atual, pont);
 				}
+				heap_destroy(hp);
 			}
 			imprvolta++;
 		}
@@ -700,7 +677,6 @@ int main(int argc, char* argv[]){
 
 	desaloca_pista();
 
-	/* Queue e mutex de resultados */
 	for(int i = 0;i < num_voltas;i++){
 		queue_delete(resultados[i]);
 		queue_delete(pontuacoes[i]);
@@ -710,7 +686,6 @@ int main(int argc, char* argv[]){
 	free(pontuacoes); 
 	free(mutex_resultados);
 
-	/* Inicializa mutex para ciclista_ativos */
 	free(quebrado);
 
 	desaloca_ciclistas();
