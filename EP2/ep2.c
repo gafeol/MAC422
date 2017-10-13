@@ -501,6 +501,14 @@ void barreira_threads(){
 		pthread_barrier_destroy(arrive);
 		pthread_barrier_init(arrive, NULL, ciclistas_ativos+1);
 	}
+	if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
+		pthread_barrier_destroy(imprime);
+		pthread_barrier_init(imprime, NULL, ciclistas_ativos);
+		pthread_barrier_destroy(intencoes);
+		pthread_barrier_init(intencoes, NULL, ciclistas_ativos);
+		pthread_barrier_destroy(ciclistas_parados);
+		pthread_barrier_init(ciclistas_parados, NULL, ciclistas_ativos);
+	}
 }
 
 void libera_threads(){
