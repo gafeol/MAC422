@@ -523,6 +523,8 @@ void libera_threads(){
 int main(int argc, char* argv[]){
 	clock_t clk = clock();
 
+	FILE *saida = fopen("dados.txt", "a");
+
 	tam_pista = atoi(argv[1]);
 	ciclistas_ativos = num_ciclistas = atoi(argv[2]);
 	num_voltas = atoi(argv[3]);
@@ -674,6 +676,6 @@ int main(int argc, char* argv[]){
 
 	desaloca_ciclistas();
 	
-	printf("%.10f\n", (((double)(clock() - clk))/CLOCKS_PER_SEC));
+	fprintf(saida, "%.10f\n", (((double)(clock() - clk))/CLOCKS_PER_SEC));
 	return 0;
 }
