@@ -117,8 +117,10 @@ int testa_quebrou(int i){
 	if(!ciclistas[i].completou_volta || ciclistas[i].voltas%15 != 0) return 0;
 	if(ciclistas[i].tempo_chegada != 0) return 0;
 	pthread_mutex_lock(quebrado);
-	if(ciclistas_ativos <= 1)
+	if(ciclistas_ativos <= 1) {
+		pthread_mutex_unlock(quebrado);
 		return 0;
+	}
 	if(sorteio(100)){ 
 		fprintf(stderr, "QUEBROUUUUUUUUUUUUU %d\n", i); 
 		ciclistas[i].destruido = 1;
@@ -397,7 +399,7 @@ void roda(int i){
 	//pthread_mutex_lock(ciclistas[i].cont);
 
 	/* Thread sorteia velocidade da proxima rodada */
-	//pthread_mutex_unlock(ciclistas[i].arrive);
+	//pthread_mutex_unlock(ciclistas[i].);
 	debug("%d parou no arrive\n", i);
 	int rc = pthread_barrier_wait(arrive);
 	debug("%d passou no arrive\n", i);
@@ -408,6 +410,8 @@ void roda(int i){
 		pthread_barrier_init(intencoes, NULL, ciclistas_ativos);
 		pthread_barrier_destroy(ciclistas_parados);
 		pthread_barrier_init(ciclistas_parados, NULL, ciclistas_ativos);
+		pthread_barrier_destroy(arrive);
+		pthread_barrier_init(arrive, NULL, ciclistas_ativos+1);
 	}
 	debug("%d parou no continue\n", i);
 	rc = pthread_barrier_wait(cont);
