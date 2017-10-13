@@ -78,7 +78,7 @@ void remove_ciclista_pista(int i)
 	int raia = ciclistas[i].raia;
 	int pos = mod((int)ciclistas[i].dist);
 	debug("REMOVE DA PISTA %d que ta na pista[%d].raia %d = %d\n", i, pos, raia, pista[pos].raia[raia]);
-	assert(pista_aux[pos].raia[raia] == i);
+	//assert(pista_aux[pos].raia[raia] == i);
 	pista_aux[pos].raia[raia] = -1;
 }
 
@@ -166,24 +166,24 @@ void fica(int i){
 	int pos = mod((int)floor(ciclistas[i].dist));
 	int raia = ciclistas[i].raia;
 	pista[pos].raia[raia] = i;
-	assert(pista_aux[pos].raia[raia] == i);
+	//assert(pista_aux[pos].raia[raia] == i);
 	pista_aux[pos].raia[raia] = -1;
 }
 
 void anda_esquerda(int i){
 	int pos = mod((int)floor(ciclistas[i].dist));
 	int raia = ciclistas[i].raia;
-	assert(pista[pos].raia[raia-1] == -1);
+	//assert(pista[pos].raia[raia-1] == -1);
 	pista[pos].raia[raia-1] = i;
 	ciclistas[i].raia--;
-	assert(pista_aux[pos].raia[raia] == i);
+	//assert(pista_aux[pos].raia[raia] == i);
 	pista_aux[pos].raia[raia] = -1;
 }
 
 void ciclista_avanca(int i){
 	int pos = mod((int)floor(ciclistas[i].dist));
 	int raia = ciclistas[i].raia;
-	assert(pista_aux[pos].raia[raia] == i);
+	//assert(pista_aux[pos].raia[raia] == i);
 	if(raia == 0){
 		fica(i);
 		return;
@@ -302,7 +302,7 @@ void roda(int i){
 			nxt_pos = mod(nxt_pos-1);
 			nxt = pista[nxt_pos].raia[raia];
 		}
-		assert(pista_aux[pos].raia[raia] == -1);
+		//assert(pista_aux[pos].raia[raia] == -1);
 		pista_aux[pos].raia[raia] = i;
 		pista[pos].raia[raia] = -1;
 		//fprintf(stderr, "pista_aux[%d][%d] = %d\n", pos, raia, pista_aux[pos].raia[raia]);
@@ -320,16 +320,16 @@ void roda(int i){
 		ciclistas[i].dist += distancia_a_percorrer(ciclistas[i].velocidade, dt);
 		if(nxt != -1 && raia < 9){ //ultrapasso
 			debug("ultrapassa %d\n", i);
-			assert(pista_aux[nxt_pos].raia[raia+1] == -1);
+			//assert(pista_aux[nxt_pos].raia[raia+1] == -1);
 			pista_aux[mod(pos+1)].raia[raia+1] = i;
 			ciclistas[i].raia = raia+1;
 		}
 		else{ // so anda
 			debug("so anda %d\n", i);
-			assert(pista_aux[nxt_pos].raia[raia] == -1);
+			//assert(pista_aux[nxt_pos].raia[raia] == -1);
 			pista_aux[mod(pos+1)].raia[raia] = i;
 		}
-		assert(pista[pos].raia[raia] == i);
+		//assert(pista[pos].raia[raia] == i);
 		pista[pos].raia[raia] = -1;
 	}
 
