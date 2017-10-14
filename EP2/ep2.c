@@ -403,7 +403,7 @@ void roda(int i){
 	debug("%d parou no arrive\n", i);
 	int rc = pthread_barrier_wait(arrive);
 	debug("%d passou no arrive\n", i);
-/*	if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
+	/*	if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
 		pthread_barrier_destroy(imprime);
 		pthread_barrier_init(imprime, NULL, ciclistas_ativos);
 		pthread_barrier_destroy(intencoes);
@@ -412,24 +412,65 @@ void roda(int i){
 		pthread_barrier_init(ciclistas_parados, NULL, ciclistas_ativos);
 		pthread_barrier_destroy(arrive);
 		pthread_barrier_init(arrive, NULL, ciclistas_ativos+1);
-	}
-*/	debug("%d parou no continue\n", i);
+		}
+	 */	debug("%d parou no continue\n", i);
 	rc = pthread_barrier_wait(cont);
 	debug("%d passou no continue\n", i);
-/*	if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
+	/*	if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
 		pthread_barrier_destroy(cont);
 		pthread_barrier_init(cont, NULL, ciclistas_ativos+1);
-	}
-*/
+		}
+	 */
 
 	if(ciclistas[i].destruido){
 		//	pthread_exit(NULL);
 		pthread_t dummy = malloc(sizeof(pthread_t));
 		pthread_
-		return;
+			return;
 	}
 	if(queue_size(resultados[num_voltas-1]) == ciclistas_ativos){
 		return ;
+	}
+}
+
+void *run_process(void * ii){
+	int i = *((int *)ii);
+	debug("run process cara %d\n", i);
+	while(volta < num_voltas){
+		if(vai_rodar(i))
+			roda(i);
+		//else if(!ciclistas[i].destruido){
+		else{
+			debug("cara %d jacabou\n", i);
+
+			int impr = pthread_barrier_wait(imprime);
+			if(impr == PTHREAD_BARRIER_SERIAL_THREAD){
+				tempo += dt;
+				if(debug){
+					printf("tempo %lld\n", tempo-dt);
+					for(int a=tam_pista-1;a>=0;a--){
+						for(int b=0;b<10;b++){
+							if(pista[a].raia[b] == -1)
+								printf("%3c", 'X');
+							else
+								printf("%3d", pista[a].raia[b]);
+						}
+						printf("\n");
+					}
+					printf("\n");
+				}
+			}
+
+			pthread_barrier_wait(intencoes);
+			/* Barreira adicional*/
+			pthread_barrier_wait(ciclistas_parados);
+			/* Barreira adicional*/
+
+
+			int rc = pthread_barrier_wait(arrive);	
+
+			rc = pthread_barrier_wait(cont);
+		}
 	}
 }
 
