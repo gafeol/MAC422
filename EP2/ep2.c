@@ -13,6 +13,7 @@
 
 
 
+void *roda_dummy(void *);
 int primeiro_ciclista, segundo_ciclista;
 
 double floor(double x){
@@ -423,11 +424,63 @@ void roda(int i){
 */
 
 	if(ciclistas[i].destruido){
-		//	pthread_exit(NULL);
-		return;
+		pthread_t *dummy = malloc(sizeof(pthread_t));
+		int *aux = malloc(sizeof(int));
+		pthread_create(dummy, NULL, roda_dummy, (void *)aux);
+		pthread_exit(NULL); 
 	}
 	if(queue_size(resultados[num_voltas-1]) == ciclistas_ativos){
 		return ;
+	}
+}
+
+void *roda_dummy(void *ii)
+{
+	int i = *((int *) ii);
+	while(volta < num_voltas) {
+		int impr = pthread_barrier_wait(imprime);
+			if(impr == PTHREAD_BARRIER_SERIAL_THREAD){
+				tempo += dt;
+				if(debug){
+					printf("tempo %lld\n", tempo-dt);
+					for(int a=tam_pista-1;a>=0;a--){
+						for(int b=0;b<10;b++){
+							if(pista[a].raia[b] == -1)
+								printf("%3c", 'X');
+							else
+								printf("%3d", pista[a].raia[b]);
+						}
+						printf("\n");
+					}
+					printf("\n");
+				}
+			}
+
+			pthread_barrier_wait(intencoes);
+			/* Barreira adicional*/
+			pthread_barrier_wait(ciclistas_parados);
+			/* Barreira adicional*/
+
+
+			int rc = pthread_barrier_wait(arrive);	
+
+	/*		if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
+				pthread_barrier_destroy(arrive);
+				pthread_barrier_init(arrive, NULL, ciclistas_ativos+1);
+				pthread_barrier_destroy(imprime);
+				pthread_barrier_init(imprime, NULL, ciclistas_ativos);
+				pthread_barrier_destroy(intencoes);
+				pthread_barrier_init(intencoes, NULL, ciclistas_ativos);
+				pthread_barrier_destroy(ciclistas_parados);
+				pthread_barrier_init(ciclistas_parados, NULL, ciclistas_ativos);
+			}
+*/
+			rc = pthread_barrier_wait(cont);
+/*			if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
+				pthread_barrier_destroy(cont);
+				pthread_barrier_init(cont, NULL, ciclistas_ativos+1);
+			}
+*/	
 	}
 }
 
