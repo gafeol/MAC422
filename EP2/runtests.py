@@ -21,7 +21,7 @@ os.system("make");
 
 print("Teste com %d %d %d" % (tam_pista, num_ciclistas, num_voltas))
 
-for i in range(0, 30):
+for i in range(0, 1000):
 	print("Executando teste %d" % i)
 	os.system("./ep2 %d %d %d %s > out"  % (tam_pista, num_ciclistas, num_voltas, flag) )
 

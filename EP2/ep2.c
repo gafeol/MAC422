@@ -117,7 +117,7 @@ int testa_quebrou(int i){
 	if(!ciclistas[i].completou_volta || ciclistas[i].voltas%15 != 0) return 0;
 	if(ciclistas[i].tempo_chegada != 0) return 0;
 	pthread_mutex_lock(quebrado);
-	if(ciclistas_ativos <= 1) {
+	if(ciclistas_ativos <= 5) {
 		pthread_mutex_unlock(quebrado);
 		return 0;
 	}
@@ -403,7 +403,7 @@ void roda(int i){
 	debug("%d parou no arrive\n", i);
 	int rc = pthread_barrier_wait(arrive);
 	debug("%d passou no arrive\n", i);
-	/*	if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
+/*	if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
 		pthread_barrier_destroy(imprime);
 		pthread_barrier_init(imprime, NULL, ciclistas_ativos);
 		pthread_barrier_destroy(intencoes);
@@ -412,21 +412,19 @@ void roda(int i){
 		pthread_barrier_init(ciclistas_parados, NULL, ciclistas_ativos);
 		pthread_barrier_destroy(arrive);
 		pthread_barrier_init(arrive, NULL, ciclistas_ativos+1);
-		}
-	 */	debug("%d parou no continue\n", i);
+	}
+*/	debug("%d parou no continue\n", i);
 	rc = pthread_barrier_wait(cont);
 	debug("%d passou no continue\n", i);
-	/*	if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
+/*	if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
 		pthread_barrier_destroy(cont);
 		pthread_barrier_init(cont, NULL, ciclistas_ativos+1);
-		}
-	 */
+	}
+*/
 
 	if(ciclistas[i].destruido){
 		//	pthread_exit(NULL);
-		pthread_t dummy = malloc(sizeof(pthread_t));
-		pthread_
-			return;
+		return;
 	}
 	if(queue_size(resultados[num_voltas-1]) == ciclistas_ativos){
 		return ;
@@ -469,47 +467,26 @@ void *run_process(void * ii){
 
 			int rc = pthread_barrier_wait(arrive);	
 
-			rc = pthread_barrier_wait(cont);
-		}
-	}
-}
-
-void *dummy(void * ii){
-	int i = *((int *)ii);
-	while(volta < num_voltas){
-		int impr = pthread_barrier_wait(imprime);
-		if(impr == PTHREAD_BARRIER_SERIAL_THREAD){
-			tempo += dt;
-			if(debug){
-				printf("tempo %lld\n", tempo-dt);
-				for(int a=tam_pista-1;a>=0;a--){
-					for(int b=0;b<10;b++){
-						if(pista[a].raia[b] == -1)
-							printf("%3c", 'X');
-						else
-							printf("%3d", pista[a].raia[b]);
-					}
-					printf("\n");
-				}
-				printf("\n");
+	/*		if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
+				pthread_barrier_destroy(arrive);
+				pthread_barrier_init(arrive, NULL, ciclistas_ativos+1);
+				pthread_barrier_destroy(imprime);
+				pthread_barrier_init(imprime, NULL, ciclistas_ativos);
+				pthread_barrier_destroy(intencoes);
+				pthread_barrier_init(intencoes, NULL, ciclistas_ativos);
+				pthread_barrier_destroy(ciclistas_parados);
+				pthread_barrier_init(ciclistas_parados, NULL, ciclistas_ativos);
 			}
+*/
+			rc = pthread_barrier_wait(cont);
+/*			if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
+				pthread_barrier_destroy(cont);
+				pthread_barrier_init(cont, NULL, ciclistas_ativos+1);
+			}
+*/			
 		}
-
-		pthread_barrier_wait(intencoes);
-		pthread_barrier_wait(ciclistas_parados);
-
-
-		int rc = pthread_barrier_wait(arrive);	
-
-		rc = pthread_barrier_wait(cont);
-
-		pthread_barrier_wait(intencoes);
-		pthread_barrier_wait(ciclistas_parados);
-
-
-		int rc = pthread_barrier_wait(arrive);	
-
-		rc = pthread_barrier_wait(cont);
+	//	else 
+	//		break;
 	}
 }
 
@@ -569,28 +546,28 @@ void barreira_threads(){
 	int rc = pthread_barrier_wait(arrive);
 	//atualizar destruidos
 	/*if(quebrou) {
-	  pthread_barrier_destroy(arrive);
-	  pthread_barrier_init(arrive, NULL, ciclistas_ativos+1);
-	  }*/
+		pthread_barrier_destroy(arrive);
+		pthread_barrier_init(arrive, NULL, ciclistas_ativos+1);
+	}*/
 	/*if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
-	  pthread_barrier_destroy(arrive);
-	  pthread_barrier_init(arrive, NULL, ciclistas_ativos+1);
-	  pthread_barrier_destroy(imprime);
-	  pthread_barrier_init(imprime, NULL, ciclistas_ativos);
-	  pthread_barrier_destroy(intencoes);
-	  pthread_barrier_init(intencoes, NULL, ciclistas_ativos);
-	  pthread_barrier_destroy(ciclistas_parados);
-	  pthread_barrier_init(ciclistas_parados, NULL, ciclistas_ativos);
-	  }*/
+		pthread_barrier_destroy(arrive);
+		pthread_barrier_init(arrive, NULL, ciclistas_ativos+1);
+		pthread_barrier_destroy(imprime);
+		pthread_barrier_init(imprime, NULL, ciclistas_ativos);
+		pthread_barrier_destroy(intencoes);
+		pthread_barrier_init(intencoes, NULL, ciclistas_ativos);
+		pthread_barrier_destroy(ciclistas_parados);
+		pthread_barrier_init(ciclistas_parados, NULL, ciclistas_ativos);
+	}*/
 }
 
 void libera_threads(){
 	int rc = pthread_barrier_wait(cont);
 	/*if(rc == PTHREAD_BARRIER_SERIAL_THREAD){
-	  pthread_barrier_destroy(cont);
-	  pthread_barrier_init(cont, NULL, ciclistas_ativos+1);
-	  quebrou = 0;
-	  }*/
+		pthread_barrier_destroy(cont);
+		pthread_barrier_init(cont, NULL, ciclistas_ativos+1);
+		quebrou = 0;
+	}*/
 }
 
 int main(int argc, char* argv[]){
@@ -714,9 +691,9 @@ int main(int argc, char* argv[]){
 		debug("Coordenador passoou no continue\n");
 		debug("Sincronizou!\n");
 	}
-	//	for(int a=0;a<num_ciclistas;a++){
-	//		pthread_join(*ciclistas[a].thread, NULL);
-	//	}
+//	for(int a=0;a<num_ciclistas;a++){
+//		pthread_join(*ciclistas[a].thread, NULL);
+//	}
 	for(int a=0;a<num_ciclistas;a++){
 		printf("Ciclista %d: ", a);
 		if(ciclistas[a].destruido)
@@ -725,13 +702,18 @@ int main(int argc, char* argv[]){
 			printf("terminou a corrida em %lld ms\n", ciclistas[a].tempo_chegada);
 	}
 
-
+	pthread_barrier_destroy(intencoes);
 	free(intencoes);
+	pthread_barrier_destroy(ciclistas_parados);
 	free(ciclistas_parados);
+	pthread_barrier_destroy(imprime);
 	free(imprime);
-
+	
+	pthread_barrier_destroy(arrive);
 	free(arrive);
+	pthread_barrier_destroy(barreira_andou);
 	free(barreira_andou);
+	pthread_barrier_destroy(cont);
 	free(cont);
 
 	desaloca_pista();
@@ -739,6 +721,7 @@ int main(int argc, char* argv[]){
 	for(int i = 0;i < num_voltas;i++){
 		queue_delete(resultados[i]);
 		queue_delete(pontuacoes[i]);
+		pthread_mutex_destroy(mutex_resultados[i]);
 		free(mutex_resultados[i]);
 	}
 	free(resultados);
@@ -748,7 +731,7 @@ int main(int argc, char* argv[]){
 	free(quebrado);
 
 	desaloca_ciclistas();
-
+	
 	fprintf(saida, "%.10f\n", (((double)(clock() - clk))/CLOCKS_PER_SEC));
 	return 0;
 }
