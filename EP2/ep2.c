@@ -713,7 +713,9 @@ int main(int argc, char* argv[]){
 				}
 			}
 			else { 
-				Heap hp = heap_create();
+				Heap hp = NULL;
+				hp = heap_create();
+				printf("LOGO ANTES DE CRIAR\n");
 				while(!queue_empty(resultados[imprvolta-1])) {
 					int atual = head(resultados[imprvolta-1]);
 					queue_pop(resultados[imprvolta-1]);
@@ -779,5 +781,6 @@ int main(int argc, char* argv[]){
 	desaloca_ciclistas();
 	*/
 	fprintf(saida, "%.10f\n", (((double)(clock() - clk))/CLOCKS_PER_SEC));
+	fclose(saida);
 	return 0;
 }

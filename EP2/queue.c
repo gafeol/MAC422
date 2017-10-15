@@ -45,14 +45,14 @@ void queue_pop(Queue q){
 	q->first = top->next; 
 	if(q->first == NULL)
 		q->last = NULL;
-	free(top);
+	//free(top);
 	q->size--;
 }
 
 void queue_delete(Queue q){
 	while(q->size != 0)
 		queue_pop(q);
-	free(q);
+	//free(q);
 }
 
 int queue_size(Queue q){

@@ -3,7 +3,7 @@ CC=gcc -std=gnu99
 all: ep2 
 
 ep2: ep2.o queue.o heap.o
-		$(CC) -pthread -lmemusage -g $^ -o $@
+		$(CC) -pthread -g $^ -o $@
 
 ep2.o: ep2.c global.h heap.h
 		$(CC) ep2.c -pthread -g -c -o $@
