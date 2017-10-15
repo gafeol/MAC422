@@ -619,9 +619,10 @@ int main(int argc, char* argv[]){
 	aleatorio = malloc(sizeof(pthread_mutex_t));
 	pthread_mutex_init(aleatorio, NULL);	
 
-	tam_pista = atoi(argv[2]);
-	ciclistas_ativos = num_ciclistas = atoi(argv[3]);
-	num_voltas = atoi(argv[4]);
+	tam_pista = atoi(argv[1]);
+	ciclistas_ativos = num_ciclistas = atoi(argv[2]);
+	num_voltas = atoi(argv[3]);
+	fprintf(stderr, "rodando ep2 %d %d %d\n", tam_pista, num_ciclistas, num_voltas);
 	volta_atual = 1;
 	quebrou = 0;
 
@@ -641,9 +642,9 @@ int main(int argc, char* argv[]){
 		debug = (argv[4][0] == 'd' ? 1 : 0);
 
 	imprvolta = 1;
+	arrive = malloc(sizeof(pthread_barrier_t));
 	volta = 0;
 
-	arrive = malloc(sizeof(pthread_barrier_t));
 	pthread_barrier_init(arrive, NULL, num_ciclistas+1);
 	barreira_andou = malloc(sizeof(pthread_barrier_t));
 	pthread_barrier_init(barreira_andou, NULL, num_ciclistas+1);
@@ -745,6 +746,7 @@ int main(int argc, char* argv[]){
 		else
 			printf("terminou a corrida em %lld ms\n", ciclistas[a].tempo_chegada);
 	}
+	/*
 
 	pthread_barrier_destroy(intencoes);
 	free(intencoes);
@@ -775,6 +777,7 @@ int main(int argc, char* argv[]){
 	free(quebrado);
 
 	desaloca_ciclistas();
+	*/
 	fprintf(saida, "%.10f\n", (((double)(clock() - clk))/CLOCKS_PER_SEC));
 	return 0;
 }

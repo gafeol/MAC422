@@ -3,9 +3,11 @@
 
 int *s;
 
-int main (){
-	s = malloc(50*sizeof(int));
-	for(int a=0;a<50;a++){
+int main (int argc, char* argv[]){
+	int n = atoi(argv[1]);
+	printf("argc %d n %d\n", argc, n);
+	s = malloc(n*sizeof(int));
+	for(int a=0;a<n;a++){
 		s[a] = a;
 		printf("%d\n", s[a]);
 	}

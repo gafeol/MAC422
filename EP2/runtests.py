@@ -27,7 +27,7 @@ for i in range(0, 30):
 	with open("mem.txt", "a") as myfile:
 	    myfile.write("Teste "+repr(i))
 
-	os.system("./memusage.sh ./ep2 %d %d %d %s dum > out 2>> mem.txt"  % (tam_pista, num_ciclistas, num_voltas, flag) )
+	os.system("./memusage.sh ./ep2 %d %d %d %s > out 2>> mem.txt"  % (tam_pista, num_ciclistas, num_voltas, flag) )
 
 os.system("mv dados.txt dados_%d_%d_%d.txt" % (tam_pista, num_ciclistas, num_voltas))
 os.system("mv mem.txt mem_%d_%d_%d.txt" % (tam_pista, num_ciclistas, num_voltas))
