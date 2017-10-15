@@ -374,7 +374,6 @@ void roda(int i){
 
 	/* Atualizar o lap e tempo */
 	if(((int)floor(ciclistas[i].dist))/tam_pista > ciclistas[i].voltas){
-		debug("cara %d dist %lf tam pista %d voltas %d\n", i, ciclistas[i].dist, tam_pista, ciclistas[i].voltas); 
 		ciclistas[i].voltas++;
 		ciclistas[i].completou_volta = 1;
 
@@ -387,6 +386,7 @@ void roda(int i){
 		if(novalap%10==0) 
 			queue_push(pontuacoes[novalap-1], ciclistas[i].pontuacao);
 
+		debug("cara %d dist %lf tam pista %d voltas %d\n", i, ciclistas[i].dist, tam_pista, ciclistas[i].voltas); 
 		queue_push(resultados[novalap-1], i);
 		pthread_mutex_unlock(mutex_resultados[novalap-1]);
 		if(novalap == num_voltas){
@@ -622,7 +622,6 @@ int main(int argc, char* argv[]){
 	tam_pista = atoi(argv[1]);
 	ciclistas_ativos = num_ciclistas = atoi(argv[2]);
 	num_voltas = atoi(argv[3]);
-	fprintf(stderr, "rodando ep2 %d %d %d\n", tam_pista, num_ciclistas, num_voltas);
 	volta_atual = 1;
 	quebrou = 0;
 
@@ -748,7 +747,6 @@ int main(int argc, char* argv[]){
 		else
 			printf("terminou a corrida em %lld ms\n", ciclistas[a].tempo_chegada);
 	}
-	/*
 
 	pthread_barrier_destroy(intencoes);
 	free(intencoes);
@@ -779,7 +777,7 @@ int main(int argc, char* argv[]){
 	free(quebrado);
 
 	desaloca_ciclistas();
-	*/
+
 	fprintf(saida, "%.10f\n", (((double)(clock() - clk))/CLOCKS_PER_SEC));
 	fclose(saida);
 	return 0;
