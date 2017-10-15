@@ -52,7 +52,7 @@ void queue_pop(Queue q){
 void queue_delete(Queue q){
 	while(q->size != 0)
 		queue_pop(q);
-	free(q);
+	//free(q);
 }
 
 int queue_size(Queue q){
