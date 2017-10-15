@@ -27,11 +27,13 @@ double floor(double x){
 //#include "aleatorio.h"
 int sorteio(int p)
 {
+	pthread_mutex_lock(aleatorio);
 	if(semente == 0) {
 		srand((unsigned)time(NULL));
 		semente = 1;
 	}
 	int x = rand() % 100;
+	pthread_mutex_unlock(aleatorio);
 	return (x < p) ? 1 : 0;
 }
 
@@ -426,7 +428,10 @@ void roda(int i){
 	if(ciclistas[i].destruido){
 		pthread_t *dummy = malloc(sizeof(pthread_t));
 		int *aux = malloc(sizeof(int));
-		pthread_create(dummy, NULL, roda_dummy, (void *)aux);
+		if(!pthread_create(dummy, NULL, roda_dummy, (void *)aux)){
+			printf("Erro na criacao da thread dummy que substituiria a thread %d\n", i);
+			exit(0);
+		}
 		pthread_exit(NULL); 
 	}
 	if(queue_size(resultados[num_voltas-1]) == ciclistas_ativos){
@@ -551,7 +556,10 @@ void create_thread(int i){
 	pthread_mutex_init(ciclistas[i].cont, NULL);
 	pthread_mutex_lock(ciclistas[i].cont);
 	ciclistas[i].thread = malloc(sizeof(pthread_t));
-	pthread_create(ciclistas[i].thread, NULL, run_process, ciclistas[i].id);
+	if(!pthread_create(ciclistas[i].thread, NULL, run_process, ciclistas[i].id)){
+		printf("Erro na criacao da thread %d\n", i);
+		exit(0);
+	}
 }
 
 void inicializa_ciclistas(){
@@ -627,6 +635,9 @@ int main(int argc, char* argv[]){
 	clock_t clk = clock();
 
 	FILE *saida = fopen("dados.txt", "a");
+
+	aleatorio = malloc(sizeof(pthread_mutex_t));
+	pthread_mutex_init(aleatorio, NULL);	
 
 	tam_pista = atoi(argv[1]);
 	ciclistas_ativos = num_ciclistas = atoi(argv[2]);

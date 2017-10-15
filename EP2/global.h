@@ -47,7 +47,7 @@ matriz_pista *pista, *pista_aux;
 
 pthread_barrier_t *arrive, *barreira_andou, *cont; 
 pthread_barrier_t *intencoes, *ciclistas_parados, *imprime;
-pthread_mutex_t *quebrado;
+pthread_mutex_t *quebrado, *aleatorio;
 
 int volta, imprvolta;
 
