@@ -24,9 +24,9 @@ int heap_empty(Heap H){
 }
 
 void heap_destroy(heap *H) {
-	//for(int i = 0; i < H->size; i++)
-		//free(H->h[i]);
-	//free(H);
+	for(int i = 0; i < H->size; i++)
+		free(H->h[i]);
+	free(H);
 }
 
 void heap_push(heap *H, double priority, int element) {
@@ -44,7 +44,7 @@ void heap_push(heap *H, double priority, int element) {
 void heap_pop(heap *H)
 {
 	if(H->size) {
-		//free(H->h[0]);
+		free(H->h[0]);
 		H->h[0] = H->h[--(H->size)];
 		heapify(H,0);
 	}
