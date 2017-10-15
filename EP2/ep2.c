@@ -428,8 +428,8 @@ void roda(int i){
 	if(ciclistas[i].destruido){
 		pthread_t *dummy = malloc(sizeof(pthread_t));
 		int *aux = malloc(sizeof(int));
-		if(!pthread_create(dummy, NULL, roda_dummy, (void *)aux)){
-			printf("Erro na criacao da thread dummy que substituiria a thread %d\n", i);
+		if(pthread_create(dummy, NULL, roda_dummy, (void *)aux)){
+			fprintf(stderr, "Erro na criacao da thread dummy que substituiria a thread %d\n", i);
 			exit(0);
 		}
 		pthread_exit(NULL); 
@@ -556,8 +556,8 @@ void create_thread(int i){
 	pthread_mutex_init(ciclistas[i].cont, NULL);
 	pthread_mutex_lock(ciclistas[i].cont);
 	ciclistas[i].thread = malloc(sizeof(pthread_t));
-	if(!pthread_create(ciclistas[i].thread, NULL, run_process, ciclistas[i].id)){
-		printf("Erro na criacao da thread %d\n", i);
+	if(pthread_create(ciclistas[i].thread, NULL, run_process, ciclistas[i].id)){
+		fprintf(stderr, "Erro na criacao da thread %d\n", i);
 		exit(0);
 	}
 }
