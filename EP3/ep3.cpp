@@ -1,6 +1,10 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+#include "processo.h"
+#include "sweep.h"
+
+
 
 void roda(FILE *trace, int dt, int subs, int espaco){
 	FILE *mem, *vir;  
@@ -27,8 +31,17 @@ int main(){
 		if(strcmp(input, "carrega") == 0){
 			printf("carregou\n");
 			scanf(" %s", file);
-			printf("`%s`\n", file);
 			trace = fopen(file, "r");
+			fscanf(trace, "%d %d %d %d", &total, &virt, &unidade_aloc, &tam_pagina);
+			int t0, tf, b;
+			char st[500010];
+			while(fscanf(trace, "%d", &t0) != EOF){
+				fscanf(trace, "%d%d", &tf, &b);
+				fscanf(trace, " %s", st);
+				nome = str(st);
+				char *numbers;
+				
+			}	
 			printf("pa\n");
 		}
 		else if(strcmp(input, "substitui") == 0){
