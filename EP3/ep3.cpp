@@ -4,16 +4,11 @@ using namespace std;
 #include "processo.h"
 #include "sweep.h"
 
-
-
 void roda(FILE *trace, int dt, int subs, int espaco){
 	FILE *mem, *vir;  
 	mem = fopen("tmp/ep3.mem", "r+wb"); 
 	vir = fopen("tmp/ep3.vir", "r+wb");
 	int buffer = -1;
-	int total, virt, ualoc, tamp;
-	fscanf(trace, "%d%d%d%d", &total, &virt, &ualoc, &tamp); 
-	printf("%d %d %d %d\n", total, virt, ualoc, tamp); 
 }
 
 int main(){
@@ -32,7 +27,8 @@ int main(){
 			printf("carregou\n");
 			scanf(" %s", file);
 			trace = fopen(file, "r");
-			fscanf(trace, "%d %d %d %d", &total, &virt, &unidade_aloc, &tam_pagina);
+			int total, virt, ualoc, tam_pagina;
+			fscanf(trace, "%d %d %d %d", &total, &virt, &ualoc, &tam_pagina);
 			int t0, tf, b;
 			char st[500010];
 			int cnt = 0;
@@ -40,17 +36,15 @@ int main(){
 				cnt++;
 				fscanf(trace, " %d%d", &tf, &b);
 				fscanf(trace, " %s", st);
-				nome = str(st);
-				fscanf(trace, "%[\n]", st); 
+				string nome = st;
+				fscanf(trace, "%[^\n]", st); 
 				char *p = strtok(st, " \n");
 				while(p != NULL) {
 					int pos, t;
 					sscanf(p, "%d", &pos);
 					sscanf(p, "%d", &t);
-					adiciona_eventos(t, 3, cnt, pos);  
+					adiciona_evento(t, 3, cnt, pos);  
 				}
-				
-				
 			}	
 			printf("pa\n");
 		}
