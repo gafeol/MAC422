@@ -35,11 +35,21 @@ int main(){
 			fscanf(trace, "%d %d %d %d", &total, &virt, &unidade_aloc, &tam_pagina);
 			int t0, tf, b;
 			char st[500010];
-			while(fscanf(trace, "%d", &t0) != EOF){
-				fscanf(trace, "%d%d", &tf, &b);
+			int cnt = 0;
+			while(fscanf(trace,"%d",&t0) != EOF) {
+				cnt++;
+				fscanf(trace, " %d%d", &tf, &b);
 				fscanf(trace, " %s", st);
 				nome = str(st);
-				char *numbers;
+				fscanf(trace, "%[\n]", st); 
+				char *p = strtok(st, " \n");
+				while(p != NULL) {
+					int pos, t;
+					sscanf(p, "%d", &pos);
+					sscanf(p, "%d", &t);
+					adiciona_eventos(t, 3, cnt, pos);  
+				}
+				
 				
 			}	
 			printf("pa\n");
