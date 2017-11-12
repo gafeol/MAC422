@@ -1,3 +1,9 @@
+/****************************************************
+Equipe
+Nome: Thiago Estrela Montenegro 	NUSP: 9762873
+Nome: Gabriel Fernandes de Oliveira     NUSP: 9345370
+****************************************************/
+
 #ifndef GLOBAL_H
 #define GLOBAL_H
 

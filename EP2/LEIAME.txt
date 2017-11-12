@@ -1,0 +1,11 @@
+/****************************************************
+Equipe
+Nome: Thiago Estrela Montenegro 	NUSP: 9762873
+Nome: Gabriel Fernandes de Oliveira     NUSP: 9345370
+****************************************************/
+
+// Como Compilar e Executar
+
+Para compilar, basta executar o comando make.
+
+Para executar o EP, rode "./ep2 [tamanho da pista] [número de ciclistas] [número de voltas] [OPCIONAL: flag para mostrar as saidas de stderr]"
