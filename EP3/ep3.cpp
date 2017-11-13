@@ -42,8 +42,10 @@ int main(){
 				while(p != NULL) {
 					int pos, t;
 					sscanf(p, "%d", &pos);
+					p = strtok(NULL, " \n");
 					sscanf(p, "%d", &t);
-					adiciona_evento(t, 3, cnt, pos);  
+					adiciona_evento(t, 3, cnt, pos); 
+					p = strtok(NULL, " \n"); 
 				}
 			}	
 			printf("pa\n");
