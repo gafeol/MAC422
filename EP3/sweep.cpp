@@ -3,6 +3,8 @@ using namespace std;
 
 #include "sweep.h"
 
+multiset<evento> eventos; 
+
 evento prox_evento(){
 	evento x = *eventos.begin();
 	eventos.erase(eventos.begin());

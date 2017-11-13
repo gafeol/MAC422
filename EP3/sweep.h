@@ -25,7 +25,7 @@ struct evento{
 	}
 };
 
-multiset<evento> eventos;
+extern multiset<evento> eventos;
 
 evento prox_evento();
 

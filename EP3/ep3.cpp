@@ -1,8 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "processo.h"
 #include "sweep.h"
+#include "processo.h"
 
 void roda(FILE *trace, int dt, int subs, int espaco){
 	FILE *mem, *vir;  
