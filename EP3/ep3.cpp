@@ -37,6 +37,7 @@ int main(){
 				fscanf(trace, " %d%d", &tf, &b);
 				fscanf(trace, " %s", st);
 				string nome = st;
+				printf("LINHA %d: %d %d %d %s ", cnt, t0, tf, b, st);
 				fscanf(trace, "%[^\n]", st); 
 				char *p = strtok(st, " \n");
 				while(p != NULL) {
@@ -44,6 +45,7 @@ int main(){
 					sscanf(p, "%d", &pos);
 					p = strtok(NULL, " \n");
 					sscanf(p, "%d", &t);
+					printf(" par %d %d ", pos, t);
 					adiciona_evento(t, 3, cnt, pos); 
 					p = strtok(NULL, " \n"); 
 				}
