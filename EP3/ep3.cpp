@@ -1,25 +1,79 @@
 #include <bits/stdc++.h>
+#include <sys/stat.h>
 using namespace std;
 
+#define debug(args...) fprintf(stderr,args)
+
+#include "global.h"
 #include "sweep.h"
 #include "processo.h"
+#include "memory.h"
 
-void roda(FILE *trace, int dt, int subs, int espaco){
-	FILE *mem, *vir;  
-	mem = fopen("tmp/ep3.mem", "r+wb"); 
-	vir = fopen("tmp/ep3.vir", "r+wb");
-	int buffer = -1;
+void roda(int total, int virt, int alg_subs, int alg_aloc){
+	mkdir("./tmp", ACCESSPERMS);
+
+	FILE *mem, *vir;
+
+	mem = fopen("./tmp/ep3.mem", "wb+"); 
+	assert(mem != NULL && "Erro na abertura de tmp/ep3.mem\n");
+
+	vir = fopen("./tmp/ep3.vir", "wb+");
+	assert(vir != NULL && "Erro na abertura de tmp/ep3.vir\n");
+	
+	char buffer = EMPTY;
+
+	fseek(mem, 0, SEEK_SET);
+	fseek(vir, 0, SEEK_SET);
+
+	for(int i=0;i < total;i++)
+		assert(fwrite(&buffer, sizeof(char), 1, mem) == 1 && "Erro na escrita do arquivo ep3.mem"); 
+
+	for(int i=0;i < ceil(total, tam_pag);i++)
+		MF.push_back(mem_fis());
+
+	for(int i=0;i < virt;i++)
+		assert(fwrite(&buffer, sizeof(char), 1, vir) == 1 && "Erro na escrita do arquivo ep3.vir");
+
+	for(int i=0;i < ceil(virt, tam_pag);i++)
+		MV.push_back(mem_virt());
+
+	fclose(mem);
+	fclose(vir);
+
+	while(!eventos.empty()){
+		evento ev = prox_evento(); 
+		printf("evento %d %d\n", ev.tipo, ev.proc);
+		int proc = ev.proc;
+		int pos = ev.pos;
+		switch (ev.tipo){
+			case 1:
+				aloca_processo(proc, alg_aloc);
+				break;
+			case 2:
+				remove_processo(proc);
+				break;
+			case 3:
+				acessa_pag(proc, pos, alg_subs);	
+				break;
+/*			case 4:
+				compacta();
+				break;
+			
+*/		
+			default:
+				break;
+		}
+	}
 }
 
 int main(){
-	int dt;
 	int tipo_subs = 0, tipo_espaco = 0;
 	char input[30], file[110];
+	int total, virt;
 	FILE *trace;
 	while(1){
 		printf("[ep3]: ");
 		scanf(" %s", input);
-		printf("'%s'\n", input);
 		if(strcmp(input, "sai") == 0)
 			break;
 		
@@ -27,17 +81,27 @@ int main(){
 			printf("carregou\n");
 			scanf(" %s", file);
 			trace = fopen(file, "r");
-			int total, virt, ualoc, tam_pagina;
-			fscanf(trace, "%d %d %d %d", &total, &virt, &ualoc, &tam_pagina);
+			fscanf(trace, "%d %d %d %d", &total, &virt, &ualoc, &tam_pag);
 			int t0, tf, b;
 			char st[500010];
 			int cnt = 0;
 			while(fscanf(trace,"%d",&t0) != EOF) {
-				cnt++;
-				fscanf(trace, " %d%d", &tf, &b);
+				fscanf(trace, " %s", st);
+				if(strcmp(st, "COMPACTAR") == 0){
+					adiciona_evento(t0, 4, 0, 0);
+					continue;
+				}
+				else
+					tf = atoi(st);
+				fscanf(trace, " %d", &b);
 				fscanf(trace, " %s", st);
 				string nome = st;
-				printf("LINHA %d: %d %d %d %s ", cnt, t0, tf, b, st);
+				adiciona_evento(t0, 1, cnt, 0);
+				adiciona_evento(tf, 2, cnt, 0);
+	
+				processo novo  = cria_processo(t0, tf, b, nome); 
+				processos.push_back(novo);
+
 				fscanf(trace, "%[^\n]", st); 
 				char *p = strtok(st, " \n");
 				while(p != NULL) {
@@ -45,12 +109,11 @@ int main(){
 					sscanf(p, "%d", &pos);
 					p = strtok(NULL, " \n");
 					sscanf(p, "%d", &t);
-					printf(" par %d %d ", pos, t);
 					adiciona_evento(t, 3, cnt, pos); 
 					p = strtok(NULL, " \n"); 
 				}
+				cnt++;
 			}	
-			printf("pa\n");
 		}
 		else if(strcmp(input, "substitui") == 0){
 			printf("substituiu\n");
@@ -62,7 +125,7 @@ int main(){
 		else if(strcmp(input, "executa") == 0){
 			printf("executa\n");
 			scanf("%d", &dt);
-			roda(trace, dt, tipo_subs, tipo_espaco);
+			roda(total, virt, tipo_subs, tipo_espaco);
 		}
 		else{
 			printf("Comando desconhecido\n");

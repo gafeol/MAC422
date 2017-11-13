@@ -6,6 +6,8 @@ using namespace std;
 
 struct processo{
 	int t0, tf, b;
+
+	int pid;
 	string nome;
 	map<int, int> memf; // posicao na memoria fisica
 	int pos_virt; //posicao inicial na memoria virtual
@@ -13,7 +15,7 @@ struct processo{
 	processo(int tt0, int ttf, int bb, string nn){
 		t0 = tt0;
 		tf = ttf;
-		bb = b;
+		b = bb;
 		nome = nn;
 		memf.clear();
 		pos_virt = -1;
@@ -22,6 +24,14 @@ struct processo{
 	processo(){}
 };
 
+extern vector<processo> processos;
+
 processo cria_processo(int t0, int tf, int b, string nome);
+
+void aloca_processo(int pro, int alg_aloc);
+
+void remove_processo(int pro);
+
+void acessa_pag(int pro, int pos, int alg_subs);
 
 #endif
