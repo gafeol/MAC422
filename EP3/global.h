@@ -36,9 +36,12 @@ struct mem_fis{
 
 extern vector<mem_virt> MV;
 extern vector<mem_fis> MF;
+extern int *livre;
 
 int ceil(int, int);
 
 extern queue<int> fila_fis;
+extern queue<int> pid_disp;
+
 
 #endif

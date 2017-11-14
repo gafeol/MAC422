@@ -9,8 +9,12 @@ using namespace std;
 
 void fifo(int pos_virt){
 
-	debug("fifo %d\n", pos_virt);
-
+	// PAGE FAULT
+	while(!fila_fis.empty() && livre[fila_fis.front()]){
+		livre[fila_fis.front()]--;
+		fila_fis.pop();
+	}
+	assert(!fila_fis.empty());
 	int pag = fila_fis.front();
 	fila_fis.pop();
 	fila_fis.push(pag);
@@ -23,7 +27,7 @@ void fifo(int pos_virt){
 	 
 	mem = fopen("./tmp/ep3.mem", "r+b");
 
-	char buffer  =  15; // processos[MF[pag].ind].pid;
+	char buffer  =  processos[MF[pag].ind].pid;
 	debug("pag %d tam pag %d \n", pag, tam_pag);
 	fseek(mem, pag*tam_pag*sizeof(char), SEEK_SET);
 	for(int a=0;a<tam_pag;a++){

@@ -10,6 +10,12 @@ using namespace std;
 #include "memory.h"
 
 void roda(int total, int virt, int alg_subs, int alg_aloc){
+	alg_subs = 2;
+	if(alg_subs == 2){
+		livre = (int*)malloc(total*sizeof(int));
+		memset(livre, 0, sizeof(livre));
+	}
+
 	mkdir("./tmp", ACCESSPERMS);
 
 	FILE *mem, *vir;
@@ -64,6 +70,9 @@ void roda(int total, int virt, int alg_subs, int alg_aloc){
 				break;
 		}
 	}
+
+	if(alg_subs == 2)
+		free(livre);
 }
 
 int main(){
@@ -71,6 +80,10 @@ int main(){
 	char input[30], file[110];
 	int total, virt;
 	FILE *trace;
+	
+	for(int a=0;a<128;a++){
+		pid_disp.push(a);
+	}
 	while(1){
 		printf("[ep3]: ");
 		scanf(" %s", input);

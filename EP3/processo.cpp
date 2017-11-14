@@ -18,6 +18,10 @@ void aloca_processo(int pro, int alg_aloc){
 
 	alg_aloc = 2; /* FORÇANDO WORST FIT */
 
+	// Seta pid do processo
+	processos[pro].pid = pid_disp.front();
+	pid_disp.pop();
+
 	switch (alg_aloc) {
 		case 1: 
 			best_fit(pro);
@@ -32,16 +36,16 @@ void aloca_processo(int pro, int alg_aloc){
 }
 
 void remove_processo(int pro){
-	int sz = processos[pro].b;
-	int sz_p = ceil(sz, tam_pag);
 	printf("remove processo %d\n", pro);
-	remove_virtual(processos[pro].pos_virt, sz_p, pro);
+	pid_disp.push(processos[pro].pid);
+
+	remove_virtual(pro);
 }
 
 void acessa_pag(int p, int pos, int alg_subs){
 	int pos_virt = processos[p].pos_virt + pos/tam_pag;
 	if(MV[pos_virt].pos_fis == EMPTY){
 		// tenta botar o maluco na memoria fisica 
-		aloca_fis(pos_virt, alg_subs);
+		procura_fis(pos_virt, alg_subs);
 	}
 }

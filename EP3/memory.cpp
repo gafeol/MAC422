@@ -1,6 +1,9 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+#define debug(args...) fprintf(stderr, args);
+
+#include "memory.h"
 #include "global.h"
 #include "processo.h"
 
@@ -34,13 +37,23 @@ void seta_virtual(int pos_ini, int num_pag, int p){
 	getchar();
 }
 
-void remove_virtual(int pos_ini, int num_pag, int p){
+void remove_virtual(int p){
+	int pos_ini = processos[p].pos_virt;
+	int sz = processos[p].b;
+	int num_pag = ceil(sz, tam_pag);
+
 	printf("rmv virtual %d %d %d\n", pos_ini, num_pag, p);
 	for(int a=pos_ini;a<pos_ini+num_pag;a++){
+		if(MV[a].pos_fis != EMPTY){
+			debug("a %d pos fis %d inv %d\n", a, MV[a].pos_fis, MF[MV[a].pos_fis].pos_virt);
+			assert(MF[MV[a].pos_fis].pos_virt == a);
+			libera_fis(MV[a].pos_fis);
+			MF[MV[a].pos_fis] = mem_fis();
+			livre[MV[a].pos_fis]++;
+		}
 		MV[a] = mem_virt();
 	}
 	
-	int sz = processos[p].b;
 	FILE *vir;
 	vir = fopen("./tmp/ep3.vir", "r+b");
 	assert(vir != NULL && "Erro na abertura de tmp/ep3.vir");
@@ -48,7 +61,9 @@ void remove_virtual(int pos_ini, int num_pag, int p){
 	fseek(vir, pos_ini*tam_pag*sizeof(char), SEEK_SET); 
 
 	char buffer = EMPTY;
-	for(int cnt=0;cnt < sz;cnt++){
+	// NAO É SZ, TEM QUE LEVAR EM CONTA A UALOC
+	debug("cara tem %d bytes, mas apago %d*%d\n", sz, num_pag, tam_pag);
+	for(int cnt=0;cnt < num_pag*tam_pag;cnt++){
 		assert(fwrite(&buffer, sizeof(char), 1, vir) == 1 && "Erro na escrita de vir");
 	}
 	fclose(vir);
@@ -57,22 +72,19 @@ void remove_virtual(int pos_ini, int num_pag, int p){
 	getchar();
 }
 
-void aloca_fis(int pos_virt, int alg_subs){
+void procura_fis(int pos_virt, int alg_subs){
 	printf("aloca fis %d\n", pos_virt);
 	for(int i=0;i < MF.size();i++){
 		if(MF[i].pos_virt == EMPTY){
 			MV[pos_virt].pos_fis = i;
+			debug("liga virt %d - > mem %d\n", pos_virt, i);
 			MF[i].pos_virt = pos_virt;
+			debug("liga mem %d - > virt %d\n", i, pos_virt);
 			MF[i].ind = MV[pos_virt].ind;
 
 			fila_fis.push(i);
 
-			FILE *mem;
-			mem = fopen("./tmp/ep3.mem", "r+b");
-			char buffer = 10; // processos[MF[i].ind].pid;
-			fseek(mem, i*tam_pag*sizeof(char), SEEK_SET);
-			assert(fwrite(&buffer, sizeof(char), 1, mem) && "Erro na escrita de mem");
-			fclose(mem);
+			aloca_fis(i, MF[i].ind);
 
 			printf("nao usou fifo\n");
 			getchar();
@@ -97,4 +109,29 @@ void aloca_fis(int pos_virt, int alg_subs){
 			lru4(pos_virt);
 		break;*/
 	}
+}
+
+void aloca_fis(int pos_fis, int p){
+	modifica_fis(pos_fis, p);
+}
+
+void libera_fis(int pos_fis){
+	modifica_fis(pos_fis, -1);
+}
+
+void modifica_fis(int pos_fis, int p){
+	FILE *mem;
+	mem = fopen("./tmp/ep3.mem", "r+b");
+	char buffer;
+	if(p == -1)
+		buffer = EMPTY;
+	else
+		buffer = processos[p].pid;
+
+	fseek(mem, pos_fis*tam_pag*sizeof(char), SEEK_SET);
+	for(int a=0;a<tam_pag;a++){
+		assert(fwrite(&buffer, sizeof(char), 1, mem) && "Erro na escrita de mem");
+	}
+	fclose(mem);
+	
 }
