@@ -15,14 +15,13 @@ void roda(int alg_subs, int alg_aloc){
 
 	R = (int*) malloc(nquad*sizeof(int));
 
-	alg_subs = FIFO;
+	alg_subs = LRU4;
 
 	if(alg_subs == FIFO){
 		livre = (int*)malloc(nquad*sizeof(int));
 		memset(livre, 0, sizeof(livre));
 	}
-	if(alg_subs == LRU2){
-		int nquad = ceil(total, tam_pag);
+	if(alg_subs == LRU2 || alg_subs == LRU4){
 		matriz_pag = (bool **) malloc(nquad*sizeof(bool*));
 		for(int i=0;i<nquad;i++){
 			matriz_pag[i] = (bool *) malloc(nquad*sizeof(bool));
@@ -79,7 +78,11 @@ void roda(int alg_subs, int alg_aloc){
 				break;
 			case 4:
 				compacta();
-				break;		
+				break;
+			case 5:
+				for(int a=0;a<nquad;a++)
+					R[a] = 0;
+				break;
 			default:
 				break;
 		}
@@ -87,7 +90,7 @@ void roda(int alg_subs, int alg_aloc){
 
 	if(alg_subs == FIFO)
 		free(livre);
-	else if(alg_subs == LRU2)
+	else if(alg_subs == LRU2 || alg_subs == LRU4)
 		free(matriz_pag);
 }
 
@@ -106,6 +109,7 @@ int main(){
 			break;
 		
 		if(strcmp(input, "carrega") == 0){
+			int tmax = 0;
 			printf("carregou\n");
 			scanf(" %s", file);
 			trace = fopen(file, "r");
@@ -121,6 +125,8 @@ int main(){
 				}
 				else
 					tf = atoi(st);
+				tmax = max(tmax, t0);
+				tmax = max(tmax, tf);
 				fscanf(trace, " %d", &b);
 				fscanf(trace, " %s", st);
 				string nome = st;
@@ -138,11 +144,16 @@ int main(){
 					p = strtok(NULL, " \n");
 					sscanf(p, "%d", &t);
 					adiciona_evento(t, 3, cnt, pos); 
+					tmax = max(tmax, t);
 					p = strtok(NULL, " \n"); 
 				}
 				cnt++;
-			}
-			fclose(trace);	
+				fclose(trace);	
+			}	
+
+			// Eventos de atualizacao do bit R a cada unidade de tempo
+			for(int tempo=0;tempo<=tmax+1;tempo++)
+				adiciona_evento(tempo, 5,  0, 0);
 		}
 		else if(strcmp(input, "substitui") == 0){
 			printf("substituiu\n");

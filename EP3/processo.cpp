@@ -9,6 +9,7 @@ using namespace std;
 #include "best_fit.h"
 #include "worst_fit.h"
 //#include "quick_fit.h"
+#include "lru4.h"
 
 vector<processo> processos;
 
@@ -40,7 +41,6 @@ void aloca_processo(int pro, int alg_aloc){
 void remove_processo(int pro, int alg_subs){
 	printf("remove processo %d\n", pro);
 	pid_disp.push(processos[pro].pid);
-
 	remove_virtual(pro, alg_subs);
 }
 
@@ -52,4 +52,8 @@ void acessa_pag(int p, int pos, int alg_subs){
 		// tenta botar o maluco na memoria fisica 
 		procura_fis(pos_virt, alg_subs);
 	}
+	R[MV[pos_virt].pos_fis] = 1;
+	
+	if(alg_subs == LRU4)
+		atualiza_matriz4();
 }

@@ -18,7 +18,6 @@ bool cmp(int a, int b){
 
 void lru2(int pos_virt){
 	// PAGE FAULT
-	int nquad = ceil(total, tam_pag);
 	int mn = 0;
 	for(int i=1;i<nquad;i++){
 		if(cmp(i, mn))
@@ -34,8 +33,6 @@ void lru2(int pos_virt){
 
 void atualiza_matriz(int pag){
 	debug("atualiza matriz %d\n", pag);
-	int nquad = ceil(total, tam_pag);
-
 	for(int j=0;j<nquad;j++)
 		matriz_pag[pag][j] = 1;
 	for(int i=0;i<nquad;i++)

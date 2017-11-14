@@ -10,7 +10,7 @@ using namespace std;
 //#include "optimal.h"
 #include "fifo.h"
 #include "lru2.h"
-//#include "lru4.h"
+#include "lru4.h"
 
 
 void seta_virtual(int pos_ini, int num_pag, int p){
@@ -98,7 +98,7 @@ void procura_fis(int pos_virt, int alg_subs){
 		}
 	}
 
-	alg_subs = FIFO;
+	alg_subs = LRU4;
 
 	switch (alg_subs){
 		/*case 1:
@@ -110,9 +110,9 @@ void procura_fis(int pos_virt, int alg_subs){
 		case LRU2:
 			lru2(pos_virt);
 		break;
-		/*case 4:
+		case LRU4:
 			lru4(pos_virt);
-		break;*/
+		break;
 	}
 }
 
@@ -142,6 +142,7 @@ void modifica_fis(int pos_fis, int p){
 
 void substitui_pag(int pag, int pos_virt){
 	MV[pos_virt].pos_fis = pag;
+	assert(MF[pag].pos_virt != EMPTY);
 	MV[MF[pag].pos_virt].pos_fis = EMPTY;
 	MF[pag].pos_virt = pos_virt;
 	MF[pag].ind = MV[pos_virt].ind;
@@ -153,9 +154,8 @@ void substitui_pag(int pag, int pos_virt){
 	char buffer  =  processos[MF[pag].ind].pid;
 	debug("pag %d tam pag %d \n", pag, tam_pag);
 	fseek(mem, pag*tam_pag*sizeof(char), SEEK_SET);
-	for(int a=0;a<tam_pag;a++){
+	for(int a=0;a<tam_pag;a++)
 		assert(fwrite(&buffer, sizeof(char), 1, mem) == 1 && "Erro na escrita de mem");
-	}
 	fclose(mem);
 
 	getchar();

@@ -4,6 +4,14 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+/* Ordem de desempate dos eventos
+	Bit R
+	t0 de pag
+	acesso de pag
+	compactacao
+	tf de pag
+*/
+
 struct evento{
 	int tipo;
 	int t;
@@ -21,7 +29,8 @@ struct evento{
 	evento(){}
 	
 	bool operator< (const evento o) const {
-		return (t < o.t);
+		int ordem[] = {-1, 2, 5, 3, 4, 1};
+		return (t < o.t || (t == o.t && ordem[tipo] < ordem[o.tipo]));
 	}
 };
 
