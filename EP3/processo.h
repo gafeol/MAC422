@@ -30,7 +30,7 @@ processo cria_processo(int t0, int tf, int b, string nome);
 
 void aloca_processo(int pro, int alg_aloc);
 
-void remove_processo(int pro);
+void remove_processo(int pro, int alg_subs);
 
 void acessa_pag(int pro, int pos, int alg_subs);
 

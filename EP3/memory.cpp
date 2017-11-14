@@ -9,7 +9,7 @@ using namespace std;
 
 //#include "optimal.h"
 #include "fifo.h"
-//#include "lru2.h"
+#include "lru2.h"
 //#include "lru4.h"
 
 
@@ -37,7 +37,7 @@ void seta_virtual(int pos_ini, int num_pag, int p){
 	getchar();
 }
 
-void remove_virtual(int p){
+void remove_virtual(int p, int alg_subs){
 	int pos_ini = processos[p].pos_virt;
 	int sz = processos[p].b;
 	int num_pag = ceil(sz, tam_pag);
@@ -49,9 +49,11 @@ void remove_virtual(int p){
 			assert(MF[MV[a].pos_fis].pos_virt == a);
 			libera_fis(MV[a].pos_fis);
 			MF[MV[a].pos_fis] = mem_fis();
-			livre[MV[a].pos_fis]++;
+			if(alg_subs == FIFO)
+				livre[MV[a].pos_fis]++;
 		}
 		MV[a] = mem_virt();
+		debug("seta MV %d pra empty\n", a);
 	}
 	
 	FILE *vir;
@@ -81,31 +83,34 @@ void procura_fis(int pos_virt, int alg_subs){
 			MF[i].pos_virt = pos_virt;
 			debug("liga mem %d - > virt %d\n", i, pos_virt);
 			MF[i].ind = MV[pos_virt].ind;
-
-			fila_fis.push(i);
+			
+			if(alg_subs == FIFO)
+				fila_fis.push(i);
+			else if(alg_subs == LRU2)
+				atualiza_matriz(i);
 
 			aloca_fis(i, MF[i].ind);
 
-			printf("nao usou fifo\n");
+			printf("nao usou alg subs\n");
 			getchar();
 			getchar();
 			return ;
 		}
 	}
 
-	alg_subs = 2;
+	alg_subs = LRU2;
 
 	switch (alg_subs){
 		/*case 1:
 			optimal(pos_virt);
 		break;*/
-		case 2:
+		case FIFO:
 			fifo(pos_virt);
 		break;
-		/*case 3:
+		case LRU2:
 			lru2(pos_virt);
 		break;
-		case 4:
+		/*case 4:
 			lru4(pos_virt);
 		break;*/
 	}
@@ -133,5 +138,26 @@ void modifica_fis(int pos_fis, int p){
 		assert(fwrite(&buffer, sizeof(char), 1, mem) && "Erro na escrita de mem");
 	}
 	fclose(mem);
-	
+}
+
+void substitui_pag(int pag, int pos_virt){
+	MV[pos_virt].pos_fis = pag;
+	MV[MF[pag].pos_virt].pos_fis = EMPTY;
+	MF[pag].pos_virt = pos_virt;
+	MF[pag].ind = MV[pos_virt].ind;
+
+	FILE *mem;
+	 
+	mem = fopen("./tmp/ep3.mem", "r+b");
+
+	char buffer  =  processos[MF[pag].ind].pid;
+	debug("pag %d tam pag %d \n", pag, tam_pag);
+	fseek(mem, pag*tam_pag*sizeof(char), SEEK_SET);
+	for(int a=0;a<tam_pag;a++){
+		assert(fwrite(&buffer, sizeof(char), 1, mem) && "Erro na escrita de mem");
+	}
+	fclose(mem);
+
+	getchar();
+	getchar();
 }

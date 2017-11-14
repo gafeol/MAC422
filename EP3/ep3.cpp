@@ -9,11 +9,27 @@ using namespace std;
 #include "processo.h"
 #include "memory.h"
 
-void roda(int total, int virt, int alg_subs, int alg_aloc){
-	alg_subs = 2;
-	if(alg_subs == 2){
-		livre = (int*)malloc(total*sizeof(int));
+void roda(int alg_subs, int alg_aloc){
+
+	nquad = ceil(total, tam_pag);
+
+	R = (int*) malloc(nquad*sizeof(int));
+
+	alg_subs = LRU2;
+
+	if(alg_subs == FIFO){
+		livre = (int*)malloc(nquad*sizeof(int));
 		memset(livre, 0, sizeof(livre));
+	}
+	if(alg_subs == LRU2){
+		int nquad = ceil(total, tam_pag);
+		matriz_pag = (bool **) malloc(nquad*sizeof(bool*));
+		for(int i=0;i<nquad;i++){
+			matriz_pag[i] = (bool *) malloc(nquad*sizeof(bool));
+			for(int j=0;j<nquad;j++){
+				matriz_pag[i][j] = 0;
+			}
+		}
 	}
 
 	mkdir("./tmp", ACCESSPERMS);
@@ -56,7 +72,7 @@ void roda(int total, int virt, int alg_subs, int alg_aloc){
 				aloca_processo(proc, alg_aloc);
 				break;
 			case 2:
-				remove_processo(proc);
+				remove_processo(proc, alg_subs);
 				break;
 			case 3:
 				acessa_pag(proc, pos, alg_subs);	
@@ -64,21 +80,21 @@ void roda(int total, int virt, int alg_subs, int alg_aloc){
 /*			case 4:
 				compacta();
 				break;
-			
 */		
 			default:
 				break;
 		}
 	}
 
-	if(alg_subs == 2)
+	if(alg_subs == FIFO)
 		free(livre);
+	else if(alg_subs == LRU2)
+		free(matriz_pag);
 }
 
 int main(){
 	int tipo_subs = 0, tipo_espaco = 0;
 	char input[30], file[110];
-	int total, virt;
 	FILE *trace;
 	
 	for(int a=0;a<128;a++){
@@ -138,7 +154,7 @@ int main(){
 		else if(strcmp(input, "executa") == 0){
 			printf("executa\n");
 			scanf("%d", &dt);
-			roda(total, virt, tipo_subs, tipo_espaco);
+			roda(tipo_subs, tipo_espaco);
 		}
 		else{
 			printf("Comando desconhecido\n");

@@ -6,7 +6,15 @@ using namespace std;
 
 const char EMPTY = 129;
 
+const int OPT = 1;
+const int FIFO = 2;
+const int LRU2 = 3;
+const int LRU4 = 4;
+
 extern int ualoc, tam_pag, dt;
+extern int total, virt;
+
+extern int nquad;
 
 struct mem_virt{
 	int ind;
@@ -36,7 +44,11 @@ struct mem_fis{
 
 extern vector<mem_virt> MV;
 extern vector<mem_fis> MF;
+extern int *R;
+
 extern int *livre;
+
+extern bool** matriz_pag;
 
 int ceil(int, int);
 

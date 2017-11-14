@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+#define debug(args...) fprintf(stderr, args);
+
 #include "global.h"
 #include "processo.h"
 #include "memory.h"
@@ -35,16 +37,18 @@ void aloca_processo(int pro, int alg_aloc){
 	}
 }
 
-void remove_processo(int pro){
+void remove_processo(int pro, int alg_subs){
 	printf("remove processo %d\n", pro);
 	pid_disp.push(processos[pro].pid);
 
-	remove_virtual(pro);
+	remove_virtual(pro, alg_subs);
 }
 
 void acessa_pag(int p, int pos, int alg_subs){
 	int pos_virt = processos[p].pos_virt + pos/tam_pag;
+	debug("acessa pag %d %d pos fis %d\n", p, pos, MV[pos_virt].pos_fis);
 	if(MV[pos_virt].pos_fis == EMPTY){
+		debug("procura fis\n");
 		// tenta botar o maluco na memoria fisica 
 		procura_fis(pos_virt, alg_subs);
 	}
