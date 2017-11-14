@@ -6,6 +6,8 @@ using namespace std;
 int ualoc, tam_pag, dt;
 int total, virt;
 
+map<int, map<int, int> > qtd_aces;
+
 int nquad;
 
 vector<mem_virt> MV;

@@ -15,7 +15,7 @@ void roda(int alg_subs, int alg_aloc){
 
 	R = (int*) malloc(nquad*sizeof(int));
 
-	alg_subs = LRU4;
+	alg_subs = OPT;
 
 	if(alg_subs == FIFO){
 		livre = (int*)malloc(nquad*sizeof(int));
@@ -146,6 +146,9 @@ int main(){
 					adiciona_evento(t, 3, cnt, pos); 
 					tmax = max(tmax, t);
 					p = strtok(NULL, " \n"); 
+					
+					debug("qtd_aces[%d][%d] ++\n", cnt, pos/tam_pag);
+					qtd_aces[cnt][pos/tam_pag]++;
 				}
 				cnt++;
 			}	

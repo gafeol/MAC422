@@ -14,6 +14,8 @@ const int LRU4 = 4;
 extern int ualoc, tam_pag, dt;
 extern int total, virt;
 
+extern map<int, map<int, int> > qtd_aces;
+
 extern int nquad;
 
 struct mem_virt{

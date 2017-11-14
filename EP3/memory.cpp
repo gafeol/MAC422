@@ -7,7 +7,7 @@ using namespace std;
 #include "global.h"
 #include "processo.h"
 
-//#include "optimal.h"
+#include "optimal.h"
 #include "fifo.h"
 #include "lru2.h"
 #include "lru4.h"
@@ -84,6 +84,7 @@ void procura_fis(int pos_virt, int alg_subs){
 			debug("liga mem %d - > virt %d\n", i, pos_virt);
 			MF[i].ind = MV[pos_virt].ind;
 			
+
 			if(alg_subs == FIFO)
 				fila_fis.push(i);
 			else if(alg_subs == LRU2)
@@ -98,12 +99,12 @@ void procura_fis(int pos_virt, int alg_subs){
 		}
 	}
 
-	alg_subs = LRU4;
+	alg_subs = OPT;
 
 	switch (alg_subs){
-		/*case 1:
+		case OPT:
 			optimal(pos_virt);
-		break;*/
+		break;
 		case FIFO:
 			fifo(pos_virt);
 		break;
@@ -196,6 +197,9 @@ void compacta()
 			MV[pnlivre].ind = EMPTY;
 			MV[pnlivre].pos_fis = EMPTY;
 			MV[plivre].pos_fis = fis;
+
+			if(plivre == 0 || MV[plivre-1].ind != MV[plivre].ind)
+				processos[MV[plivre].ind].pos_virt = plivre;
 		}
 		buffer = processos[MV[plivre].ind].pid;
 		printf("buffer %d\n", buffer);

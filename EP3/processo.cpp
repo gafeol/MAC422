@@ -46,6 +46,9 @@ void remove_processo(int pro, int alg_subs){
 
 void acessa_pag(int p, int pos, int alg_subs){
 	int pos_virt = processos[p].pos_virt + pos/tam_pag;
+
+	qtd_aces[p][pos/tam_pag]--;
+
 	debug("acessa pag %d %d pos fis %d\n", p, pos, MV[pos_virt].pos_fis);
 	if(MV[pos_virt].pos_fis == EMPTY){
 		debug("procura fis\n");
