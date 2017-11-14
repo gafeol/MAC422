@@ -98,7 +98,7 @@ void procura_fis(int pos_virt, int alg_subs){
 		}
 	}
 
-	alg_subs = LRU2;
+	alg_subs = FIFO;
 
 	switch (alg_subs){
 		/*case 1:
@@ -135,7 +135,7 @@ void modifica_fis(int pos_fis, int p){
 
 	fseek(mem, pos_fis*tam_pag*sizeof(char), SEEK_SET);
 	for(int a=0;a<tam_pag;a++){
-		assert(fwrite(&buffer, sizeof(char), 1, mem) && "Erro na escrita de mem");
+		assert(fwrite(&buffer, sizeof(char), 1, mem) == 1 && "Erro na escrita de mem");
 	}
 	fclose(mem);
 }
@@ -154,10 +154,103 @@ void substitui_pag(int pag, int pos_virt){
 	debug("pag %d tam pag %d \n", pag, tam_pag);
 	fseek(mem, pag*tam_pag*sizeof(char), SEEK_SET);
 	for(int a=0;a<tam_pag;a++){
-		assert(fwrite(&buffer, sizeof(char), 1, mem) && "Erro na escrita de mem");
+		assert(fwrite(&buffer, sizeof(char), 1, mem) == 1 && "Erro na escrita de mem");
 	}
 	fclose(mem);
 
 	getchar();
 	getchar();
+}
+
+void compacta()
+{
+	//compacta virtual
+	printf("prestes a compactar\n");
+	getchar();
+	getchar();
+	int plivre = 0, pnlivre= 0;
+	int num_pages = ceil(virt, tam_pag);
+	printf("num_pages %d\n", num_pages);
+	int fis;
+	FILE *vir;
+	vir = fopen("./tmp/ep3.vir", "r+b");
+	fseek(vir, 0, SEEK_SET);
+	char buffer = EMPTY;
+	for(int i = 0; i < num_pages*tam_pag; i++) {
+		assert(fwrite(&buffer, sizeof(char), 1, vir) == 1 && "Nao foi possivel escrever no arquivo vir");
+		fflush(vir);
+	}
+	printf("zerou\n");
+	getchar();
+	getchar();
+	fseek(vir, 0, SEEK_SET);
+	while(plivre < num_pages && pnlivre < num_pages) {
+		while(MV[pnlivre].ind == EMPTY && pnlivre < num_pages)
+			pnlivre++;
+		if(pnlivre >= num_pages)
+			break;
+		if(plivre != pnlivre) {
+			fis = MV[pnlivre].pos_fis;
+			MF[fis].pos_virt = plivre;
+			MV[plivre].ind = MV[pnlivre].ind;
+			MV[pnlivre].ind = EMPTY;
+			MV[pnlivre].pos_fis = EMPTY;
+			MV[plivre].pos_fis = fis;
+		}
+		buffer = processos[MV[plivre].ind].pid;
+		printf("buffer %d\n", buffer);
+		for(int i = 0; i < tam_pag; i++) {
+			assert(fwrite(&buffer, sizeof(char), 1, vir) == 1  && "Nao foi possivel escrever no arquivo vir");
+			fflush(vir);
+		}
+		printf("escreveu\n");
+		getchar();
+		getchar();
+		plivre++; pnlivre++;
+	}
+	printf("compactou memoria virtual\n");
+	getchar();
+	getchar();
+	//compacta fisica
+	plivre = 0, pnlivre= 0;
+	int num_quadros = ceil(total, tam_pag);
+	int virt;
+	FILE *mem;
+	mem = fopen("./tmp/ep3.mem", "r+b");
+	fseek(mem, 0, SEEK_SET);
+	buffer = EMPTY;
+	for(int i = 0; i < num_quadros*tam_pag; i++) {
+		assert(fwrite(&buffer, sizeof(char), 1, mem) == 1 && "Nao foi possivel escrever no arquivo vir");
+		fflush(mem);
+	}
+	fseek(mem, 0, SEEK_SET);
+	while(plivre < num_quadros && pnlivre < num_quadros) {
+		while(MF[pnlivre].ind == EMPTY && pnlivre < num_quadros)
+			pnlivre++;
+		if(pnlivre >= num_quadros)
+			break;
+		if(plivre != pnlivre) {
+			virt = MF[pnlivre].pos_virt;
+			MV[virt].pos_fis = plivre;
+			MF[plivre].ind = MF[pnlivre].ind;
+			MF[pnlivre].ind = EMPTY;
+			MF[pnlivre].pos_virt = EMPTY;
+			MF[plivre].pos_virt = virt;
+		}
+		buffer = processos[MF[plivre].ind].pid;
+		printf("INDICE %d\n", MF[plivre].ind);
+		for(int i = 0; i < tam_pag; i++) {
+			assert(fwrite(&buffer, sizeof(char), 1, mem) && "Nao foi possivel escrever no arquivo mem");
+			fflush(mem);	
+		}
+		printf("escreveu\n");
+		getchar();
+		getchar();
+		plivre++; pnlivre++;
+	}
+	printf("compactou memoria fisica\n");
+	getchar();
+	getchar();
+	fclose(vir);
+	fclose(mem);
 }

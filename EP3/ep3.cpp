@@ -15,7 +15,7 @@ void roda(int alg_subs, int alg_aloc){
 
 	R = (int*) malloc(nquad*sizeof(int));
 
-	alg_subs = LRU2;
+	alg_subs = FIFO;
 
 	if(alg_subs == FIFO){
 		livre = (int*)malloc(nquad*sizeof(int));
@@ -77,10 +77,9 @@ void roda(int alg_subs, int alg_aloc){
 			case 3:
 				acessa_pag(proc, pos, alg_subs);	
 				break;
-/*			case 4:
+			case 4:
 				compacta();
-				break;
-*/		
+				break;		
 			default:
 				break;
 		}
@@ -142,7 +141,8 @@ int main(){
 					p = strtok(NULL, " \n"); 
 				}
 				cnt++;
-			}	
+			}
+			fclose(trace);	
 		}
 		else if(strcmp(input, "substitui") == 0){
 			printf("substituiu\n");

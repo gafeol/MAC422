@@ -11,5 +11,6 @@ void aloca_fis(int, int);
 void libera_fis(int);
 void modifica_fis(int, int);
 void substitui_pag(int, int);
+void compacta();
 
 #endif
