@@ -41,5 +41,5 @@ lru4.o: lru4.cpp lru4.h
 
 
 clean: 
-	rm ep3 *.o *~
+	rm ep3 *.o *~ -rf tmp/
 

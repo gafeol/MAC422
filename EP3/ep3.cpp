@@ -148,8 +148,8 @@ int main(){
 					p = strtok(NULL, " \n"); 
 				}
 				cnt++;
-				fclose(trace);	
 			}	
+			fclose(trace);	
 
 			// Eventos de atualizacao do bit R a cada unidade de tempo
 			for(int tempo=0;tempo<=tmax+1;tempo++)
