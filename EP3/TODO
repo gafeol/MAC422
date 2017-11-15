@@ -1,0 +1,11 @@
+Compactar se for preciso
+
+Impressoes de dados
+	Contar tempo gasto na procura de pagina
+	Numero de page faults
+
+Imprimir o estado da memoria e os bitmaps a cada dt
+
+Utilizar unidade de alocação nos calculos e escrita de binarios
+
+Testar Quick fit com todos processos do mesmo tamanho

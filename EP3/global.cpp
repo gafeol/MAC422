@@ -29,3 +29,6 @@ map<int, int> freq;
 int val[2];
 set<int> pos[2];
 set<pair<int, int> > proc;
+
+double tempo_busca;
+int page_fault;

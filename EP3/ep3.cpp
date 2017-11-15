@@ -87,7 +87,7 @@ void roda(int alg_subs, int alg_aloc){
 
 	while(!eventos.empty()){
 		evento ev = prox_evento(); 
-		printf("evento %d %d\n", ev.tipo, ev.proc);
+		debug("Evento %d %d\n", ev.tipo, ev.proc);
 		int proc = ev.proc;
 		int pos = ev.pos;
 		switch (ev.tipo){
@@ -112,21 +112,47 @@ void roda(int alg_subs, int alg_aloc){
 		}
 	}
 
+	free(R);
+
 	if(alg_subs == FIFO)
 		free(livre);
-	else if(alg_subs == LRU2 || alg_subs == LRU4)
+	else if(alg_subs == LRU2 || alg_subs == LRU4){
+		for(int i=0;i<nquad;i++)
+			free(matriz_pag[i]);
 		free(matriz_pag);
+	}
+}
+
+void init(){
+	val[0] = val[1] = -1;
+	page_fault = 0;
+	tempo_busca = 0.;
+
+	while(!pid_disp.empty())
+		pid_disp.pop();
+	for(int a=0;a<128;a++)
+		pid_disp.push(a);
+
+	qtd_aces.clear();
+	nquad = 0;
+	MV.clear();
+	MF.clear();
+
+	while(!fila_fis.empty())
+		fila_fis.pop();
+
+	while(!pid_disp.empty())
+		pid_disp.pop();
+	
+	
 }
 
 int main(){
-	val[0] = val[1] = -1;
-	int tipo_subs = 0, tipo_espaco = 0;
+	int tipo_subs, tipo_espaco;
 	char input[30], file[110];
 	FILE *trace;
-	
-	for(int a=0;a<128;a++){
-		pid_disp.push(a);
-	}
+	init();
+
 	while(1){
 		printf("[ep3]: ");
 		scanf(" %s", input);
@@ -199,10 +225,16 @@ int main(){
 			printf("executa\n");
 			scanf("%d", &dt);
 			roda(tipo_subs, tipo_espaco);
+			printf("Tempo gasto buscando espaço livre na memória física:    %.5f\n", tempo_busca);
+			printf("Numero de page faults: %d\n", page_fault);
+
+			init();
+			// Zerar o programa
 		}
 		else{
 			printf("Comando desconhecido\n");
 			break;
 		}
 	}
+
 }

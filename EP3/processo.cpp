@@ -20,6 +20,7 @@ processo cria_processo(int t0, int tf, int b, string nome){
 }
 
 void aloca_processo(int pro, int alg_aloc){
+	clock_t clk = clock();
 
 	alg_aloc = 3; /* FORÇANDO QUICK FIT */
 
@@ -38,6 +39,8 @@ void aloca_processo(int pro, int alg_aloc){
 			quick_fit(pro);
 		break;
 	}
+
+	tempo_busca += (clock() - clk)/CLOCKS_PER_SEC;
 }
 
 void remove_processo(int pro, int alg_subs, int alg_aloc){

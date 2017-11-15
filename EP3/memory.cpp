@@ -61,7 +61,6 @@ void remove_virtual(int p, int alg_subs){
 
 	char buffer = EMPTY;
 	// NAO É SZ, TEM QUE LEVAR EM CONTA A UALOC
-	debug("cara tem %d bytes, mas apago %d*%d\n", sz, num_pag, tam_pag);
 	for(int cnt=0;cnt < num_pag*tam_pag;cnt++){
 		assert(fwrite(&buffer, sizeof(char), 1, vir) == 1 && "Erro na escrita de vir");
 	}
@@ -75,6 +74,8 @@ void procura_fis(int pos_virt, int alg_subs){
 	printf("aloca fis %d\n", pos_virt);
 	for(int i=0;i < MF.size();i++){
 		if(MF[i].pos_virt == EMPTY){
+			page_fault++;
+
 			MV[pos_virt].pos_fis = i;
 			debug("liga virt %d - > mem %d\n", pos_virt, i);
 			MF[i].pos_virt = pos_virt;
