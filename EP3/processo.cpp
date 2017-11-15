@@ -12,6 +12,7 @@ typedef pair<int, int> pii;
 #include "worst_fit.h"
 #include "quick_fit.h"
 #include "lru4.h"
+#include "lista.h"
 
 vector<processo> processos;
 
@@ -22,10 +23,9 @@ processo cria_processo(int t0, int tf, int b, string nome){
 void aloca_processo(int pro, int alg_aloc){
 	clock_t clk = clock();
 
-	alg_aloc = 3; /* FORÇANDO QUICK FIT */
-
 	// Seta pid do processo
 	processos[pro].pid = pid_disp.front();
+	printf("processo %d -> pid %d\n", pro, processos[pro].pid);
 	pid_disp.pop();
 
 	switch (alg_aloc) {
@@ -45,6 +45,8 @@ void aloca_processo(int pro, int alg_aloc){
 
 void remove_processo(int pro, int alg_subs, int alg_aloc){
 	printf("remove processo %d\n", pro);
+	if(alg_aloc < 3)
+		lista_erase(L, pro);
 	pid_disp.push(processos[pro].pid);
 	remove_virtual(pro, alg_subs);
 	

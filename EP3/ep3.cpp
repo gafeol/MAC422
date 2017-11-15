@@ -10,6 +10,9 @@ typedef pair<int, int> pii;
 #include "sweep.h"
 #include "processo.h"
 #include "memory.h"
+#include "lista.h"
+
+int tmax;
 
 void verifica_freq(int npag){
 	if(val[0] == npag || val[1] == npag) return;
@@ -33,10 +36,10 @@ void roda(int alg_subs, int alg_aloc){
 
 	R = (int*) malloc(nquad*sizeof(int));
 
-	alg_subs = OPT;
-	alg_aloc = 3;
-
-	if(alg_subs == FIFO){
+	assert(alg_subs != -1 && "Algoritmo de substituicao de pagina nao escolhido");
+	assert(alg_aloc != -1 && "Algoritmo de alocacao de memoria livre nao escolhido");
+	
+	if(alg_subs == FIFO){ 
 		livre = (int*)malloc(nquad*sizeof(int));
 		memset(livre, 0, sizeof(livre));
 	}
@@ -49,6 +52,9 @@ void roda(int alg_subs, int alg_aloc){
 			}
 		}
 	}
+
+	if(alg_aloc < 3)
+		L = lista_create();
 	if(alg_aloc == 3){
 		if(val[0] > val[1]) swap(val[0], val[1]);		
 		int npag = ceil(virt, tam_pag);
@@ -107,6 +113,32 @@ void roda(int alg_subs, int alg_aloc){
 				for(int a=0;a<nquad;a++)
 					R[a] = 0;
 				break;
+			case 6:
+			{
+				printf("Estado da memória no instante %d\n", ev.t);	
+				printf("  Memoria virtual (Bitmap e Estado)\n");
+				char buffer;
+				FILE *vir = fopen("./tmp/ep3.vir", "rb");
+				for(int i=0;i<virt;i++){
+					fread(&buffer, sizeof(char), 1, vir);
+					if(buffer == EMPTY)
+						printf("	0 -1\n");
+					else
+						printf("	1 %d\n", (int)buffer);
+				}
+				fclose(vir);
+				printf("  Memoria física (Bitmap e Estado)\n");
+				FILE *mem = fopen("./tmp/ep3.mem", "rb");
+				for(int i=0;i<total;i++){
+					fread(&buffer, sizeof(char), 1, mem);
+					if(buffer == EMPTY)
+						printf("	0 -1\n");
+					else
+						printf("	1 %d\n", (int)buffer);
+				}
+				fclose(mem);
+				break;
+			}
 			default:
 				break;
 		}
@@ -121,6 +153,8 @@ void roda(int alg_subs, int alg_aloc){
 			free(matriz_pag[i]);
 		free(matriz_pag);
 	}
+	if(alg_aloc < 3)
+		lista_delete(L);
 }
 
 void init(){
@@ -141,9 +175,6 @@ void init(){
 	while(!fila_fis.empty())
 		fila_fis.pop();
 
-	while(!pid_disp.empty())
-		pid_disp.pop();
-
 	freq.clear();
 
 	pos[0].clear();
@@ -153,7 +184,6 @@ void init(){
 }
 
 void carrega(char* file){
-	int tmax = 0;
 	eventos.clear();
 	processos.clear();
 
@@ -167,7 +197,7 @@ void carrega(char* file){
 		fscanf(trace, " %s", st);
 		if(strcmp(st, "COMPACTAR") == 0){
 			adiciona_evento(t0, 4, 0, 0);
-			continue;
+			continue; 
 		}
 		else
 			tf = atoi(st);
@@ -209,7 +239,7 @@ void carrega(char* file){
 }
 
 int main(){
-	int tipo_subs, tipo_espaco;
+	int tipo_subs = -1, tipo_espaco = -1;
 	char input[30], file[110];
 	init();
 
@@ -233,6 +263,8 @@ int main(){
 			scanf("%d", &dt);
 			if(eventos.empty())
 				carrega(file);
+			for(int a=0;a*dt <= tmax;a++)
+				adiciona_evento(a*dt, 6, 0, 0);
 			roda(tipo_subs, tipo_espaco);
 			printf("Tempo gasto buscando espaço livre na memória física:    %.5f\n", tempo_busca);
 			printf("Numero de page faults: %d\n", page_fault);

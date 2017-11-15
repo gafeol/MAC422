@@ -66,5 +66,4 @@ extern set<pair<int, int> > proc;
 extern double tempo_busca; 
 extern int page_fault;
 
-
 #endif

@@ -43,6 +43,7 @@ void remove_virtual(int p, int alg_subs){
 	int num_pag = ceil(sz, tam_pag);
 
 	for(int a=pos_ini;a<pos_ini+num_pag;a++){
+		debug("remove pos %d -> %d\n", a, MV[a].pos_fis);
 		if(MV[a].pos_fis != EMPTY){
 			assert(MF[MV[a].pos_fis].pos_virt == a);
 			libera_fis(MV[a].pos_fis);
@@ -96,8 +97,6 @@ void procura_fis(int pos_virt, int alg_subs){
 			return ;
 		}
 	}
-
-	alg_subs = OPT;
 
 	switch (alg_subs){
 		case OPT:

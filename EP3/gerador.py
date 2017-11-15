@@ -11,6 +11,8 @@ nome = str(sys.argv[1])
 
 saida = open(nome, 'w')
 
-for i in range(0, n):
+saida.write("100 10 1 2\n")
 
+for i in range(0, n):
+	t0 = random.randint(
 saida.close()

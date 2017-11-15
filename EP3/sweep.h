@@ -10,6 +10,7 @@ using namespace std;
 	acesso de pag
 	compactacao
 	tf de pag
+	Impressao do estado das memorias
 */
 
 struct evento{
@@ -29,7 +30,7 @@ struct evento{
 	evento(){}
 	
 	bool operator< (const evento o) const {
-		int ordem[] = {-1, 2, 5, 3, 4, 1};
+		int ordem[] = {-1, 2, 5, 3, 4, 1, 6};
 		return (t < o.t || (t == o.t && ordem[tipo] < ordem[o.tipo]));
 	}
 };

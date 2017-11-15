@@ -6,7 +6,7 @@ CC=g++
 
 all: ep3 
 
-ep3: ep3.o processo.o sweep.o memory.o global.o best_fit.o worst_fit.o fifo.o lru2.o lru4.o optimal.o quick_fit.o
+ep3: ep3.o processo.o sweep.o memory.o global.o best_fit.o worst_fit.o fifo.o lru2.o lru4.o optimal.o quick_fit.o lista.o
 		$(CC) -g $^ -o $@
 
 ep3.o: ep3.cpp processo.h sweep.h memory.h global.h
@@ -45,6 +45,8 @@ optimal.o: optimal.cpp optimal.h
 quick_fit.o: quick_fit.cpp quick_fit.h
 		$(CC) quick_fit.cpp -g -c -o $@
 		
+lista.o: lista.cpp lista.h processo.h global.h
+		$(CC) lista.cpp -g -c -o $@
 
 
 
