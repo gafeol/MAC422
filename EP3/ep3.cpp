@@ -2,12 +2,30 @@
 #include <sys/stat.h>
 using namespace std;
 
+typedef pair<int, int> pii;
+
 #define debug(args...) fprintf(stderr,args)
 
 #include "global.h"
 #include "sweep.h"
 #include "processo.h"
 #include "memory.h"
+
+void verifica_freq(int npag){
+	if(val[0] == npag || val[1] == npag) return;
+	if(val[0] != -1 && val[1] != -1){
+		if(freq[val[0]] < freq[val[1]])
+			swap(val[0], val[1]); 
+			// Garante que val 0 sera o npag mais frequente
+	}
+	if(freq[npag] > freq[val[0]] || val[0] == -1){
+		val[1] = val[0];
+		val[0] = npag;
+	}
+	else if(freq[npag] > freq[val[1]] || val[1] == -1){
+		val[1] = npag;
+	}
+}
 
 void roda(int alg_subs, int alg_aloc){
 
@@ -16,6 +34,7 @@ void roda(int alg_subs, int alg_aloc){
 	R = (int*) malloc(nquad*sizeof(int));
 
 	alg_subs = OPT;
+	alg_aloc = 3;
 
 	if(alg_subs == FIFO){
 		livre = (int*)malloc(nquad*sizeof(int));
@@ -29,6 +48,11 @@ void roda(int alg_subs, int alg_aloc){
 				matriz_pag[i][j] = 0;
 			}
 		}
+	}
+	if(alg_aloc == 3){
+		if(val[0] > val[1]) swap(val[0], val[1]);		
+		int npag = ceil(virt, tam_pag);
+		pos[1].insert(0);
 	}
 
 	mkdir("./tmp", ACCESSPERMS);
@@ -71,7 +95,7 @@ void roda(int alg_subs, int alg_aloc){
 				aloca_processo(proc, alg_aloc);
 				break;
 			case 2:
-				remove_processo(proc, alg_subs);
+				remove_processo(proc, alg_subs, alg_aloc);
 				break;
 			case 3:
 				acessa_pag(proc, pos, alg_subs);	
@@ -95,6 +119,7 @@ void roda(int alg_subs, int alg_aloc){
 }
 
 int main(){
+	val[0] = val[1] = -1;
 	int tipo_subs = 0, tipo_espaco = 0;
 	char input[30], file[110];
 	FILE *trace;
@@ -128,6 +153,11 @@ int main(){
 				tmax = max(tmax, t0);
 				tmax = max(tmax, tf);
 				fscanf(trace, " %d", &b);
+
+				int npag = ceil(b, tam_pag);
+				freq[npag]++;
+				verifica_freq(npag);
+
 				fscanf(trace, " %s", st);
 				string nome = st;
 				adiciona_evento(t0, 1, cnt, 0);

@@ -24,3 +24,8 @@ int ceil(int a, int b){
 
 queue<int> fila_fis;
 queue<int> pid_disp;
+
+map<int, int> freq;
+int val[2];
+set<int> pos[2];
+set<pair<int, int> > proc;

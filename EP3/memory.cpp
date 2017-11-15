@@ -42,10 +42,8 @@ void remove_virtual(int p, int alg_subs){
 	int sz = processos[p].b;
 	int num_pag = ceil(sz, tam_pag);
 
-	printf("rmv virtual %d %d %d\n", pos_ini, num_pag, p);
 	for(int a=pos_ini;a<pos_ini+num_pag;a++){
 		if(MV[a].pos_fis != EMPTY){
-			debug("a %d pos fis %d inv %d\n", a, MV[a].pos_fis, MF[MV[a].pos_fis].pos_virt);
 			assert(MF[MV[a].pos_fis].pos_virt == a);
 			libera_fis(MV[a].pos_fis);
 			MF[MV[a].pos_fis] = mem_fis();
@@ -53,7 +51,6 @@ void remove_virtual(int p, int alg_subs){
 				livre[MV[a].pos_fis]++;
 		}
 		MV[a] = mem_virt();
-		debug("seta MV %d pra empty\n", a);
 	}
 	
 	FILE *vir;
@@ -166,9 +163,6 @@ void substitui_pag(int pag, int pos_virt){
 void compacta()
 {
 	//compacta virtual
-	printf("prestes a compactar\n");
-	getchar();
-	getchar();
 	int plivre = 0, pnlivre= 0;
 	int num_pages = ceil(virt, tam_pag);
 	printf("num_pages %d\n", num_pages);
@@ -181,7 +175,6 @@ void compacta()
 		assert(fwrite(&buffer, sizeof(char), 1, vir) == 1 && "Nao foi possivel escrever no arquivo vir");
 		fflush(vir);
 	}
-	printf("zerou\n");
 	getchar();
 	getchar();
 	fseek(vir, 0, SEEK_SET);
@@ -202,14 +195,10 @@ void compacta()
 				processos[MV[plivre].ind].pos_virt = plivre;
 		}
 		buffer = processos[MV[plivre].ind].pid;
-		printf("buffer %d\n", buffer);
 		for(int i = 0; i < tam_pag; i++) {
 			assert(fwrite(&buffer, sizeof(char), 1, vir) == 1  && "Nao foi possivel escrever no arquivo vir");
 			fflush(vir);
 		}
-		printf("escreveu\n");
-		getchar();
-		getchar();
 		plivre++; pnlivre++;
 	}
 	printf("compactou memoria virtual\n");
@@ -242,14 +231,10 @@ void compacta()
 			MF[plivre].pos_virt = virt;
 		}
 		buffer = processos[MF[plivre].ind].pid;
-		printf("INDICE %d\n", MF[plivre].ind);
 		for(int i = 0; i < tam_pag; i++) {
 			assert(fwrite(&buffer, sizeof(char), 1, mem) && "Nao foi possivel escrever no arquivo mem");
 			fflush(mem);	
 		}
-		printf("escreveu\n");
-		getchar();
-		getchar();
 		plivre++; pnlivre++;
 	}
 	printf("compactou memoria fisica\n");

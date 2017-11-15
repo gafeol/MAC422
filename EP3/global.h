@@ -57,5 +57,11 @@ int ceil(int, int);
 extern queue<int> fila_fis;
 extern queue<int> pid_disp;
 
+extern map<int, int> freq;
+extern int val[2];
+
+extern set<int> pos[2];
+extern set<pair<int, int> > proc;
+
 
 #endif
