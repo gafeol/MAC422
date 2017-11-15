@@ -143,14 +143,74 @@ void init(){
 
 	while(!pid_disp.empty())
 		pid_disp.pop();
-	
-	
+
+	freq.clear();
+
+	pos[0].clear();
+	pos[1].clear();
+
+	proc.clear();
+}
+
+void carrega(char* file){
+	int tmax = 0;
+	eventos.clear();
+	processos.clear();
+
+	FILE *trace;
+	trace = fopen(file, "r");
+	fscanf(trace, "%d %d %d %d", &total, &virt, &ualoc, &tam_pag);
+	int t0, tf, b;
+	char st[500010];
+	int cnt = 0;
+	while(fscanf(trace,"%d",&t0) != EOF) {
+		fscanf(trace, " %s", st);
+		if(strcmp(st, "COMPACTAR") == 0){
+			adiciona_evento(t0, 4, 0, 0);
+			continue;
+		}
+		else
+			tf = atoi(st);
+		tmax = max(tmax, t0);
+		tmax = max(tmax, tf);
+		fscanf(trace, " %d", &b);
+
+		int npag = ceil(b, tam_pag);
+		freq[npag]++;
+		verifica_freq(npag);
+
+		fscanf(trace, " %s", st);
+		string nome = st;
+		adiciona_evento(t0, 1, cnt, 0);
+		adiciona_evento(tf, 2, cnt, 0);
+
+		processo novo  = cria_processo(t0, tf, b, nome); 
+		processos.push_back(novo);
+
+		fscanf(trace, "%[^\n]", st); 
+		char *p = strtok(st, " \n");
+		while(p != NULL) {
+			int pos, t;
+			sscanf(p, "%d", &pos);
+			p = strtok(NULL, " \n");
+			sscanf(p, "%d", &t);
+			adiciona_evento(t, 3, cnt, pos); 
+			tmax = max(tmax, t);
+			p = strtok(NULL, " \n"); 
+			qtd_aces[cnt][pos/tam_pag]++;
+		}
+		cnt++;
+	}	
+	fclose(trace);	
+
+	// Eventos de atualizacao do bit R a cada unidade de tempo
+	for(int tempo=0;tempo<=tmax+1;tempo++)
+		adiciona_evento(tempo, 5,  0, 0);
 }
 
 int main(){
 	int tipo_subs, tipo_espaco;
 	char input[30], file[110];
-	FILE *trace;
 	init();
 
 	while(1){
@@ -160,70 +220,19 @@ int main(){
 			break;
 		
 		if(strcmp(input, "carrega") == 0){
-			int tmax = 0;
-			printf("carregou\n");
 			scanf(" %s", file);
-			trace = fopen(file, "r");
-			fscanf(trace, "%d %d %d %d", &total, &virt, &ualoc, &tam_pag);
-			int t0, tf, b;
-			char st[500010];
-			int cnt = 0;
-			while(fscanf(trace,"%d",&t0) != EOF) {
-				fscanf(trace, " %s", st);
-				if(strcmp(st, "COMPACTAR") == 0){
-					adiciona_evento(t0, 4, 0, 0);
-					continue;
-				}
-				else
-					tf = atoi(st);
-				tmax = max(tmax, t0);
-				tmax = max(tmax, tf);
-				fscanf(trace, " %d", &b);
-
-				int npag = ceil(b, tam_pag);
-				freq[npag]++;
-				verifica_freq(npag);
-
-				fscanf(trace, " %s", st);
-				string nome = st;
-				adiciona_evento(t0, 1, cnt, 0);
-				adiciona_evento(tf, 2, cnt, 0);
-	
-				processo novo  = cria_processo(t0, tf, b, nome); 
-				processos.push_back(novo);
-
-				fscanf(trace, "%[^\n]", st); 
-				char *p = strtok(st, " \n");
-				while(p != NULL) {
-					int pos, t;
-					sscanf(p, "%d", &pos);
-					p = strtok(NULL, " \n");
-					sscanf(p, "%d", &t);
-					adiciona_evento(t, 3, cnt, pos); 
-					tmax = max(tmax, t);
-					p = strtok(NULL, " \n"); 
-					
-					debug("qtd_aces[%d][%d] ++\n", cnt, pos/tam_pag);
-					qtd_aces[cnt][pos/tam_pag]++;
-				}
-				cnt++;
-			}	
-			fclose(trace);	
-
-			// Eventos de atualizacao do bit R a cada unidade de tempo
-			for(int tempo=0;tempo<=tmax+1;tempo++)
-				adiciona_evento(tempo, 5,  0, 0);
+			carrega(file);
 		}
 		else if(strcmp(input, "substitui") == 0){
-			printf("substituiu\n");
 			scanf("%d", &tipo_subs);
 		}
 		else if(strcmp(input, "espaco") == 0){
 			scanf("%d", &tipo_espaco);
 		}
 		else if(strcmp(input, "executa") == 0){
-			printf("executa\n");
 			scanf("%d", &dt);
+			if(eventos.empty())
+				carrega(file);
 			roda(tipo_subs, tipo_espaco);
 			printf("Tempo gasto buscando espaço livre na memória física:    %.5f\n", tempo_busca);
 			printf("Numero de page faults: %d\n", page_fault);
@@ -236,5 +245,4 @@ int main(){
 			break;
 		}
 	}
-
 }

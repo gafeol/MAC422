@@ -28,7 +28,7 @@ void seta_virtual(int pos_ini, int num_pag, int p){
 	fseek(vir, pos_ini*tam_pag*sizeof(char), SEEK_SET); 
 
 	char buffer = processos[p].pid;
-	for(int cnt=0;cnt < sz;cnt++){
+	for(int cnt=0;cnt < ualoc*ceil(sz, ualoc);cnt++){
 		assert(fwrite(&buffer, sizeof(char), 1, vir) == 1 && "Erro na escrita de vir");
 	}
 	fclose(vir);
