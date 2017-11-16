@@ -16,7 +16,7 @@ void worst_fit(int p){
 	int cnt = 0;
 
 	// Fazendo alocacao com BitMap
-	printf("cnt %d sz p %d\n", cnt, sz_p);
+/*	printf("cnt %d sz p %d\n", cnt, sz_p);
 	for(int i=0;i<MV.size();i++){
 		if(MV[i].ind != EMPTY){
 			if(cnt >= sz_p && worst < cnt){
@@ -34,12 +34,13 @@ void worst_fit(int p){
 		worst = cnt;
 		iworst = MV.size() - cnt;
 	}
-
+*/
 	//Fazendo alocacao com Lista Ligada
 	int pos = lista_push(L, p, 2);
+	iworst = pos;
 
-	assert(pos == iworst);
-	debug("BATEU! AAAAAAAAAAAAAAAAAAAAA %d = %d\n", pos, iworst);
+//	assert(pos == iworst);
+//	debug("BATEU! AAAAAAAAAAAAAAAAAAAAA %d = %d\n", pos, iworst);
 
 	processos[p].pos_virt = iworst;
 

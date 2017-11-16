@@ -15,6 +15,7 @@ void best_fit(int p){
 	int best = INT_MAX, ibest;
 	int cnt = 0;
 
+	/*
 	//Fazendo alocacao com BitMap
 	printf("cnt %d sz p %d\n", cnt, sz_p);
 	for(int i=0;i<MV.size();i++){
@@ -34,12 +35,13 @@ void best_fit(int p){
 		best = cnt;
 		ibest = MV.size() - cnt;
 	}
-
+	*/
 	//Alteracoes com Lista Ligada
 	int pos = lista_push(L, p, 1);
+	ibest = pos;
 
-	assert(ibest == pos);
-	debug("BATEUFDPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA %d %d\n", ibest, pos);
+	//assert(ibest == pos);
+	//debug("BATEUFDPAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA %d %d\n", ibest, pos);
 
 	processos[p].pos_virt = ibest;
 
