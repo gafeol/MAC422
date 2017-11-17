@@ -48,5 +48,5 @@ void worst_fit(int p){
 
 	//printf("seta virtual %d %d %d\n", iworst, sz_p, p);
 
-	seta_virtual(iworst, sz, p);
+	seta_virtual(iworst, sz_p, p);
 }

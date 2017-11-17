@@ -10,8 +10,6 @@ using namespace std;
 #include "memory.h"
 
 void best_fit(int p){
-
-	debug("best fit %d\n", p);
 	int sz = processos[p].b;
 	int sz_p = ceil(sz, tam_pag);
 	int best = INT_MAX, ibest;
@@ -51,5 +49,5 @@ void best_fit(int p){
 
 	//printf("seta virtual %d %d %d\n", ibest, sz_p, p);
 
-	seta_virtual(ibest, sz, p);
+	seta_virtual(ibest, sz_p, p);
 }

@@ -21,15 +21,12 @@ processo cria_processo(int t0, int tf, int b, string nome){
 }
 
 void aloca_processo(int pro, int alg_aloc){
-	debug("aloca %d %d\n", pro, alg_aloc);
 	clock_t clk = clock();
 
 	// Seta pid do processo
 	processos[pro].pid = pid_disp.front();
 	//printf("processo %d -> pid %d\n", pro, processos[pro].pid);
 	pid_disp.pop();
-
-	debug("aloca %d %d\n", pro, alg_aloc);
 
 	switch (alg_aloc) {
 		case 1:
@@ -46,7 +43,7 @@ void aloca_processo(int pro, int alg_aloc){
 }
 
 void remove_processo(int pro, int alg_subs, int alg_aloc){
-	//printf("remove processo %d\n", pro);
+	printf("remove processo %d\n", pro);
 	lista_erase(L, pro);
 
 	pid_disp.push(processos[pro].pid);
@@ -56,24 +53,31 @@ void remove_processo(int pro, int alg_subs, int alg_aloc){
 		proc.erase(pii(processos[pro].pos_virt, pro));
 
 		int l = prv_pro(processos[pro].pos_virt);
-		int r = nxt_pro(processos[pro].pos_virt);
-		//printf("l %d r %d\n", l, r);
-		if(l != -1){
-			int livre = processos[l].pos_virt + ceil(processos[l].b, tam_pag);
-			if(pos[1].find(livre) != pos[1].end())
-				pos[1].erase(livre);
-			else if(pos[0].find(livre) != pos[0].end())
-				pos[0].erase(livre);
-		}
-		int livre = processos[pro].pos_virt + ceil(processos[pro].b, tam_pag);
+		int r = nxt_pro(processos[pro].pos_virt + ceil(processos[pro].b, tam_pag));
+		printf("l %d r %d\n", l, r);
+
+
+		int livre;
+		if(l == -1)
+			livre = 0;
+		if(l != -1)
+			livre = processos[l].pos_virt + ceil(processos[l].b, tam_pag);
+
 		if(pos[1].find(livre) != pos[1].end())
 			pos[1].erase(livre);
-		else if(pos[0].find(livre) != pos[0].end())
+		if(pos[0].find(livre) != pos[0].end())
+			pos[0].erase(livre);
+
+		livre = processos[pro].pos_virt + ceil(processos[pro].b, tam_pag);
+
+		if(pos[1].find(livre) != pos[1].end())
+			pos[1].erase(livre);
+		if(pos[0].find(livre) != pos[0].end())
 			pos[0].erase(livre);
 
 		int ultl;
 		if(r == -1)
-			ultl = virt - 1;
+			ultl = ceil(virt, tam_pag) - 1;
 		else
 			ultl = processos[r].pos_virt - 1;
 		int inil;
@@ -81,6 +85,15 @@ void remove_processo(int pro, int alg_subs, int alg_aloc){
 			inil = 0;
 		else
 			inil = processos[l].pos_virt + ceil(processos[l].b, tam_pag);
+
+		assert(inil -1 < 0 || MV[inil-1].ind != EMPTY);
+		assert(ultl+1 >= ceil(virt, tam_pag) || MV[ultl+1].ind != EMPTY);
+
+		for(int i=inil;i <= ultl;i++){
+			assert(pos[1].find(i) == pos[1].end());
+			assert(pos[0].find(i) == pos[0].end());
+		}
+
 		int taml = ultl - inil + 1;
 		//debug("inil %d ultl %d\n", inil, ultl);
 		//debug("retira processo %d, taml %d\n", pro, taml);
@@ -93,7 +106,11 @@ void remove_processo(int pro, int alg_subs, int alg_aloc){
 
 void acessa_pag(int p, int pos, int alg_subs){
 	int pos_virt = processos[p].pos_virt + pos/tam_pag;
-
+	if(MV[pos_virt].ind == EMPTY){
+		fprintf(stderr, "AAAAAAAAAA\n");
+		fprintf(stderr, "p %d pos %d\n", p, pos);
+	}
+	assert(MV[pos_virt].ind != EMPTY);
 	qtd_aces[p][pos/tam_pag]--;
 
 	if(MV[pos_virt].pos_fis == EMPTY){

@@ -18,7 +18,7 @@ void verifica_freq(int npag){
 	if(val[0] == npag || val[1] == npag) return;
 	if(val[0] != -1 && val[1] != -1){
 		if(freq[val[0]] < freq[val[1]])
-			swap(val[0], val[1]); 
+			swap(val[0], val[1]);
 			// Garante que val 0 sera o npag mais frequente
 	}
 	if(freq[npag] > freq[val[0]] || val[0] == -1){
@@ -38,8 +38,8 @@ void roda(int alg_subs, int alg_aloc){
 
 	assert(alg_subs != -1 && "Algoritmo de substituicao de pagina nao escolhido");
 	assert(alg_aloc != -1 && "Algoritmo de alocacao de memoria livre nao escolhido");
-	
-	if(alg_subs == FIFO){ 
+
+	if(alg_subs == FIFO){
 		livre = (int*)malloc(nquad*sizeof(int));
 		memset(livre, 0, sizeof(livre));
 	}
@@ -52,12 +52,12 @@ void roda(int alg_subs, int alg_aloc){
 			}
 		}
 	}
-	debug("alg aloc %d\n", alg_aloc);
 
 	L = lista_create();
 	if(alg_aloc == 3){
-		if(val[0] > val[1]) swap(val[0], val[1]);		
-		int npag = ceil(virt, tam_pag);
+		if(val[0] > val[1]) swap(val[0], val[1]);
+		pos[1].clear();
+		pos[0].clear();
 		pos[1].insert(0);
 	}
 
@@ -66,19 +66,19 @@ void roda(int alg_subs, int alg_aloc){
 
 	FILE *mem, *vir;
 
-	mem = fopen("./tmp/ep3.mem", "wb+"); 
+	mem = fopen("./tmp/ep3.mem", "wb+");
 	assert(mem != NULL && "Erro na abertura de tmp/ep3.mem\n");
 
 	vir = fopen("./tmp/ep3.vir", "wb+");
 	assert(vir != NULL && "Erro na abertura de tmp/ep3.vir\n");
-	
+
 	char buffer = EMPTY;
 
 	fseek(mem, 0, SEEK_SET);
 	fseek(vir, 0, SEEK_SET);
 
 	for(int i=0;i < total;i++)
-		assert(fwrite(&buffer, sizeof(char), 1, mem) == 1 && "Erro na escrita do arquivo ep3.mem"); 
+		assert(fwrite(&buffer, sizeof(char), 1, mem) == 1 && "Erro na escrita do arquivo ep3.mem");
 
 	for(int i=0;i < ceil(total, tam_pag);i++)
 		MF.push_back(mem_fis());
@@ -94,7 +94,7 @@ void roda(int alg_subs, int alg_aloc){
 	fclose(vir);
 
 	while(!eventos.empty()){
-		evento ev = prox_evento(); 
+		evento ev = prox_evento();
 		//debug("Evento %d %d\n", ev.tipo, ev.proc);
 		int proc = ev.proc;
 		int pos = ev.pos;
@@ -106,7 +106,7 @@ void roda(int alg_subs, int alg_aloc){
 				remove_processo(proc, alg_subs, alg_aloc);
 				break;
 			case 3:
-				acessa_pag(proc, pos, alg_subs);	
+				acessa_pag(proc, pos, alg_subs);
 				break;
 			case 4:
 				compacta();
@@ -117,7 +117,7 @@ void roda(int alg_subs, int alg_aloc){
 				break;
 			case 6:
 			{
-				printf("Estado da memória no instante %d\n", ev.t);	
+				printf("Estado da memória no instante %d\n", ev.t);
 				printf("  Memoria virtual (Bitmap e Estado)\n");
 				char buffer;
 				FILE *vir = fopen("./tmp/ep3.vir", "rb");
@@ -202,7 +202,7 @@ void carrega(char* file){
 		fscanf(trace, " %s", st);
 		if(strcmp(st, "COMPACTAR") == 0){
 			adiciona_evento(t0, 4, 0, 0);
-			continue; 
+			continue;
 		}
 		else
 			tf = atoi(st);
@@ -219,10 +219,10 @@ void carrega(char* file){
 		adiciona_evento(t0, 1, cnt, 0);
 		adiciona_evento(tf, 2, cnt, 0);
 
-		processo novo  = cria_processo(t0, tf, b, nome); 
+		processo novo  = cria_processo(t0, tf, b, nome);
 		processos.push_back(novo);
 
-		fscanf(trace, "%[^\n]", st); 
+		fscanf(trace, "%[^\n]", st);
 		char *p = strtok(st, " \n");
 		while(p != NULL) {
 			int pos, t;
@@ -230,14 +230,15 @@ void carrega(char* file){
 			p = strtok(NULL, " \n");
 			sscanf(p, "%d", &t);
 			assert(pos < b);
-			adiciona_evento(t, 3, cnt, pos); 
+			assert(t <= tf && t >= t0);
+			adiciona_evento(t, 3, cnt, pos);
 			tmax = max(tmax, t);
-			p = strtok(NULL, " \n"); 
+			p = strtok(NULL, " \n");
 			qtd_aces[cnt][pos/tam_pag]++;
 		}
 		cnt++;
-	}	
-	fclose(trace);	
+	}
+	fclose(trace);
 
 	// Eventos de atualizacao do bit R a cada unidade de tempo
 	for(int tempo=0;tempo<=tmax+1;tempo++)
@@ -254,8 +255,7 @@ int main(){
 		scanf(" %s", input);
 		if(strcmp(input, "sai") == 0)
 			break;
-		
-		if(strcmp(input, "carrega") == 0){
+		else if(strcmp(input, "carrega") == 0){
 			scanf(" %s", file);
 			carrega(file);
 		}
@@ -269,8 +269,10 @@ int main(){
 			scanf("%d", &dt);
 			if(eventos.empty())
 				carrega(file);
+			/* OOOOOOOOOOOOOOOO NAO ESQUECE DE DESCOMENTAR NAO EM DEBUG
 			for(int a=0;a*dt <= tmax;a++)
 				adiciona_evento(a*dt, 6, 0, 0);
+			 */
 			roda(tipo_subs, tipo_espaco);
 			printf("Tempo gasto buscando espaço livre na memória física:    %.10f\n", tempo_busca);
 			printf("Numero de page faults: %d\n", page_fault);
