@@ -45,9 +45,9 @@ void best_fit(int p){
 
 	processos[p].pos_virt = ibest;
 
-	printf("cnt %d sz p %d best %d besti %d\n", cnt, sz_p, best, ibest);
+	//printf("cnt %d sz p %d best %d besti %d\n", cnt, sz_p, best, ibest);
 
-	printf("seta virtual %d %d %d\n", ibest, sz_p, p);
+	//printf("seta virtual %d %d %d\n", ibest, sz_p, p);
 
 	seta_virtual(ibest, sz, p);
 }

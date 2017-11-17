@@ -44,9 +44,9 @@ void worst_fit(int p){
 
 	processos[p].pos_virt = iworst;
 
-	printf("cnt %d sz p %d worst %d worsti %d\n", cnt, sz_p, worst, iworst);
+	//printf("cnt %d sz p %d worst %d worsti %d\n", cnt, sz_p, worst, iworst);
 
-	printf("seta virtual %d %d %d\n", iworst, sz_p, p);
+	//printf("seta virtual %d %d %d\n", iworst, sz_p, p);
 
 	seta_virtual(iworst, sz, p);
 }

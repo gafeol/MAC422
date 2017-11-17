@@ -14,13 +14,13 @@ using namespace std;
 
 
 void seta_virtual(int pos_ini, int num_pag, int p){
-	printf("seta virtual %d %d %d\n", pos_ini, num_pag, p);
+	//printf("seta virtual %d %d %d\n", pos_ini, num_pag, p);
 	for(int a=pos_ini;a<pos_ini+num_pag;a++){
 		MV[a] = mem_virt(p, EMPTY);
 	}
 	
 	int sz = processos[p].b;
-	printf("sz %d\n", sz);
+	//printf("sz %d\n", sz);
 	FILE *vir;
 	vir = fopen("./tmp/ep3.vir", "r+b");
 	assert(vir != NULL && "Erro na abertura de tmp/ep3.vir");
@@ -43,7 +43,7 @@ void remove_virtual(int p, int alg_subs){
 	int num_pag = ceil(sz, tam_pag);
 
 	for(int a=pos_ini;a<pos_ini+num_pag;a++){
-		debug("remove pos %d -> %d\n", a, MV[a].pos_fis);
+		//debug("remove pos %d -> %d\n", a, MV[a].pos_fis);
 		if(MV[a].pos_fis != EMPTY){
 			assert(MF[MV[a].pos_fis].pos_virt == a);
 			libera_fis(MV[a].pos_fis);
@@ -72,15 +72,13 @@ void remove_virtual(int p, int alg_subs){
 }
 
 void procura_fis(int pos_virt, int alg_subs){
-	printf("aloca fis %d\n", pos_virt);
+	//printf("aloca fis %d\n", pos_virt);
 	for(int i=0;i < MF.size();i++){
 		if(MF[i].pos_virt == EMPTY){
-			page_fault++;
-
 			MV[pos_virt].pos_fis = i;
-			debug("liga virt %d - > mem %d\n", pos_virt, i);
+			//debug("liga virt %d - > mem %d\n", pos_virt, i);
 			MF[i].pos_virt = pos_virt;
-			debug("liga mem %d - > virt %d\n", i, pos_virt);
+			//debug("liga mem %d - > virt %d\n", i, pos_virt);
 			MF[i].ind = MV[pos_virt].ind;
 			
 
@@ -91,7 +89,7 @@ void procura_fis(int pos_virt, int alg_subs){
 
 			aloca_fis(i, MF[i].ind);
 
-			printf("nao usou alg subs\n");
+			//printf("nao usou alg subs\n");
 			//getchar();
 			//getchar();
 			return ;
@@ -150,7 +148,7 @@ void substitui_pag(int pag, int pos_virt){
 	mem = fopen("./tmp/ep3.mem", "r+b");
 
 	char buffer  =  processos[MF[pag].ind].pid;
-	debug("pag %d tam pag %d \n", pag, tam_pag);
+	//debug("pag %d tam pag %d \n", pag, tam_pag);
 	fseek(mem, pag*tam_pag*sizeof(char), SEEK_SET);
 	for(int a=0;a<tam_pag;a++)
 		assert(fwrite(&buffer, sizeof(char), 1, mem) == 1 && "Erro na escrita de mem");
@@ -165,7 +163,7 @@ void compacta()
 	//compacta virtual
 	int plivre = 0, pnlivre= 0;
 	int num_pages = ceil(virt, tam_pag);
-	printf("num_pages %d\n", num_pages);
+	//printf("num_pages %d\n", num_pages);
 	int fis;
 	FILE *vir;
 	vir = fopen("./tmp/ep3.vir", "r+b");
@@ -201,7 +199,7 @@ void compacta()
 		}
 		plivre++; pnlivre++;
 	}
-	printf("compactou memoria virtual\n");
+	//printf("compactou memoria virtual\n");
 	//getchar();
 	//getchar();
 	//compacta fisica
@@ -237,7 +235,7 @@ void compacta()
 		}
 		plivre++; pnlivre++;
 	}
-	printf("compactou memoria fisica\n");
+	//printf("compactou memoria fisica\n");
 	//getchar();
 	//getchar();
 	fclose(vir);

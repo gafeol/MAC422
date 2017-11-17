@@ -53,9 +53,9 @@ void quick_fit(int p){
 	int sz = processos[p].b;
 	int sz_p = ceil(sz, tam_pag);
 
-	debug("val0 %d val1 %d\n", val[0], val[1]);
-	print(0);
-	print(1);
+	//debug("val0 %d val1 %d\n", val[0], val[1]);
+	//print(0);
+	//print(1);
 
 	if(sz_p > val[1]){
 		best_fit(p);
@@ -90,7 +90,7 @@ void quick_fit(int p){
 
 	int l = prv_pro(processos[p].pos_virt);
 	int r = nxt_pro(processos[p].pos_virt);
-	debug("cara %d pos virt %d esq %d dir %d\n", p, processos[p].pos_virt, l, r);
+	//debug("cara %d pos virt %d esq %d dir %d\n", p, processos[p].pos_virt, l, r);
 
 	proc.insert(pii(processos[p].pos_virt, p));
 }

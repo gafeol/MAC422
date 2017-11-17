@@ -93,7 +93,7 @@ void roda(int alg_subs, int alg_aloc){
 
 	while(!eventos.empty()){
 		evento ev = prox_evento(); 
-		debug("Evento %d %d\n", ev.tipo, ev.proc);
+		//debug("Evento %d %d\n", ev.tipo, ev.proc);
 		int proc = ev.proc;
 		int pos = ev.pos;
 		switch (ev.tipo){

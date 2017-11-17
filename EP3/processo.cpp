@@ -25,7 +25,7 @@ void aloca_processo(int pro, int alg_aloc){
 
 	// Seta pid do processo
 	processos[pro].pid = pid_disp.front();
-	printf("processo %d -> pid %d\n", pro, processos[pro].pid);
+	//printf("processo %d -> pid %d\n", pro, processos[pro].pid);
 	pid_disp.pop();
 
 	switch (alg_aloc) {
@@ -43,7 +43,7 @@ void aloca_processo(int pro, int alg_aloc){
 }
 
 void remove_processo(int pro, int alg_subs, int alg_aloc){
-	printf("remove processo %d\n", pro);
+	//printf("remove processo %d\n", pro);
 	if(alg_aloc < 3)
 		lista_erase(L, pro);
 	pid_disp.push(processos[pro].pid);
@@ -54,7 +54,7 @@ void remove_processo(int pro, int alg_subs, int alg_aloc){
 
 		int l = prv_pro(processos[pro].pos_virt);
 		int r = nxt_pro(processos[pro].pos_virt);
-		printf("l %d r %d\n", l, r);
+		//printf("l %d r %d\n", l, r);
 		if(l != -1){
 			int livre = processos[l].pos_virt + ceil(processos[l].b, tam_pag);
 			if(pos[1].find(livre) != pos[1].end())
@@ -79,8 +79,8 @@ void remove_processo(int pro, int alg_subs, int alg_aloc){
 		else
 			inil = processos[l].pos_virt + ceil(processos[l].b, tam_pag);
 		int taml = ultl - inil + 1;
-		debug("inil %d ultl %d\n", inil, ultl);
-		debug("retira processo %d, taml %d\n", pro, taml);
+		//debug("inil %d ultl %d\n", inil, ultl);
+		//debug("retira processo %d, taml %d\n", pro, taml);
 		if(taml >= val[1])
 			pos[1].insert(inil);
 		else if(taml >= val[0])
@@ -95,6 +95,7 @@ void acessa_pag(int p, int pos, int alg_subs){
 
 	if(MV[pos_virt].pos_fis == EMPTY){
 		// tenta botar o maluco na memoria fisica 
+		page_fault++;
 		procura_fis(pos_virt, alg_subs);
 	}
 	R[MV[pos_virt].pos_fis] = 1;
