@@ -10,6 +10,8 @@ using namespace std;
 #include "memory.h"
 
 void best_fit(int p){
+
+	debug("best fit %d\n", p);
 	int sz = processos[p].b;
 	int sz_p = ceil(sz, tam_pag);
 	int best = INT_MAX, ibest;

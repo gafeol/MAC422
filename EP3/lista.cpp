@@ -10,6 +10,8 @@ Nome: Gabriel Fernandes de Oliveira     NUSP: 9345370
 #include "global.h"
 #include "processo.h"
 
+#define debug(args...) //fprintf(stderr, args);
+
 
 Lista L;
 
@@ -39,6 +41,7 @@ int inter(Node u, Node v){
 }
 
 void put(Lista q, Node u, Node v){
+	//debug("put lista\n");
 	if(u == NULL){
 		v->next = q->first;
 		q->first = v;
@@ -54,11 +57,14 @@ void put(Lista q, Node u, Node v){
 }
 
 int lista_push(Lista q, int p, int alg_aloc){
+	debug("lista_push %d %d\n", p, alg_aloc);
 	// Coloca o processo p na posicao certa
 	Node new_node = (Node) malloc(sizeof(node));
 	new_node->p = p;
 
+	debug("lista size antes %d\n", q->size);
 	q->size++;
+	debug("lista size depois %d\n", q->size);
 
 	Node u = q->first;
 	Node lst = NULL;
@@ -93,6 +99,32 @@ int lista_push(Lista q, int p, int alg_aloc){
 		put(q, iworst, new_node);
 	
 	return new_node->ini;
+}
+
+void lista_insert(Lista q, int p, int pos_virt){
+	// Coloca o processo p na posicao certa
+	Node new_node = (Node) malloc(sizeof(node));
+	new_node->p = p;
+
+	q->size++;
+
+	Node u = q->first;
+	Node lst = NULL;
+
+	int sz = ceil(processos[p].b, tam_pag);
+
+
+	while(u != NULL){
+		if(u->ini >= pos_virt)
+			break;
+		lst = u;
+		u = u->next;
+	}
+
+	put(q, lst, new_node);
+	
+	new_node->ini = pos_virt;
+	new_node->fim = pos_virt + sz - 1;
 }
 
 void lista_pop(Lista q){

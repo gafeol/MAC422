@@ -34,6 +34,8 @@ int head(Lista);
 
 int lista_push(Lista, int, int);
 
+void lista_insert(Lista, int, int);
+
 void lista_pop(Lista);
 
 void lista_erase(Lista, int);

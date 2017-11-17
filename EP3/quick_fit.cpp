@@ -9,6 +9,7 @@ typedef pair<int, int> pii;
 #include "global.h"
 #include "memory.h"
 #include "processo.h"
+#include "lista.h"
 
 
 
@@ -91,6 +92,9 @@ void quick_fit(int p){
 	int l = prv_pro(processos[p].pos_virt);
 	int r = nxt_pro(processos[p].pos_virt);
 	//debug("cara %d pos virt %d esq %d dir %d\n", p, processos[p].pos_virt, l, r);
+
+	lista_insert(L, p, processos[p].pos_virt);
+	/// DADO UMA POSICAO JA 
 
 	proc.insert(pii(processos[p].pos_virt, p));
 }

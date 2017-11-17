@@ -31,7 +31,7 @@ void verifica_freq(int npag){
 }
 
 void roda(int alg_subs, int alg_aloc){
-
+	debug("alg aloc %d\n", alg_aloc);
 	nquad = ceil(total, tam_pag);
 
 	R = (int*) malloc(nquad*sizeof(int));
@@ -52,15 +52,16 @@ void roda(int alg_subs, int alg_aloc){
 			}
 		}
 	}
+	debug("alg aloc %d\n", alg_aloc);
 
-	if(alg_aloc < 3)
-		L = lista_create();
+	L = lista_create();
 	if(alg_aloc == 3){
 		if(val[0] > val[1]) swap(val[0], val[1]);		
 		int npag = ceil(virt, tam_pag);
 		pos[1].insert(0);
 	}
 
+	debug("alg aloc %d\n", alg_aloc);
 	mkdir("./tmp", ACCESSPERMS);
 
 	FILE *mem, *vir;
@@ -87,6 +88,7 @@ void roda(int alg_subs, int alg_aloc){
 
 	for(int i=0;i < ceil(virt, tam_pag);i++)
 		MV.push_back(mem_virt());
+	debug("alg aloc %d\n", alg_aloc);
 
 	fclose(mem);
 	fclose(vir);
@@ -153,8 +155,7 @@ void roda(int alg_subs, int alg_aloc){
 			free(matriz_pag[i]);
 		free(matriz_pag);
 	}
-	if(alg_aloc < 3)
-		lista_delete(L);
+	lista_delete(L);
 }
 
 void init(){
@@ -228,6 +229,7 @@ void carrega(char* file){
 			sscanf(p, "%d", &pos);
 			p = strtok(NULL, " \n");
 			sscanf(p, "%d", &t);
+			assert(pos < b);
 			adiciona_evento(t, 3, cnt, pos); 
 			tmax = max(tmax, t);
 			p = strtok(NULL, " \n"); 

@@ -21,6 +21,7 @@ processo cria_processo(int t0, int tf, int b, string nome){
 }
 
 void aloca_processo(int pro, int alg_aloc){
+	debug("aloca %d %d\n", pro, alg_aloc);
 	clock_t clk = clock();
 
 	// Seta pid do processo
@@ -28,27 +29,29 @@ void aloca_processo(int pro, int alg_aloc){
 	//printf("processo %d -> pid %d\n", pro, processos[pro].pid);
 	pid_disp.pop();
 
+	debug("aloca %d %d\n", pro, alg_aloc);
+
 	switch (alg_aloc) {
-		case 1: 
+		case 1:
 			best_fit(pro);
-		break;
+			break;
 		case 2:
 			worst_fit(pro);
-		break;
+			break;
 		case 3:
 			quick_fit(pro);
-		break;
+			break;
 	}
 	tempo_busca += (double(clock() - clk))/CLOCKS_PER_SEC;
 }
 
 void remove_processo(int pro, int alg_subs, int alg_aloc){
 	//printf("remove processo %d\n", pro);
-	if(alg_aloc < 3)
-		lista_erase(L, pro);
+	lista_erase(L, pro);
+
 	pid_disp.push(processos[pro].pid);
 	remove_virtual(pro, alg_subs);
-	
+
 	if(alg_aloc == 3){
 		proc.erase(pii(processos[pro].pos_virt, pro));
 
@@ -94,12 +97,12 @@ void acessa_pag(int p, int pos, int alg_subs){
 	qtd_aces[p][pos/tam_pag]--;
 
 	if(MV[pos_virt].pos_fis == EMPTY){
-		// tenta botar o maluco na memoria fisica 
+		// tenta botar o maluco na memoria fisica
 		page_fault++;
 		procura_fis(pos_virt, alg_subs);
 	}
 	R[MV[pos_virt].pos_fis] = 1;
-	
+
 	if(alg_subs == LRU4)
 		atualiza_matriz4();
 }

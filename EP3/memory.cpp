@@ -18,14 +18,14 @@ void seta_virtual(int pos_ini, int num_pag, int p){
 	for(int a=pos_ini;a<pos_ini+num_pag;a++){
 		MV[a] = mem_virt(p, EMPTY);
 	}
-	
+
 	int sz = processos[p].b;
 	//printf("sz %d\n", sz);
 	FILE *vir;
 	vir = fopen("./tmp/ep3.vir", "r+b");
 	assert(vir != NULL && "Erro na abertura de tmp/ep3.vir");
 
-	fseek(vir, pos_ini*tam_pag*sizeof(char), SEEK_SET); 
+	fseek(vir, pos_ini*tam_pag*sizeof(char), SEEK_SET);
 
 	char buffer = processos[p].pid;
 	for(int cnt=0;cnt < ualoc*ceil(sz, ualoc);cnt++){
@@ -53,12 +53,12 @@ void remove_virtual(int p, int alg_subs){
 		}
 		MV[a] = mem_virt();
 	}
-	
+
 	FILE *vir;
 	vir = fopen("./tmp/ep3.vir", "r+b");
 	assert(vir != NULL && "Erro na abertura de tmp/ep3.vir");
 
-	fseek(vir, pos_ini*tam_pag*sizeof(char), SEEK_SET); 
+	fseek(vir, pos_ini*tam_pag*sizeof(char), SEEK_SET);
 
 	char buffer = EMPTY;
 	// NAO É SZ, TEM QUE LEVAR EM CONTA A UALOC
@@ -80,7 +80,7 @@ void procura_fis(int pos_virt, int alg_subs){
 			MF[i].pos_virt = pos_virt;
 			//debug("liga mem %d - > virt %d\n", i, pos_virt);
 			MF[i].ind = MV[pos_virt].ind;
-			
+
 
 			if(alg_subs == FIFO)
 				fila_fis.push(i);
@@ -137,6 +137,7 @@ void modifica_fis(int pos_fis, int p){
 }
 
 void substitui_pag(int pag, int pos_virt){
+	printf("pag %d pos_virt %d\n", pag, pos_virt);
 	MV[pos_virt].pos_fis = pag;
 	assert(MF[pag].pos_virt != EMPTY);
 	MV[MF[pag].pos_virt].pos_fis = EMPTY;
@@ -144,9 +145,9 @@ void substitui_pag(int pag, int pos_virt){
 	MF[pag].ind = MV[pos_virt].ind;
 
 	FILE *mem;
-	 
-	mem = fopen("./tmp/ep3.mem", "r+b");
 
+	mem = fopen("./tmp/ep3.mem", "r+b");
+	printf("pag %d MF[pag].ind %d\n", pag, MF[pag].ind);
 	char buffer  =  processos[MF[pag].ind].pid;
 	//debug("pag %d tam pag %d \n", pag, tam_pag);
 	fseek(mem, pag*tam_pag*sizeof(char), SEEK_SET);
@@ -186,6 +187,7 @@ void compacta()
 			MF[fis].pos_virt = plivre;
 			MV[plivre].ind = MV[pnlivre].ind;
 			MV[pnlivre].ind = EMPTY;
+			fprintf(stderr, "MV[%d] = empty\n", pnlivre);
 			MV[pnlivre].pos_fis = EMPTY;
 			MV[plivre].pos_fis = fis;
 
@@ -225,13 +227,15 @@ void compacta()
 			MV[virt].pos_fis = plivre;
 			MF[plivre].ind = MF[pnlivre].ind;
 			MF[pnlivre].ind = EMPTY;
+			fprintf(stderr, "MF[%d] = empty\n", pnlivre);
 			MF[pnlivre].pos_virt = EMPTY;
+			fprintf(stderr, "MF[%d] = empty\n", pnlivre);
 			MF[plivre].pos_virt = virt;
 		}
 		buffer = processos[MF[plivre].ind].pid;
 		for(int i = 0; i < tam_pag; i++) {
 			assert(fwrite(&buffer, sizeof(char), 1, mem) && "Nao foi possivel escrever no arquivo mem");
-			fflush(mem);	
+			fflush(mem);
 		}
 		plivre++; pnlivre++;
 	}
