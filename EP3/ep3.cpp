@@ -266,7 +266,7 @@ int main(){
 			for(int a=0;a*dt <= tmax;a++)
 				adiciona_evento(a*dt, 6, 0, 0);
 			roda(tipo_subs, tipo_espaco);
-			printf("Tempo gasto buscando espaço livre na memória física:    %.5f\n", tempo_busca);
+			printf("Tempo gasto buscando espaço livre na memória física:    %.10f\n", tempo_busca);
 			printf("Numero de page faults: %d\n", page_fault);
 
 			init();
