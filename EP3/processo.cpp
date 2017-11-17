@@ -39,8 +39,7 @@ void aloca_processo(int pro, int alg_aloc){
 			quick_fit(pro);
 		break;
 	}
-
-	tempo_busca += (clock() - clk)/CLOCKS_PER_SEC;
+	tempo_busca += (double(clock() - clk))/CLOCKS_PER_SEC;
 }
 
 void remove_processo(int pro, int alg_subs, int alg_aloc){

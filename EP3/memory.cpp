@@ -33,8 +33,8 @@ void seta_virtual(int pos_ini, int num_pag, int p){
 	}
 	fclose(vir);
 
-	getchar();
-	getchar();
+	//getchar();
+	//getchar();
 }
 
 void remove_virtual(int p, int alg_subs){
@@ -67,8 +67,8 @@ void remove_virtual(int p, int alg_subs){
 	}
 	fclose(vir);
 
-	getchar();
-	getchar();
+	//getchar();
+	//getchar();
 }
 
 void procura_fis(int pos_virt, int alg_subs){
@@ -92,8 +92,8 @@ void procura_fis(int pos_virt, int alg_subs){
 			aloca_fis(i, MF[i].ind);
 
 			printf("nao usou alg subs\n");
-			getchar();
-			getchar();
+			//getchar();
+			//getchar();
 			return ;
 		}
 	}
@@ -156,8 +156,8 @@ void substitui_pag(int pag, int pos_virt){
 		assert(fwrite(&buffer, sizeof(char), 1, mem) == 1 && "Erro na escrita de mem");
 	fclose(mem);
 
-	getchar();
-	getchar();
+	//getchar();
+	//getchar();
 }
 
 void compacta()
@@ -175,8 +175,8 @@ void compacta()
 		assert(fwrite(&buffer, sizeof(char), 1, vir) == 1 && "Nao foi possivel escrever no arquivo vir");
 		fflush(vir);
 	}
-	getchar();
-	getchar();
+	//getchar();
+	//getchar();
 	fseek(vir, 0, SEEK_SET);
 	while(plivre < num_pages && pnlivre < num_pages) {
 		while(MV[pnlivre].ind == EMPTY && pnlivre < num_pages)
@@ -202,8 +202,8 @@ void compacta()
 		plivre++; pnlivre++;
 	}
 	printf("compactou memoria virtual\n");
-	getchar();
-	getchar();
+	//getchar();
+	//getchar();
 	//compacta fisica
 	plivre = 0, pnlivre= 0;
 	int num_quadros = ceil(total, tam_pag);
@@ -238,8 +238,8 @@ void compacta()
 		plivre++; pnlivre++;
 	}
 	printf("compactou memoria fisica\n");
-	getchar();
-	getchar();
+	//getchar();
+	//getchar();
 	fclose(vir);
 	fclose(mem);
 }

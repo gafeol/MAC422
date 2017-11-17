@@ -164,8 +164,12 @@ void init(){
 
 	while(!pid_disp.empty())
 		pid_disp.pop();
-	for(int a=0;a<128;a++)
+
+	// PARA TESTAR
+	for(int a=0;a<100000;a++)
 		pid_disp.push(a);
+	//for(int a=0;a<128;a++)
+//		pid_disp.push(a);
 
 	qtd_aces.clear();
 	nquad = 0;
