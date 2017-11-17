@@ -165,9 +165,9 @@ void init(){
 	while(!pid_disp.empty())
 		pid_disp.pop();
 
-	// PARA TESTAR
+	// PARA TESTAR APAGAR DEPOIS NAO ESQUECERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
 	for(int a=0;a<100000;a++)
-		pid_disp.push(a);
+		pid_disp.push(1);
 	//for(int a=0;a<128;a++)
 //		pid_disp.push(a);
 
