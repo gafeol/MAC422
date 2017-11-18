@@ -32,18 +32,8 @@ void lru2(int pos_virt){
 }
 
 void atualiza_matriz(int pag){
-	//debug("atualiza matriz %d\n", pag);
 	for(int j=0;j<nquad;j++)
 		matriz_pag[pag][j] = 1;
 	for(int i=0;i<nquad;i++)
 		matriz_pag[i][pag] = 0;
-
-	//DEBUG
-	/*for(int a=0;a<nquad;a++){
-		for(int b=0;b<nquad;b++){
-			printf("%d ", (int)matriz_pag[a][b]);
-		}
-		puts("");
-	}*/
 }
-

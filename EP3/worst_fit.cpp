@@ -15,38 +15,32 @@ void worst_fit(int p){
 	int worst = -1, iworst;
 	int cnt = 0;
 
-	// Fazendo alocacao com BitMap
-/*	printf("cnt %d sz p %d\n", cnt, sz_p);
-	for(int i=0;i<MV.size();i++){
-		if(MV[i].ind != EMPTY){
-			if(cnt >= sz_p && worst < cnt){
-				worst = cnt;
-				iworst = i - cnt;
+	if(asserting){
+		// Fazendo alocacao com BitMap
+		for(int i=0;i<MV.size();i++){
+			if(MV[i].ind != EMPTY){
+				if(cnt >= sz_p && worst < cnt){
+					worst = cnt;
+					iworst = i - cnt;
+				}
+				cnt = 0;
 			}
-			cnt = 0;
+			else
+				cnt++;
 		}
-		else
-			cnt++;
+		if(cnt >= sz_p && worst < cnt){
+			worst = cnt;
+			iworst = MV.size() - cnt;
+		}
 	}
-	printf("cnt %d sz p %d worst %d worsti %d\n", cnt, sz_p, worst, iworst);
-
-	if(cnt >= sz_p && worst < cnt){
-		worst = cnt;
-		iworst = MV.size() - cnt;
-	}
-*/
 	//Fazendo alocacao com Lista Ligada
 	int pos = lista_push(L, p, 2);
 	iworst = pos;
 
-//	assert(pos == iworst);
-//	debug("BATEU! AAAAAAAAAAAAAAAAAAAAA %d = %d\n", pos, iworst);
+	if(asserting)
+		assert(pos == iworst);
 
 	processos[p].pos_virt = iworst;
-
-	//printf("cnt %d sz p %d worst %d worsti %d\n", cnt, sz_p, worst, iworst);
-
-	//printf("seta virtual %d %d %d\n", iworst, sz_p, p);
 
 	seta_virtual(iworst, sz_p, p);
 }

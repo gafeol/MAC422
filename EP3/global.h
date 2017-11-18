@@ -63,7 +63,9 @@ extern int val[2];
 extern set<int> pos[2];
 extern set<pair<int, int> > proc;
 
-extern double tempo_busca; 
+extern double tempo_busca;
 extern int page_fault;
+
+extern int asserting;
 
 #endif

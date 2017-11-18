@@ -14,7 +14,6 @@ using namespace std;
 
 
 void seta_virtual(int pos_ini, int num_pag, int p){
-	printf("seta virtual %d %d %d\n", pos_ini, num_pag, p);
 	for(int a=pos_ini;a<pos_ini+num_pag;a++){
 		MV[a] = mem_virt(p, EMPTY);
 	}
@@ -32,9 +31,6 @@ void seta_virtual(int pos_ini, int num_pag, int p){
 		assert(fwrite(&buffer, sizeof(char), 1, vir) == 1 && "Erro na escrita de vir");
 	}
 	fclose(vir);
-
-	//getchar();
-	//getchar();
 }
 
 void remove_virtual(int p, int alg_subs){
@@ -43,18 +39,15 @@ void remove_virtual(int p, int alg_subs){
 	int num_pag = ceil(sz, tam_pag);
 
 	for(int a=pos_ini;a<pos_ini+num_pag;a++){
-		//debug("remove pos %d -> %d\n", a, MV[a].pos_fis);
 		if(MV[a].pos_fis != EMPTY){
 			assert(MF[MV[a].pos_fis].pos_virt == a);
 			libera_fis(MV[a].pos_fis);
 			MF[MV[a].pos_fis] = mem_fis();
-			fprintf(stderr, "REMOVE MF[%d]\n", MV[a].pos_fis);
 			if(alg_subs == FIFO)
 				livre[MV[a].pos_fis]++;
 		}
 		MV[a] = mem_virt();
 		assert(MV[a].ind == EMPTY);
-		fprintf(stderr, "REMOVE MV[%d] pelo processo %d %s\n", a, p, processos[p].nome.c_str());
 	}
 
 	FILE *vir;

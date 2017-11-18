@@ -32,3 +32,5 @@ set<pair<int, int> > proc;
 
 double tempo_busca;
 int page_fault;
+
+int asserting;

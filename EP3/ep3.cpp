@@ -31,7 +31,6 @@ void verifica_freq(int npag){
 }
 
 void roda(int alg_subs, int alg_aloc){
-	debug("alg aloc %d\n", alg_aloc);
 	nquad = ceil(total, tam_pag);
 
 	R = (int*) malloc(nquad*sizeof(int));
@@ -61,7 +60,6 @@ void roda(int alg_subs, int alg_aloc){
 		pos[1].insert(0);
 	}
 
-	debug("alg aloc %d\n", alg_aloc);
 	mkdir("./tmp", ACCESSPERMS);
 
 	FILE *mem, *vir;
@@ -88,7 +86,6 @@ void roda(int alg_subs, int alg_aloc){
 
 	for(int i=0;i < ceil(virt, tam_pag);i++)
 		MV.push_back(mem_virt());
-	debug("alg aloc %d\n", alg_aloc);
 
 	fclose(mem);
 	fclose(vir);
@@ -246,6 +243,7 @@ void carrega(char* file){
 }
 
 int main(){
+	asserting = 1;
 	int tipo_subs = -1, tipo_espaco = -1;
 	char input[30], file[110];
 	init();

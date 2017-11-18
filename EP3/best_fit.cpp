@@ -15,31 +15,31 @@ void best_fit(int p){
 	int best = INT_MAX, ibest;
 	int cnt = 0;
 
-	//Fazendo alocacao com BitMap
-	printf("cnt %d sz p %d\n", cnt, sz_p);
-	for(int i=0;i<MV.size();i++){
-		if(MV[i].ind != EMPTY){
-			if(cnt >= sz_p && best > cnt){
-				best = cnt;
-				ibest = i - cnt;
+	if(asserting){
+		// Fazendo alocacao com BitMap
+		for(int i=0;i<MV.size();i++){
+			if(MV[i].ind != EMPTY){
+				if(cnt >= sz_p && best > cnt){
+					best = cnt;
+					ibest = i - cnt;
+				}
+				cnt = 0;
 			}
-			cnt = 0;
+			else
+				cnt++;
 		}
-		else
-			cnt++;
-	}
-	printf("cnt %d sz p %d best %d besti %d\n", cnt, sz_p, best, ibest);
 
-	if(cnt >= sz_p && best > cnt){
-		best = cnt;
-		ibest = MV.size() - cnt;
+		if(cnt >= sz_p && best > cnt){
+			best = cnt;
+			ibest = MV.size() - cnt;
+		}
 	}
 
 	//Alteracoes com Lista Ligada
 	int pos = lista_push(L, p, 1);
-	//ibest = pos;
 
-	assert(ibest == pos);
+	if(asserting)
+		assert(ibest == pos);
 
 	processos[p].pos_virt = ibest;
 	assert(ibest == 0 || MV[ibest-1].ind != EMPTY);

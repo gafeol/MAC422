@@ -43,7 +43,6 @@ void aloca_processo(int pro, int alg_aloc){
 }
 
 void remove_processo(int pro, int alg_subs, int alg_aloc){
-	printf("remove processo %d\n", pro);
 	lista_erase(L, pro);
 
 	pid_disp.push(processos[pro].pid);
@@ -55,18 +54,18 @@ void remove_processo(int pro, int alg_subs, int alg_aloc){
 		int l = prv_pro(processos[pro].pos_virt);
 		int r = nxt_pro(processos[pro].pos_virt);// + ceil(processos[pro].b, tam_pag));
 
-		//APAGAR VERIFICACAO
-		int ll = slowprv_pro(processos[pro].pos_virt);
-		int rr = slownxt_pro(processos[pro].pos_virt + ceil(processos[pro].b, tam_pag));
-		assert(l == ll);
-		assert(r == rr);
-		printf("l %d r %d\n", l, r);
+		if(asserting){
+			int ll = slowprv_pro(processos[pro].pos_virt);
+			int rr = slownxt_pro(processos[pro].pos_virt + ceil(processos[pro].b, tam_pag));
+			assert(l == ll);
+			assert(r == rr);
+		}
 
 
 		int livre;
 		if(l == -1)
 			livre = 0;
-		if(l != -1)
+		else
 			livre = processos[l].pos_virt + ceil(processos[l].b, tam_pag);
 
 		if(pos[1].find(livre) != pos[1].end())
@@ -95,9 +94,11 @@ void remove_processo(int pro, int alg_subs, int alg_aloc){
 		assert(inil -1 < 0 || MV[inil-1].ind != EMPTY);
 		assert(ultl+1 >= ceil(virt, tam_pag) || MV[ultl+1].ind != EMPTY);
 
-		for(int i=inil;i <= ultl;i++){
-			assert(pos[1].find(i) == pos[1].end());
-			assert(pos[0].find(i) == pos[0].end());
+		if(asserting){
+			for(int i=inil;i <= ultl;i++){
+				assert(pos[1].find(i) == pos[1].end());
+				assert(pos[0].find(i) == pos[0].end());
+			}
 		}
 
 		int taml = ultl - inil + 1;
@@ -112,10 +113,6 @@ void remove_processo(int pro, int alg_subs, int alg_aloc){
 
 void acessa_pag(int p, int pos, int alg_subs){
 	int pos_virt = processos[p].pos_virt + pos/tam_pag;
-	if(MV[pos_virt].ind == EMPTY){
-		fprintf(stderr, "AAAAAAAAAA\n");
-		fprintf(stderr, "p %d pos %d\n", p, pos);
-	}
 	assert(MV[pos_virt].ind != EMPTY);
 	qtd_aces[p][pos/tam_pag]--;
 
