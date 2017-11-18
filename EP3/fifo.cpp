@@ -9,8 +9,7 @@ using namespace std;
 #define debug(args...) fprintf(stderr,args)
 
 void fifo(int pos_virt){
-	// PAGE FAULT
-	while(!fila_fis.empty() && livre[fila_fis.front()]){
+	while(!fila_fis.empty() && livre[fila_fis.front()] > 0){
 		livre[fila_fis.front()]--;
 		fila_fis.pop();
 	}
