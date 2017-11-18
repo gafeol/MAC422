@@ -253,7 +253,7 @@ void carrega(char* file){
 
 int main(){
 	tmax = 0;
-	asserting = 1;
+	asserting = 0;
 	int tipo_subs = -1, tipo_espaco = -1;
 	char input[30], file[110];
 	init();
@@ -307,9 +307,9 @@ int main(){
 					fprintf(faults, "%d ", page_fault);
 					init();
 
-					fprintf(tempo, "\n");
-					fprintf(faults, "\n");
 				}
+				fprintf(tempo, "\n");
+				fprintf(faults, "\n");
 			}
 			int esp = 1;
 			for(int sub = 1;sub <= 4;sub++){
@@ -324,10 +324,9 @@ int main(){
 					fprintf(tempo, "%.10f ", tempo_busca);
 					fprintf(faults, "%d ", page_fault);
 					init();
-
-					fprintf(tempo, "\n");
-					fprintf(faults, "\n");
 				}
+				fprintf(tempo, "\n");
+				fprintf(faults, "\n");
 			}
 			fclose(tempo);
 			fclose(faults);
