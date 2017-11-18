@@ -19,7 +19,7 @@ Lista lista_create(){
 	Lista q = (Lista) malloc(sizeof(lista));
 	q->first = NULL;
 	q->size = 0;
-	return q; 
+	return q;
 }
 
 int lista_empty(Lista q){
@@ -35,8 +35,8 @@ int inter(Node u, Node v){
 	// Espaco livre (em paginas) entre os dois nos u e v
 	int l = 0, r = ceil(virt, tam_pag)-1;
 	if(u != NULL) l = u->fim + 1;
-	if(v != NULL) r = v->ini - 1; 
-	
+	if(v != NULL) r = v->ini - 1;
+
 	return r - l + 1;
 }
 
@@ -73,15 +73,15 @@ int lista_push(Lista q, int p, int alg_aloc){
 
 	int best = INT_MAX;
 	Node ibest = NULL;
-	int worst = INT_MIN; 
+	int worst = INT_MIN;
 	Node iworst = NULL;
-	
+
 	while(1){
-		int esp = inter(lst, u);	
+		int esp = inter(lst, u);
 		if(esp >= sz){
 			if(best > esp){
 				best = esp;
-				ibest = lst; 
+				ibest = lst;
 			}
 			if(worst < esp){
 				worst = esp;
@@ -97,7 +97,7 @@ int lista_push(Lista q, int p, int alg_aloc){
 		put(q, ibest, new_node);
 	else 			  //Worst fit
 		put(q, iworst, new_node);
-	
+
 	return new_node->ini;
 }
 
@@ -122,14 +122,17 @@ void lista_insert(Lista q, int p, int pos_virt){
 	}
 
 	put(q, lst, new_node);
-	
+
+	assert(new_node->ini == pos_virt);
+	assert(new_node->fim == pos_virt + sz - 1);
+
 	new_node->ini = pos_virt;
 	new_node->fim = pos_virt + sz - 1;
 }
 
 void lista_pop(Lista q){
 	Node top = q->first;
-	q->first = top->next; 
+	q->first = top->next;
 	free(top);
 	q->size--;
 }
@@ -149,7 +152,7 @@ void lista_erase(Lista q, int p){
 		ult->next = u->next;
 
 	free(u);
-	q->size--;	
+	q->size--;
 }
 
 void lista_delete(Lista q){

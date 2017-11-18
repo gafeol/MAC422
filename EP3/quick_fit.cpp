@@ -11,8 +11,6 @@ typedef pair<int, int> pii;
 #include "processo.h"
 #include "lista.h"
 
-
-
 //int prv_pro(int ini){
 //	if(!proc.empty() && proc.lower_bound(pii(ini, -1)) != proc.begin())
 //		return (--proc.lower_bound(pii(ini, -1)))->second;
@@ -144,6 +142,7 @@ void quick_fit(int p){
 		seta_virtual(ini, sz_p, p);
 		printf("chama do val1\n");
 		atualiza_set(p);
+		lista_insert(L, p, processos[p].pos_virt);
 	}
 	else{
 		int ini;
@@ -176,13 +175,14 @@ void quick_fit(int p){
 		printf("chama do ult\n");
 		seta_virtual(ini, sz_p, p);
 		atualiza_set(p);
+		lista_insert(L, p, processos[p].pos_virt);
 	}
 
 //	int l = prv_pro(processos[p].pos_virt);
 //	int r = nxt_pro(processos[p].pos_virt + ceil(processos[p].b, tam_pag));
 	//debug("cara %d pos virt %d esq %d dir %d\n", p, processos[p].pos_virt, l, r);
 
-	lista_insert(L, p, processos[p].pos_virt);
+
 	/// DADO UMA POSICAO JA
 	if(p == 0){
 		printf("insert %d %d\n", processos[p].pos_virt, p);

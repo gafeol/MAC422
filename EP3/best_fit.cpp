@@ -37,11 +37,12 @@ void best_fit(int p){
 
 	//Alteracoes com Lista Ligada
 	int pos = lista_push(L, p, 1);
-	ibest = pos;
+	//ibest = pos;
 
 	assert(ibest == pos);
 
 	processos[p].pos_virt = ibest;
+	assert(ibest == 0 || MV[ibest-1].ind != EMPTY);
 
 	assert(best != INT_MAX);
 	seta_virtual(ibest, sz_p, p);
