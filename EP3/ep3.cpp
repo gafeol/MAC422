@@ -253,7 +253,7 @@ void carrega(char* file){
 
 int main(){
 	tmax = 0;
-	asserting = 0;
+	asserting = 1;
 	int tipo_subs = -1, tipo_espaco = -1;
 	char input[30], file[110];
 	init();
@@ -294,20 +294,37 @@ int main(){
 			tempo = fopen("./tempos.txt", "w");
 			faults = fopen("./faults.txt", "w");
 			for(int esp=1;esp<=3;esp++){
-				for(int sub=1;sub<=4;sub++){
-					printf("Testando alg esp %d e alg sub %d\n", esp, sub);
-					for(int test=0;test<30;test++){
-						printf("Teste %d\n", test+1);
-						if(eventos.empty())
-							carrega(file);
-						roda(sub, esp);
-						printf("%.10f ", tempo_busca);
-						printf("%d\n", page_fault);
-						fprintf(tempo, "%.10f ", tempo_busca);
-						fprintf(faults, "%d ", page_fault);
-						init();
+				int sub = 1;
+				printf("Testando alg esp %d e alg sub %d\n", esp, sub);
+				for(int test=0;test<30;test++){
+					printf("Teste %d\n", test+1);
+					if(eventos.empty())
+						carrega(file);
+					roda(sub, esp);
+					printf("%.10f ", tempo_busca);
+					printf("%d\n", page_fault);
+					fprintf(tempo, "%.10f ", tempo_busca);
+					fprintf(faults, "%d ", page_fault);
+					init();
 
-					}
+					fprintf(tempo, "\n");
+					fprintf(faults, "\n");
+				}
+			}
+			int esp = 1;
+			for(int sub = 1;sub <= 4;sub++){
+				printf("Testando alg esp %d e alg sub %d\n", esp, sub);
+				for(int test=0;test<30;test++){
+					printf("Teste %d\n", test+1);
+					if(eventos.empty())
+						carrega(file);
+					roda(sub, esp);
+					printf("%.10f ", tempo_busca);
+					printf("%d\n", page_fault);
+					fprintf(tempo, "%.10f ", tempo_busca);
+					fprintf(faults, "%d ", page_fault);
+					init();
+
 					fprintf(tempo, "\n");
 					fprintf(faults, "\n");
 				}
