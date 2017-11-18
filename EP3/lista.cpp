@@ -12,7 +12,6 @@ Nome: Gabriel Fernandes de Oliveira     NUSP: 9345370
 
 #define debug(args...) //fprintf(stderr, args);
 
-
 Lista L;
 
 Lista lista_create(){
@@ -57,14 +56,11 @@ void put(Lista q, Node u, Node v){
 }
 
 int lista_push(Lista q, int p, int alg_aloc){
-	debug("lista_push %d %d\n", p, alg_aloc);
 	// Coloca o processo p na posicao certa
 	Node new_node = (Node) malloc(sizeof(node));
 	new_node->p = p;
 
-	debug("lista size antes %d\n", q->size);
 	q->size++;
-	debug("lista size depois %d\n", q->size);
 
 	Node u = q->first;
 	Node lst = NULL;
@@ -105,6 +101,8 @@ void lista_insert(Lista q, int p, int pos_virt){
 	// Coloca o processo p na posicao certa
 	Node new_node = (Node) malloc(sizeof(node));
 	new_node->p = p;
+
+	assert(pos_virt == 0 || MV[pos_virt-1].ind != EMPTY);
 
 	q->size++;
 

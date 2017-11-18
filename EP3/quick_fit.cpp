@@ -11,29 +11,29 @@ typedef pair<int, int> pii;
 #include "processo.h"
 #include "lista.h"
 
-//int prv_pro(int ini){
-//	if(!proc.empty() && proc.lower_bound(pii(ini, -1)) != proc.begin())
-//		return (--proc.lower_bound(pii(ini, -1)))->second;
-//	return -1;
-//}
-
 int prv_pro(int ini){
+	if(!proc.empty() && proc.lower_bound(pii(ini, -1)) != proc.begin())
+		return (--proc.lower_bound(pii(ini, -1)))->second;
+	return -1;
+}
+
+int slowprv_pro(int ini){
 	int i = ini-1;
 	while(MV[i].ind == EMPTY && i >= 0)
 		i--;
 	if(i != -1)
 		return MV[i].ind;
 	return -1;
+
 }
 
-
-//int nxt_pro(int ini){
-//	if(!proc.empty() && proc.upper_bound(pii(ini, INT_MAX)) != proc.end())
-//		return (proc.upper_bound(pii(ini , INT_MAX)))->second;
-//	return -1;
-//}
-
 int nxt_pro(int ini){
+	if(!proc.empty() && proc.upper_bound(pii(ini, INT_MAX)) != proc.end())
+		return (proc.upper_bound(pii(ini , INT_MAX)))->second;
+	return -1;
+}
+
+int slownxt_pro(int ini){
 	int i = ini;
 	while(MV[i].ind == EMPTY && i < ceil(virt, tam_pag))
 		i++;
@@ -63,8 +63,18 @@ void atualiza_set(int p){
 		confere++;
 	}
 
+	int prox = nxt_pro(ini);
+	int pprox = slownxt_pro(ini+sz_p);
+	assert(prox == pprox);
+	if(prox == -1)
+		esp_livre = ceil(virt, tam_pag)-1;
+	else
+		esp_livre = processos[prox].pos_virt - 1;
+
+	esp_livre = esp_livre - (ini+sz_p) + 1;
+
 	//CAGUEI
-	esp_livre = confere;
+	//esp_livre = confere;
 
 	assert(confere == esp_livre);
 
@@ -178,14 +188,5 @@ void quick_fit(int p){
 		lista_insert(L, p, processos[p].pos_virt);
 	}
 
-//	int l = prv_pro(processos[p].pos_virt);
-//	int r = nxt_pro(processos[p].pos_virt + ceil(processos[p].b, tam_pag));
-	//debug("cara %d pos virt %d esq %d dir %d\n", p, processos[p].pos_virt, l, r);
-
-
-	/// DADO UMA POSICAO JA
-	if(p == 0){
-		printf("insert %d %d\n", processos[p].pos_virt, p);
-	}
 	proc.insert(pii(processos[p].pos_virt, p));
 }

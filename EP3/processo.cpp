@@ -53,7 +53,13 @@ void remove_processo(int pro, int alg_subs, int alg_aloc){
 		proc.erase(pii(processos[pro].pos_virt, pro));
 
 		int l = prv_pro(processos[pro].pos_virt);
-		int r = nxt_pro(processos[pro].pos_virt + ceil(processos[pro].b, tam_pag));
+		int r = nxt_pro(processos[pro].pos_virt);// + ceil(processos[pro].b, tam_pag));
+
+		//APAGAR VERIFICACAO
+		int ll = slowprv_pro(processos[pro].pos_virt);
+		int rr = slownxt_pro(processos[pro].pos_virt + ceil(processos[pro].b, tam_pag));
+		assert(l == ll);
+		assert(r == rr);
 		printf("l %d r %d\n", l, r);
 
 

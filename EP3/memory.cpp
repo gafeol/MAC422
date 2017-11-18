@@ -17,10 +17,6 @@ void seta_virtual(int pos_ini, int num_pag, int p){
 	printf("seta virtual %d %d %d\n", pos_ini, num_pag, p);
 	for(int a=pos_ini;a<pos_ini+num_pag;a++){
 		MV[a] = mem_virt(p, EMPTY);
-		if(a == 835 || a == 836)
-			fprintf(stderr, "aloca [%d] pra %d nome %s\n", a, p, processos[p].nome.c_str());
-		if(p == 7026 || p == 7265)
-			fprintf(stderr, "aloca [%d] pra %d nome %s\n", a, p, processos[p].nome.c_str());
 	}
 
 	int sz = processos[p].b;
