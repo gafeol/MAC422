@@ -62,23 +62,23 @@ void remove_processo(int pro, int alg_subs, int alg_aloc){
 		}
 
 
-		int livre;
+		int livrepos;
 		if(l == -1)
-			livre = 0;
+			livrepos = 0;
 		else
-			livre = processos[l].pos_virt + ceil(processos[l].b, tam_pag);
+			livrepos = processos[l].pos_virt + ceil(processos[l].b, tam_pag);
 
-		if(pos[1].find(livre) != pos[1].end())
-			pos[1].erase(livre);
-		if(pos[0].find(livre) != pos[0].end())
-			pos[0].erase(livre);
+		if(pos[1].find(livrepos) != pos[1].end())
+			pos[1].erase(livrepos);
+		if(pos[0].find(livrepos) != pos[0].end())
+			pos[0].erase(livrepos);
 
-		livre = processos[pro].pos_virt + ceil(processos[pro].b, tam_pag);
+		livrepos = processos[pro].pos_virt + ceil(processos[pro].b, tam_pag);
 
-		if(pos[1].find(livre) != pos[1].end())
-			pos[1].erase(livre);
-		if(pos[0].find(livre) != pos[0].end())
-			pos[0].erase(livre);
+		if(pos[1].find(livrepos) != pos[1].end())
+			pos[1].erase(livrepos);
+		if(pos[0].find(livrepos) != pos[0].end())
+			pos[0].erase(livrepos);
 
 		int ultl;
 		if(r == -1)
