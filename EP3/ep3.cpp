@@ -34,14 +34,18 @@ void roda(int alg_subs, int alg_aloc){
 	nquad = ceil(total, tam_pag);
 
 	R = (int*) malloc(nquad*sizeof(int));
+	for(int a=0;a<nquad;a++)
+		R[a] = 0;
 
 	assert(alg_subs != -1 && "Algoritmo de substituicao de pagina nao escolhido");
 	assert(alg_aloc != -1 && "Algoritmo de alocacao de memoria livre nao escolhido");
 
 	if(alg_subs == FIFO){
 		livre = (int*)malloc(nquad*sizeof(int));
-		memset(livre, 0, sizeof(livre));
+		for(int a=0;a<nquad;a++)
+			livre[a] = 0;
 	}
+
 	if(alg_subs == LRU2 || alg_subs == LRU4){
 		matriz_pag = (bool **) malloc(nquad*sizeof(bool*));
 		for(int i=0;i<nquad;i++){
@@ -54,20 +58,20 @@ void roda(int alg_subs, int alg_aloc){
 
 	L = lista_create();
 	if(alg_aloc == 3){
-		if(val[0] > val[1]) swap(val[0], val[1]);
 		pos[1].clear();
+		if(val[0] > val[1]) swap(val[0], val[1]);
 		pos[0].clear();
 		pos[1].insert(0);
 	}
 
-	mkdir("./tmp", ACCESSPERMS);
+	//mkdir("/tmp", ACCESSPERMS);
 
 	FILE *mem, *vir;
 
-	mem = fopen("./tmp/ep3.mem", "wb+");
+	mem = fopen("/tmp/ep3.mem", "wb+");
 	assert(mem != NULL && "Erro na abertura de tmp/ep3.mem\n");
 
-	vir = fopen("./tmp/ep3.vir", "wb+");
+	vir = fopen("/tmp/ep3.vir", "wb+");
 	assert(vir != NULL && "Erro na abertura de tmp/ep3.vir\n");
 
 	char buffer = EMPTY;
@@ -92,7 +96,7 @@ void roda(int alg_subs, int alg_aloc){
 
 	while(!eventos.empty()){
 		evento ev = prox_evento();
-		//debug("Evento %d %d\n", ev.tipo, ev.proc);
+	//	debug("Evento %d %d\n", ev.tipo, ev.proc);
 		int proc = ev.proc;
 		int pos = ev.pos;
 		switch (ev.tipo){
@@ -117,7 +121,7 @@ void roda(int alg_subs, int alg_aloc){
 				printf("Estado da memória no instante %d\n", ev.t);
 				printf("  Memoria virtual (Bitmap e Estado)\n");
 				char buffer;
-				FILE *vir = fopen("./tmp/ep3.vir", "rb");
+				FILE *vir = fopen("/tmp/ep3.vir", "rb");
 				for(int i=0;i<virt;i++){
 					fread(&buffer, sizeof(char), 1, vir);
 					if(buffer == EMPTY)
@@ -127,7 +131,7 @@ void roda(int alg_subs, int alg_aloc){
 				}
 				fclose(vir);
 				printf("  Memoria física (Bitmap e Estado)\n");
-				FILE *mem = fopen("./tmp/ep3.mem", "rb");
+				FILE *mem = fopen("/tmp/ep3.mem", "rb");
 				for(int i=0;i<total;i++){
 					fread(&buffer, sizeof(char), 1, mem);
 					if(buffer == EMPTY)
@@ -147,7 +151,8 @@ void roda(int alg_subs, int alg_aloc){
 
 	if(alg_subs == FIFO)
 		free(livre);
-	else if(alg_subs == LRU2 || alg_subs == LRU4){
+
+	if(alg_subs == LRU2 || alg_subs == LRU4){
 		for(int i=0;i<nquad;i++)
 			free(matriz_pag[i]);
 		free(matriz_pag);
@@ -156,6 +161,7 @@ void roda(int alg_subs, int alg_aloc){
 }
 
 void init(){
+	tmax = 0;
 	val[0] = val[1] = -1;
 	page_fault = 0;
 	tempo_busca = 0.;
@@ -183,6 +189,9 @@ void init(){
 	pos[1].clear();
 
 	proc.clear();
+
+	processos.clear();
+	eventos.clear();
 }
 
 void carrega(char* file){
@@ -243,6 +252,7 @@ void carrega(char* file){
 }
 
 int main(){
+	tmax = 0;
 	asserting = 0;
 	int tipo_subs = -1, tipo_espaco = -1;
 	char input[30], file[110];
@@ -270,7 +280,7 @@ int main(){
 			/* OOOOOOOOOOOOOOOO NAO ESQUECE DE DESCOMENTAR NAO EM DEBUG
 			for(int a=0;a*dt <= tmax;a++)
 				adiciona_evento(a*dt, 6, 0, 0);
-			 */
+				*/
 			roda(tipo_subs, tipo_espaco);
 			printf("Tempo gasto buscando espaço livre na memória física:    %.10f\n", tempo_busca);
 			printf("Numero de page faults: %d\n", page_fault);
@@ -278,9 +288,34 @@ int main(){
 			init();
 			// Zerar o programa
 		}
-		else{
-			printf("Comando desconhecido\n");
-			break;
+		else if(input[0] == 't'){
+			//testa os parametros ja dados 30 vezes, para todas combinacoes espaco e substituicao
+			FILE *tempo, *faults;
+			tempo = fopen("./tempos.txt", "w");
+			faults = fopen("./faults.txt", "w");
+			for(int esp=1;esp<=3;esp++){
+				for(int sub=1;sub<=4;sub++){
+					printf("Testando alg esp %d e alg sub %d\n", esp, sub);
+					for(int test=0;test<30;test++){
+						printf("Teste %d\n", test+1);
+						if(eventos.empty())
+							carrega(file);
+						roda(sub, esp);
+						printf("%.10f ", tempo_busca);
+						printf("%d\n", page_fault);
+						fprintf(tempo, "%.10f ", tempo_busca);
+						fprintf(faults, "%d ", page_fault);
+						init();
+
+					}
+					fprintf(tempo, "\n");
+					fprintf(faults, "\n");
+				}
+			}
+			fclose(tempo);
+			fclose(faults);
 		}
+		else
+			printf("Comando '%s' desconhecido\n", input);
 	}
 }
