@@ -243,7 +243,7 @@ void carrega(char* file){
 }
 
 int main(){
-	asserting = 1;
+	asserting = 0;
 	int tipo_subs = -1, tipo_espaco = -1;
 	char input[30], file[110];
 	init();

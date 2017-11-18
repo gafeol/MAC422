@@ -37,8 +37,12 @@ void worst_fit(int p){
 	int pos = lista_push(L, p, 2);
 	iworst = pos;
 
-	if(asserting)
+	if(asserting){
 		assert(pos == iworst);
+		assert(worst != -1);
+	}
+	else
+		iworst = pos;
 
 	processos[p].pos_virt = iworst;
 

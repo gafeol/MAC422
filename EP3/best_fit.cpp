@@ -40,10 +40,13 @@ void best_fit(int p){
 
 	if(asserting)
 		assert(ibest == pos);
+	else
+		ibest = pos;
 
 	processos[p].pos_virt = ibest;
 	assert(ibest == 0 || MV[ibest-1].ind != EMPTY);
 
-	assert(best != INT_MAX);
+	if(asserting)
+		assert(best != INT_MAX);
 	seta_virtual(ibest, sz_p, p);
 }
