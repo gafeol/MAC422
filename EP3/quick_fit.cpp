@@ -49,13 +49,16 @@ void atualiza_set(int p){
 	int sz = processos[p].b;
 	int sz_p = ceil(sz, tam_pag);
 	int ini = processos[p].pos_virt;
-	printf("cara %d sz %d szp %d ini %d\n", p, sz, sz_p, ini);
-//	int nxt = nxt_pro(ini + sz_p);
-//	if(nxt != -1)
-//		esp_livre = processos[nxt].pos_virt - 1 - (ini + sz_p) + 1;
-//	else
-//		esp_livre = ceil(virt, tam_pag) - 1 - (ini + sz_p) + 1;
 
+	//GARANTE QUE O PROCESSO FOI ESCRITO CERTO NA MEMORIA VIRTUAL
+	for(int i=ini;i<ini+sz_p;i++)
+		assert(MV[i].ind == p);
+	for(int i = ini-1;i>=0;i--)
+		assert(MV[i].ind != p);
+	for(int i = ini+sz_p;i < ceil(virt, tam_pag);i++)
+		assert(MV[i].ind != p);
+
+	printf("cara %d sz %d szp %d ini %d\n", p, sz, sz_p, ini);
 	int confere = 0;
 	int i;
 	for(i=ini+sz_p;i < ceil(virt, tam_pag) && MV[i].ind == EMPTY;i++){
@@ -79,9 +82,11 @@ void atualiza_set(int p){
 	}
 
 
-	// ADICIONEI SO PRA CHECAR QUE NAO TEMOS ESPACO EM BRANCO ANES DO PROCESSO,
+	// ADICIONEI SO PRA CHECAR QUE NAO TEMOS ESPACO EM BRANCO ANTES DO PROCESSO,
 	// MAS ACONTECE QUE TEM
 	confere = 0;
+	if(ini >= 0)
+		assert(MV[ini-1].ind != EMPTY);
 	for(i = ini-1;i >= 0 && MV[i].ind == EMPTY;i--)
 		confere++;
 
@@ -112,8 +117,6 @@ void quick_fit(int p){
 	int sz_p = ceil(sz, tam_pag);
 
 	debug("val0 %d val1 %d\n", val[0], val[1]);
-	//print(0);
-	//print(1);
 
 	if(sz_p > val[1]){
 		best_fit(p);
@@ -122,6 +125,7 @@ void quick_fit(int p){
 			pos[1].erase(ini);
 		if(pos[0].find(ini) != pos[0].end())
 			pos[0].erase(ini);
+		printf("chama do best fit\n");
 		atualiza_set(p);
 	}
 	else if(sz_p > val[0]){
@@ -138,6 +142,7 @@ void quick_fit(int p){
 		processos[p].pos_virt = ini;
 		assert(MV[ini].ind == EMPTY);
 		seta_virtual(ini, sz_p, p);
+		printf("chama do val1\n");
 		atualiza_set(p);
 	}
 	else{
@@ -168,6 +173,7 @@ void quick_fit(int p){
 		processos[p].pos_virt = ini;
 		debug("pos virt %d\n", ini);
 		assert(MV[ini].ind == EMPTY);
+		printf("chama do ult\n");
 		seta_virtual(ini, sz_p, p);
 		atualiza_set(p);
 	}

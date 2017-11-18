@@ -206,7 +206,7 @@ void compacta()
 	//compacta fisica
 	plivre = 0, pnlivre= 0;
 	int num_quadros = ceil(total, tam_pag);
-	int virt;
+	int virtl;
 	FILE *mem;
 	mem = fopen("./tmp/ep3.mem", "r+b");
 	fseek(mem, 0, SEEK_SET);
@@ -222,14 +222,14 @@ void compacta()
 		if(pnlivre >= num_quadros)
 			break;
 		if(plivre != pnlivre) {
-			virt = MF[pnlivre].pos_virt;
-			MV[virt].pos_fis = plivre;
+			virtl = MF[pnlivre].pos_virt;
+			MV[virtl].pos_fis = plivre;
 			MF[plivre].ind = MF[pnlivre].ind;
 			MF[pnlivre].ind = EMPTY;
 			fprintf(stderr, "MF[%d] = empty\n", pnlivre);
 			MF[pnlivre].pos_virt = EMPTY;
 			fprintf(stderr, "MF[%d] = empty\n", pnlivre);
-			MF[plivre].pos_virt = virt;
+			MF[plivre].pos_virt = virtl;
 		}
 		buffer = processos[MF[plivre].ind].pid;
 		for(int i = 0; i < tam_pag; i++) {
