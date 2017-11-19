@@ -1,9 +1,14 @@
+/*** Equipe ********************************************
+Nome: Thiago Estrela Montenegro 	    NUSP: 9762873
+Nome: Gabriel Fernandes de Oliveira   NUSP: 9345370
+*******************************************************/
+
 #include <bits/stdc++.h>
 using namespace std;
 
 #include "sweep.h"
 
-multiset<evento> eventos; 
+multiset<evento> eventos;
 
 evento prox_evento(){
 	evento x = *eventos.begin();

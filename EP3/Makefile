@@ -49,7 +49,6 @@ lista.o: lista.cpp lista.h processo.h global.h
 		$(CC) lista.cpp -g -c -o $@
 
 
-
 clean: 
 	rm ep3 *.o *~ -rf tmp/
 

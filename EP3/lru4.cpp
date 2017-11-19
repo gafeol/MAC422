@@ -1,3 +1,8 @@
+/*** Equipe ********************************************
+Nome: Thiago Estrela Montenegro 	    NUSP: 9762873
+Nome: Gabriel Fernandes de Oliveira   NUSP: 9345370
+*******************************************************/
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -24,7 +29,7 @@ void lru4(int pos_virt){
 }
 
 void atualiza_matriz4(){
-	// Shift 
+	// Shift
 	//debug("atualiza matriz4\n");
 	for(int a=0;a<nquad;a++){
 		for(int b=nquad-1;b>0;b--){

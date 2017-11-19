@@ -1,8 +1,8 @@
-/****************************************************
-Equipe
-Nome: Thiago Estrela Montenegro 	NUSP: 9762873
-Nome: Gabriel Fernandes de Oliveira     NUSP: 9345370
-****************************************************/
+/*** Equipe ********************************************
+Nome: Thiago Estrela Montenegro 	    NUSP: 9762873
+Nome: Gabriel Fernandes de Oliveira   NUSP: 9345370
+*******************************************************/
+
 
 #ifndef LISTA_H
 #define LISTA_H

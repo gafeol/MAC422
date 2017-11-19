@@ -1,3 +1,8 @@
+/*** Equipe ********************************************
+Nome: Thiago Estrela Montenegro 	    NUSP: 9762873
+Nome: Gabriel Fernandes de Oliveira   NUSP: 9345370
+*******************************************************/
+
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -16,7 +21,7 @@ void optimal(int pos_virt){
 
 	int mn = INT_MAX, imn;
 	for(int i=0;i < MF.size();i++){
-		int p = MF[i].ind;	
+		int p = MF[i].ind;
 		int pag_rel = (MF[i].pos_virt - processos[p].pos_virt);
 		//debug("	p %d pag rel %d: acessada %d\n", p, pag_rel, qtd_aces[p][pag_rel]);
 		if(mn > qtd_aces[p][pag_rel]){
@@ -29,4 +34,3 @@ void optimal(int pos_virt){
 
 	substitui_pag(pag, pos_virt);
 }
-
