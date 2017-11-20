@@ -2,9 +2,9 @@
 # Nome: Thiago Estrela Montenegro 	NUSP: 9762873
 # Nome: Gabriel Fernandes de Oliveira   NUSP: 9345370
 
-CC=g++ -O2
+CC=g++ -O2 -w
 
-all: ep3 
+all: ep3
 
 ep3: ep3.o processo.o sweep.o memory.o global.o best_fit.o worst_fit.o fifo.o lru2.o lru4.o optimal.o quick_fit.o lista.o
 		$(CC) -g $^ -o $@
@@ -44,11 +44,10 @@ optimal.o: optimal.cpp optimal.h
 
 quick_fit.o: quick_fit.cpp quick_fit.h
 		$(CC) quick_fit.cpp -g -c -o $@
-		
+
 lista.o: lista.cpp lista.h processo.h global.h
 		$(CC) lista.cpp -g -c -o $@
 
 
-clean: 
+clean:
 	rm ep3 *.o *~ -rf tmp/
-

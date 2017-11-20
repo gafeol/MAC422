@@ -22,7 +22,6 @@ bool cmp(int a, int b){
 }
 
 void lru2(int pos_virt){
-	// PAGE FAULT
 	int mn = 0;
 	for(int i=1;i<nquad;i++){
 		if(cmp(i, mn))

@@ -14,8 +14,6 @@ using namespace std;
 #include "memory.h"
 
 void optimal(int pos_virt){
-	// PAGE FAULT
-   	//debug("optimal, quero alocar para a pos virt %d\n", pos_virt);
 
 	int pag;
 

@@ -69,8 +69,6 @@ void roda(int alg_subs, int alg_aloc){
 		pos[1].insert(0);
 	}
 
-	//mkdir("/tmp", ACCESSPERMS);
-
 	FILE *mem, *vir;
 
 	mem = fopen("/tmp/ep3.mem", "wb+");
@@ -101,7 +99,6 @@ void roda(int alg_subs, int alg_aloc){
 
 	while(!eventos.empty()){
 		evento ev = prox_evento();
-	//	debug("Evento %d %d\n", ev.tipo, ev.proc);
 		int proc = ev.proc;
 		int pos = ev.pos;
 		switch (ev.tipo){
@@ -174,11 +171,8 @@ void init(){
 	while(!pid_disp.empty())
 		pid_disp.pop();
 
-	// PARA TESTAR APAGAR DEPOIS NAO ESQUECERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
-	for(int a=0;a<100000;a++)
-		pid_disp.push(1);
-	//for(int a=0;a<128;a++)
-//		pid_disp.push(a);
+	for(int a=0;a<128;a++)
+		pid_disp.push(a);
 
 	qtd_aces.clear();
 	nquad = 0;
@@ -240,8 +234,8 @@ void carrega(char* file){
 			sscanf(p, "%d", &pos);
 			p = strtok(NULL, " \n");
 			sscanf(p, "%d", &t);
-			assert(pos < b);
-			assert(t <= tf && t >= t0);
+			assert(pos < b); // Certifica que os acessos de memoria sao de 0 a b-1
+			assert(t <= tf && t >= t0); // Certifica que os tempos de acesso sao enquanto o processo esta ativo
 			adiciona_evento(t, 3, cnt, pos);
 			tmax = max(tmax, t);
 			p = strtok(NULL, " \n");
@@ -282,10 +276,8 @@ int main(){
 			scanf("%d", &dt);
 			if(eventos.empty())
 				carrega(file);
-			/* OOOOOOOOOOOOOOOO NAO ESQUECE DE DESCOMENTAR NAO EM DEBUG
 			for(int a=0;a*dt <= tmax;a++)
 				adiciona_evento(a*dt, 6, 0, 0);
-				*/
 			roda(tipo_subs, tipo_espaco);
 			printf("Tempo gasto buscando espaço livre na memória física:    %.10f\n", tempo_busca);
 			printf("Numero de page faults: %d\n", page_fault);

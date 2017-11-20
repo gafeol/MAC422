@@ -138,9 +138,7 @@ void substitui_pag(int pag, int pos_virt){
 	FILE *mem;
 
 	mem = fopen("/tmp/ep3.mem", "r+b");
-	//printf("pag %d MF[pag].ind %d\n", pag, MF[pag].ind);
 	char buffer  =  processos[MF[pag].ind].pid;
-	//debug("pag %d tam pag %d \n", pag, tam_pag);
 	fseek(mem, pag*tam_pag*sizeof(char), SEEK_SET);
 	for(int a=0;a<tam_pag;a++)
 		assert(fwrite(&buffer, sizeof(char), 1, mem) == 1 && "Erro na escrita de mem");
@@ -152,7 +150,6 @@ void compacta()
 	//compacta virtual
 	int plivre = 0, pnlivre= 0;
 	int num_pages = ceil(virt, tam_pag);
-	//printf("num_pages %d\n", num_pages);
 	int fis;
 	FILE *vir;
 	vir = fopen("/tmp/ep3.vir", "r+b");
@@ -173,7 +170,6 @@ void compacta()
 			MF[fis].pos_virt = plivre;
 			MV[plivre].ind = MV[pnlivre].ind;
 			MV[pnlivre].ind = EMPTY;
-			fprintf(stderr, "MV[%d] = empty\n", pnlivre);
 			MV[pnlivre].pos_fis = EMPTY;
 			MV[plivre].pos_fis = fis;
 
@@ -210,9 +206,7 @@ void compacta()
 			MV[virtl].pos_fis = plivre;
 			MF[plivre].ind = MF[pnlivre].ind;
 			MF[pnlivre].ind = EMPTY;
-			fprintf(stderr, "MF[%d] = empty\n", pnlivre);
 			MF[pnlivre].pos_virt = EMPTY;
-			fprintf(stderr, "MF[%d] = empty\n", pnlivre);
 			MF[plivre].pos_virt = virtl;
 		}
 		buffer = processos[MF[plivre].ind].pid;

@@ -116,14 +116,6 @@ void atualiza_set(int p){
 	}
 }
 
-void print(int i){
-	debug("pos[%d] : ", i);
-	for(set<int>::iterator it = pos[i].begin(); it != pos[i].end();it++){
-		debug("%d ", *it);
-	}
-	debug("\n");
-}
-
 void quick_fit(int p){
 	int sz = processos[p].b;
 	int sz_p = ceil(sz, tam_pag);

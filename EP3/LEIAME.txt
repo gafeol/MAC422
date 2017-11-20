@@ -1,0 +1,37 @@
+/*** Equipe ********************************************
+Nome: Thiago Estrela Montenegro 	    NUSP: 9762873
+Nome: Gabriel Fernandes de Oliveira   NUSP: 9345370
+*******************************************************/
+
+Como Compilar e Executar
+
+Para compilar, basta executar o comando make.
+
+Para executar o shell, execute "./ep3" no terminal.
+
+Um terminal do estilo [ep3]: deve começar a ser executado
+
+Para determinar qual o algoritmo de substituição sera utilizado:
+	Escreva "substitui <numero do algoritmo de substituicao>" no terminal do ep3
+	Os algoritmos de substituicao sao numerados do seguinte modo:
+	1 - Optimal
+	2 - FIFO
+	3 - Least Recently Used 2v
+	4 - Least Recently Used 4v
+
+Para determinar qual o algoritmo de gerenciamento de memoria livre sera utilizado:
+	Escreva "espaco <numero do algoritmo de espaco>" no terminal do ep3
+	Os algoritmos de gerenciamento de espaco sao numerados do seguinte modo:
+	1 - Best Fit
+	2 - Worst Fit
+	3 - Quick Fit
+
+Para carregar um arquivo de trace:
+	Escreva "carrega <path do arquivo de trace>" no terminal do ep3
+
+Para rodar uma simulação com os parâmetros já definidos previamente:
+	Escreva "executa <intervalo>"
+	Sendo intervalo o intervalo de tempo em que se imprimem o bitmap e o estado das memórias
+
+Para fechar o terminal ep3:
+	Escreva "sai"
